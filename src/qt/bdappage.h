@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -6,7 +7,7 @@
 #define BDAPPAGE_H
 
 #include "bdap/bdap.h"
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "platformstyle.h"
 #include "walletmodel.h"
 
@@ -56,7 +57,7 @@ public:
     QTableWidget* getCompleteTable();
     QTableWidget* getPendingAcceptTable();
     QTableWidget* getPendingRequestTable();
-    
+
     QLabel* getUserStatus();
     QLabel* getGroupStatus();
     bool getMyUserCheckBoxChecked();
@@ -70,12 +71,12 @@ public:
     QLabel* getLinkCompleteRecords();
     QLabel* getPendingAcceptRecords();
     QLabel* getPendingRequestRecords();
-    std::string getCompleteRequestorSearch();    
-    std::string getCompleteRecipientSearch();    
-    std::string getPARequestorSearch();    
-    std::string getPARecipientSearch();    
-    std::string getPRRequestorSearch();    
-    std::string getPRRecipientSearch();  
+    std::string getCompleteRequestorSearch();
+    std::string getCompleteRecipientSearch();
+    std::string getPARequestorSearch();
+    std::string getPARecipientSearch();
+    std::string getPRRequestorSearch();
+    std::string getPRRecipientSearch();
 
 private:
     Ui::BdapPage* ui;

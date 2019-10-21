@@ -5,10 +5,10 @@
 
 # Test mempool limiting together/eviction with the wallet
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
-class MempoolLimitTest(DynamicTestFramework):
+class MempoolLimitTest(CreditTestFramework):
 
     def __init__(self):
         self.txouts = gen_return_txouts()

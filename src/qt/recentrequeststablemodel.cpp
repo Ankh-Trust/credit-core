@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -7,7 +8,7 @@
 
 #include "recentrequeststablemodel.h"
 
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 
@@ -85,9 +86,9 @@ QVariant RecentRequestsTableModel::data(const QModelIndex& index, int role) cons
             if (rec->recipient.amount == 0 && role == Qt::DisplayRole)
                 return tr("(no amount requested)");
             else if (role == Qt::EditRole)
-                return DynamicUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), rec->recipient.amount, false, DynamicUnits::separatorNever);
+                return CreditUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), rec->recipient.amount, false, CreditUnits::separatorNever);
             else
-                return DynamicUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), rec->recipient.amount);
+                return CreditUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), rec->recipient.amount);
         }
     } else if (role == Qt::TextAlignmentRole) {
         if (index.column() == Amount)
@@ -121,7 +122,7 @@ void RecentRequestsTableModel::updateAmountColumnTitle()
 /** Gets title for amount column including current display unit if optionsModel reference available. */
 QString RecentRequestsTableModel::getAmountTitle()
 {
-    return (this->walletModel->getOptionsModel() != NULL) ? tr("Requested") + " (" + DynamicUnits::name(this->walletModel->getOptionsModel()->getDisplayUnit()) + ")" : "";
+    return (this->walletModel->getOptionsModel() != NULL) ? tr("Requested") + " (" + CreditUnits::name(this->walletModel->getOptionsModel()->getDisplayUnit()) + ")" : "";
 }
 
 QModelIndex RecentRequestsTableModel::index(int row, int column, const QModelIndex& parent) const

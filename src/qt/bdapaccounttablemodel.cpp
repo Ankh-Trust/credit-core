@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -39,7 +40,7 @@ public:
         std::vector<std::string> params;
         int nNewRow = 0;
         int recordsFound = 0;
-    
+
         std::string keyName {""};
         std::string getName {""};
         std::string getPath {""};
@@ -49,7 +50,7 @@ public:
 
         bool hasValues = false;
 
-    
+
         if (!inputtable->objectName().isEmpty()) tableWidgetName = inputtable->objectName().toStdString();
 
         //check if table has been previously sorted
@@ -62,7 +63,7 @@ public:
         } //if not isempty
 
 
-        //Execute proper RPC call 
+        //Execute proper RPC call
         if (tableWidgetName == "tableWidget_Groups") {
             if (filterOn) {
                 params.push_back("groups");
@@ -72,7 +73,7 @@ public:
                 jreq.params = RPCConvertValues("getgroups", params);
                 jreq.strMethod = "getgroups";
             } //(filterOn Groups)
-        } else { 
+        } else {
             if (filterOn) {
                 params.push_back("users");
                 jreq.params = RPCConvertValues("mybdapaccounts", params);
@@ -82,7 +83,7 @@ public:
                 jreq.strMethod = "getusers";
             } //(filterOn Users)
         }
-        
+
         UniValue result = UniValue(UniValue::VOBJ);
 
         //Handle RPC errors
@@ -178,14 +179,14 @@ BdapAccountTableModel::BdapAccountTableModel(BdapPage* parent) : QAbstractTableM
                                                       bdapPage(parent),
                                                       timer(0)
 {
-    
+
     currentIndex = bdapPage->getCurrentIndex();
     userTable = bdapPage->getUserTable();
     groupTable = bdapPage->getGroupTable();
     userStatus = bdapPage->getUserStatus();
     groupStatus = bdapPage->getGroupStatus();
 
-        
+
     columns << tr("Common Name") << tr("Object Full Path") << tr("Expiration Date");
     priv.reset(new BdapAccountTablePriv());
     // default to unsorted

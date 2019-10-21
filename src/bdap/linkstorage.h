@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_LINKSTORAGE_H
-#define DYNAMIC_BDAP_LINKSTORAGE_H
+#ifndef CREDIT_BDAP_LINKSTORAGE_H
+#define CREDIT_BDAP_LINKSTORAGE_H
 
 #include "serialize.h"
 #include "uint256.h"
@@ -140,4 +140,4 @@ void ProcessLink(const CLinkStorage& storage, const bool fStoreInQueueOnly = fal
 void ProcessLinkQueue();
 void LoadLinkMessageInfo(const uint256& subjectID, const std::vector<unsigned char>& vchPubKey);
 
-#endif // DYNAMIC_BDAP_LINKSTORAGE_H
+#endif // CREDIT_BDAP_LINKSTORAGE_H

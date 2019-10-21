@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,7 +10,7 @@
 
 #include "tinyformat.h"
 
-const std::string CURRENCY_UNIT = "DYN";
+const std::string CURRENCY_UNIT = "0AC";
 
 CFeeRate::CFeeRate(const CAmount& nFeePaid, size_t nBytes_)
 {

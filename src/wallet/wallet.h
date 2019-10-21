@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2017-2019 The Particl Core developers
@@ -7,8 +8,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_WALLET_WALLET_H
-#define DYNAMIC_WALLET_WALLET_H
+#ifndef CREDIT_WALLET_WALLET_H
+#define CREDIT_WALLET_WALLET_H
 
 #include "amount.h"
 #include "base58.h"
@@ -102,7 +103,7 @@ enum WalletFeature {
     FEATURE_WALLETCRYPT = 40000, // wallet encryption
     FEATURE_COMPRPUBKEY = 60000, // compressed public keys
 
-    FEATURE_HD = 204000, // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
+    FEATURE_HD = 100000, // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
                          // which uses on-the-fly private key derivation
 
     FEATURE_LATEST = 61000 // HD is optional, use FEATURE_COMPRPUBKEY as latest version
@@ -112,7 +113,7 @@ enum AvailableCoinsType {
     ALL_COINS,
     ONLY_DENOMINATED,
     ONLY_NONDENOMINATED,
-    ONLY_1000, // find dynode outputs including locked ones (use with caution)
+    ONLY_50000, // find servicenode outputs including locked ones (use with caution)
     ONLY_PRIVATESEND_COLLATERAL
 };
 
@@ -332,7 +333,7 @@ public:
     bool IsCoinBase() const { return tx->IsCoinBase(); }
 };
 
-/** 
+/**
  * A transaction with a bunch of additional info that only the owner cares about.
  * It includes any unrecorded transactions needed to link it back to the block chain.
  */
@@ -593,7 +594,7 @@ public:
     }
 };
 
-/** 
+/**
  * Internal transfers.
  * Database key is acentry<account><counter>.
  */
@@ -734,7 +735,7 @@ public:
     };
 };
 
-/** 
+/**
  * A CWallet is an extension of a keystore, which also maintains a set of transactions and balances,
  * and provides the ability to create new transactions.
  */
@@ -796,9 +797,9 @@ private:
     /* HD derive new child stealth key from  */
     bool DeriveChildStealthKey(const CKey& key);
 
-    void ReserveEdKeyForTransactions(const std::vector<unsigned char>& pubKeyToReserve);   
+    void ReserveEdKeyForTransactions(const std::vector<unsigned char>& pubKeyToReserve);
 
-    bool ReserveKeyForTransactions(const CPubKey& pubKeyToReserve);   
+    bool ReserveKeyForTransactions(const CPubKey& pubKeyToReserve);
 
     std::array<char, 32> ConvertSecureVector32ToArray(const std::vector<unsigned char, secure_allocator<unsigned char> >& vIn);
 
@@ -810,7 +811,7 @@ private:
     std::set<int64_t> setInternalEdKeyPool;
     std::set<int64_t> setExternalEdKeyPool;
 
-    unsigned int DynamicKeyPoolSize = (int64_t)0;
+    unsigned int CreditKeyPoolSize = (int64_t)0;
 
     std::vector<std::vector<unsigned char>> reservedEd25519PubKeys;
 
@@ -843,7 +844,7 @@ public:
     CBlockIndex* rescan_index = nullptr;
     int ReserveKeyCount = 0;
     bool SaveRescanIndex = false;
-    //unsigned int DynamicKeyPoolSize = (int64_t)0;
+    //unsigned int CreditKeyPoolSize = (int64_t)0;
 
     bool WalletNeedsUpgrading()
     {
@@ -853,7 +854,7 @@ public:
     void SetUpdateKeyPoolsAndLinks()
     {
         fNeedToUpdateKeyPools = true;
-        fNeedToUpdateLinks = true;        
+        fNeedToUpdateLinks = true;
     }
 
     void LoadKeyPool(int nIndex, const CKeyPool& keypool)
@@ -887,7 +888,7 @@ public:
         CKeyID keyid = keypool.vchPubKey.GetID();
         if (mapKeyMetadata.count(keyid) == 0)
             mapKeyMetadata[keyid] = CKeyMetadata(keypool.nTime);
-        */    
+        */
     }
 
     // Map from Key ID (for regular keys) or Script ID (for watch-only keys) to
@@ -996,8 +997,8 @@ public:
 
     bool SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTallyRet, bool fSkipDenominated = true, bool fAnonymizable = true, bool fSkipUnconfirmed = true, int nMaxOupointsPerAddress = -1) const;
 
-    /// Get 1000DYN output and keys which can be used for the Dynode
-    bool GetDynodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash = "", std::string strOutputIndex = "");
+    /// Get 1000DYN output and keys which can be used for the ServiceNode
+    bool GetServiceNodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash = "", std::string strOutputIndex = "");
     /// Extract txin information and keys from output
     bool GetOutpointAndKeysFromOutput(const COutput& out, COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet);
 
@@ -1091,7 +1092,7 @@ public:
 
     void GetKeyBirthTimes(std::map<CTxDestination, int64_t>& mapKeyBirth) const;
 
-    /** 
+    /**
      * Increment the next transaction order id
      * @return next transaction order id
      */
@@ -1170,7 +1171,7 @@ public:
     size_t KeypoolCountInternalKeys();
     size_t EdKeypoolCountExternalKeys();
     size_t EdKeypoolCountInternalKeys();
-    bool SyncEdKeyPool(); 
+    bool SyncEdKeyPool();
     bool TopUpKeyPoolCombo(unsigned int kpSize = 0, bool fIncreaseSize = false);
     void ReserveKeysFromKeyPools(int64_t& nIndex, CKeyPool& keypool, CEdKeyPool& edkeypool, bool fInternal);
     void KeepKey(int64_t nIndex);
@@ -1200,7 +1201,7 @@ public:
     bool IsChange(const CTxOut& txout) const;
     CAmount GetChange(const CTxOut& txout) const;
     bool IsMine(const CTransaction& tx) const;
-    void AutoLockDynodeCollaterals();
+    void AutoLockServiceNodeCollaterals();
 
     bool IsRelevantToMe(const CTransaction& tx) const;
     bool IsFromMe(const CTransaction& tx, const isminefilter& filter) const;
@@ -1268,13 +1269,13 @@ public:
     //! Verify the wallet database and perform salvage if required
     static bool Verify();
 
-    /** 
+    /**
      * Address book entry changed.
      * @note called with lock cs_wallet held.
      */
     boost::signals2::signal<void(CWallet* wallet, const CTxDestination& address, const std::string& label, bool isMine, const std::string& purpose, ChangeType status)> NotifyAddressBookChanged;
 
-    /** 
+    /**
      * Wallet transaction added, removed or updated.
      * @note called with lock cs_wallet held.
      */
@@ -1379,7 +1380,7 @@ public:
 };
 
 
-/** 
+/**
  * Account information.
  * Stored in wallet with key "acc"+string account name.
  */
@@ -1415,4 +1416,4 @@ bool RunProcessStealthQueue();
 bool IsDataScript(const CScript& data);
 bool GetDataFromScript(const CScript& data, std::vector<uint8_t>& vData);
 
-#endif // DYNAMIC_WALLET_WALLET_H
+#endif // CREDIT_WALLET_WALLET_H

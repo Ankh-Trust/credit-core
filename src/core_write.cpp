@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -140,7 +141,7 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
 
     UniValue a(UniValue::VARR);
     BOOST_FOREACH (const CTxDestination& addr, addresses)
-        a.push_back(CDynamicAddress(addr).ToString());
+        a.push_back(CCreditAddress(addr).ToString());
     out.pushKV("addresses", a);
 }
 

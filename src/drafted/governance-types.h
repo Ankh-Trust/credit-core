@@ -16,9 +16,9 @@ enum GovernanceObjectType {
     ValueOverride = 1, 
 
     // -------------------------------
-    // DynamicNetwork - is the root node
-    DynamicNetwork = 1000,
-    DynamicNetworkVariable = 1001,
+    // CreditNetwork - is the root node
+    CreditNetwork = 1000,
+    CreditNetworkVariable = 1001,
     Category = 1002,
 
     // Actors

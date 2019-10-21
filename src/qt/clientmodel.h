@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_CLIENTMODEL_H
-#define DYNAMIC_QT_CLIENTMODEL_H
+#ifndef CREDIT_QT_CLIENTMODEL_H
+#define CREDIT_QT_CLIENTMODEL_H
 
 #include <QDateTime>
 #include <QObject>
@@ -39,7 +40,7 @@ enum NumConnections {
     CONNECTIONS_ALL = (CONNECTIONS_IN | CONNECTIONS_OUT),
 };
 
-/** Model for Dynamic network client. */
+/** Model for Credit network client. */
 class ClientModel : public QObject
 {
     Q_OBJECT
@@ -54,7 +55,7 @@ public:
 
     //! Return number of connections, default is in- and outbound (total)
     int getNumConnections(unsigned int flags = CONNECTIONS_ALL) const;
-    QString getDynodeCountString() const;
+    QString getServiceNodeCountString() const;
     int getNumBlocks() const;
     int getHeaderTipHeight() const;
     int64_t getHeaderTipTime() const;
@@ -95,7 +96,7 @@ public:
 private:
     OptionsModel* optionsModel;
     PeerTableModel* peerTableModel;
-    QString cachedDynodeCountString;
+    QString cachedServiceNodeCountString;
     BanTableModel* banTableModel;
 
     QTimer* pollTimer;
@@ -106,7 +107,7 @@ private:
 
 Q_SIGNALS:
     void numConnectionsChanged(int count);
-    void strDynodesChanged(const QString& strDynodes);
+    void strServiceNodesChanged(const QString& strServiceNodes);
     void numBlocksChanged(int count, const QDateTime& blockDate, double nVerificationProgress, bool header);
     void additionalDataSyncProgressChanged(double nSyncProgress);
     void mempoolSizeChanged(long count, size_t mempoolSizeInBytes);
@@ -127,4 +128,4 @@ public Q_SLOTS:
     void updateBanlist();
 };
 
-#endif // DYNAMIC_QT_CLIENTMODEL_H
+#endif // CREDIT_QT_CLIENTMODEL_H

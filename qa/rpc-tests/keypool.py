@@ -5,12 +5,12 @@
 
 # Exercise the wallet keypool, and interaction with wallet encryption/locking
 
-# Add python-dynamicrpc to module search path:
+# Add python-creditrpc to module search path:
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
-class KeyPoolTest(DynamicTestFramework):
+class KeyPoolTest(CreditTestFramework):
 
     def run_test(self):
         nodes = self.nodes
@@ -21,7 +21,7 @@ class KeyPoolTest(DynamicTestFramework):
 
         # Encrypt wallet and wait to terminate
         nodes[0].encryptwallet('test')
-        dynamicd_processes[0].wait()
+        creditd_processes[0].wait()
         # Restart node 0
         nodes[0] = start_node(0, self.options.tmpdir)
         # Keep creating keys

@@ -252,8 +252,8 @@ const char* GetOpName(opcodetype opcode)
     // fluid
     case OP_MINT:
         return "OP_MINT";
-    case OP_REWARD_DYNODE:
-        return "OP_REWARD_DYNODE";
+    case OP_REWARD_SERVICENODE:
+        return "OP_REWARD_SERVICENODE";
     case OP_REWARD_MINING:
         return "OP_REWARD_MINING";
     case OP_SWAP_SOVEREIGN_ADDRESS:

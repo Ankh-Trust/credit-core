@@ -1,6 +1,6 @@
-![DYN logo](https://github.com/duality-solutions/Logos/blob/master/Duality%20Logos/Dynamic/PNG/128x128.png)
+![_AC logo](https://github.com/.../Credit/PNG/128x128.png)
 
-DYNAMIC INITIALISATION ARGUMENTS
+CREDIT INITIALISATION ARGUMENTS
 ================================
 
 
@@ -131,9 +131,9 @@ DEBUGGING TESTING OPTIONS
 * "-limitancestorsize=[n]" ("Do not accept transactions whose size with all in-mempool ancestors exceeds [n] kilobytes")
 * "-limitdescendantcount=[n]" ("Do not accept transactions if any ancestor would have [n] or more in-mempool descendants")
 * "-limitdescendantsize=[n]" ("Do not accept transactions if any ancestor would have more than [n] kilobytes of in-mempool descendants.")
-    
-debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, qt, rand, reindex, rpc, selectcoins, tor, zmq, Dynamic (or specifically: privatesend, instantsend, dynode, spork, keepass, dnpayments, gobject)"
-    
+
+debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, qt, rand, reindex, rpc, selectcoins, tor, zmq, Credit (or specifically: privatesend, instantsend, servicenode, spork, keepass, dnpayments, gobject)"
+
 * "-debug=[category]" ("Output debugging information (supplying [category] is optional)") +
         ("If [category] is not supplied or if [category] = 1, output all debugging information.") + ("[category] can be:")
 * "-nodebug" ("Turn off debugging messages, same as -debug=0")
@@ -154,21 +154,21 @@ debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, m
 * "-printpriority" ("Log transaction priority and fee per kB when mining blocks")
 * "-privdb" ("Sets the DB_PRIVATE flag in the wallet db environment")
 * "-shrinkdebugfile" ("Shrink debug.log file on client startup (default: 1 when no -debug)")
-* "-litemode=[n]" ("Disable all Dynamic specific functionality (Dynodes, PrivateSend, InstantSend, Governance) (0-1)")
+* "-litemode=[n]" ("Disable all Credit specific functionality (ServiceNodes, PrivateSend, InstantSend, Governance) (0-1)")
 
-DYNODE OPTIONS
+SERVICENODE OPTIONS
 --------------
-* "-dynode=[n]" ("Enable the client to act as a Dynode (0-1)")
-* "-dnconf=[file]" ("Specify Dynode configuration file", "dynode.conf")
-* "-dnconflock=[n]" ("Lock Dynodes from Dynode configuration file")
-* "-dynodepairingkey=[n]" ("Set the Dynode private key")
+* "-servicenode=[n]" ("Enable the client to act as a ServiceNode (0-1)")
+* "-dnconf=[file]" ("Specify ServiceNode configuration file", "servicenode.conf")
+* "-dnconflock=[n]" ("Lock ServiceNodes from ServiceNode configuration file")
+* "-servicenodepairingkey=[n]" ("Set the ServiceNode private key")
 
 PRIVATESEND OPTIONS
 -------------------
 * "-enableprivatesend=[n]" ("Enable use of automated PrivateSend for funds stored in this wallet (0-1)")
 * "-privatesendmultisession=[n]" ("Enable multiple PrivateSend mixing sessions per block, experimental (0-1)")
-* "-privatesendrounds=[n]" ("Use N separate Dynodes for each denominated input to mix funds (2-16)")
-* "-privatesendamount=[n]" ("Keep N DYN anonymized")
+* "-privatesendrounds=[n]" ("Use N separate ServiceNodes for each denominated input to mix funds (2-16)")
+* "-privatesendamount=[n]" ("Keep N 0AC anonymized")
 * "-liquidityprovider=[n]" ("Provide liquidity to PrivateSend by infrequently mixing coins on a continual basis (0-100, 1=very frequent, high fees, 100=very infrequent, low fees)")
 
 INSTANTSEND OPTIONS
@@ -207,4 +207,3 @@ RPC SERVER OPTIONS
 * "-rpcthreads=[n]" ("Set the number of threads to service RPC calls")
 * "-rpcworkqueue=[n]" ("Set the depth of the work queue to service RPC calls")
 * "-rpcservertimeout=[n]" ("Timeout during HTTP requests")
-    

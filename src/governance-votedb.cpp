@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -55,11 +56,11 @@ std::vector<CGovernanceVote> CGovernanceObjectVoteFile::GetVotes() const
     return vecResult;
 }
 
-void CGovernanceObjectVoteFile::RemoveVotesFromDynode(const COutPoint& outpointDynode)
+void CGovernanceObjectVoteFile::RemoveVotesFromServiceNode(const COutPoint& outpointServiceNode)
 {
     vote_l_it it = listVotes.begin();
     while (it != listVotes.end()) {
-        if (it->GetDynodeOutpoint() == outpointDynode) {
+        if (it->GetServiceNodeOutpoint() == outpointServiceNode) {
             --nMemoryVotes;
             mapVoteIndex.erase(it->GetHash());
             listVotes.erase(it++);

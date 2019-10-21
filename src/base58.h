@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -13,8 +14,8 @@
  * - E-mail usually won't line-break if there's no punctuation to break at.
  * - Double-clicking selects the whole string as one word if it's all alphanumeric.
  */
-#ifndef DYNAMIC_BASE58_H
-#define DYNAMIC_BASE58_H
+#ifndef CREDIT_BASE58_H
+#define CREDIT_BASE58_H
 
 #include "bdap/stealth.h"
 #include "chainparams.h"
@@ -106,13 +107,13 @@ public:
     bool operator>(const CBase58Data& b58) const { return CompareTo(b58) > 0; }
 };
 
-/** base58-encoded Dynamic addresses.
+/** base58-encoded Credit addresses.
  * Public-key-hash-addresses have version 76 (or 140 testnet).
  * The data vector contains RIPEMD160(SHA256(pubkey)), where pubkey is the serialized public key.
  * Script-hash-addresses have version 16 (or 19 testnet).
  * The data vector contains RIPEMD160(SHA256(cscript)), where cscript is the serialized redemption script.
  */
-class CDynamicAddress : public CBase58Data
+class CCreditAddress : public CBase58Data
 {
 public:
     bool Set(const CKeyID& id);
@@ -124,10 +125,10 @@ public:
     bool IsValidStealthAddress() const;
     bool IsValidStealthAddress(const CChainParams& params) const;
 
-    CDynamicAddress() {}
-    CDynamicAddress(const CTxDestination& dest) { Set(dest); }
-    CDynamicAddress(const std::string& strAddress) { SetString(strAddress); }
-    CDynamicAddress(const char* pszAddress) { SetString(pszAddress); }
+    CCreditAddress() {}
+    CCreditAddress(const CTxDestination& dest) { Set(dest); }
+    CCreditAddress(const std::string& strAddress) { SetString(strAddress); }
+    CCreditAddress(const char* pszAddress) { SetString(pszAddress); }
 
     CTxDestination Get() const;
     bool GetKeyID(CKeyID& keyID) const;
@@ -138,7 +139,7 @@ public:
 /**
  * A base58-encoded secret key
  */
-class CDynamicSecret : public CBase58Data
+class CCreditSecret : public CBase58Data
 {
 public:
     void SetKey(const CKey& vchSecret);
@@ -147,12 +148,12 @@ public:
     bool SetString(const char* pszSecret);
     bool SetString(const std::string& strSecret);
 
-    CDynamicSecret(const CKey& vchSecret) { SetKey(vchSecret); }
-    CDynamicSecret() {}
+    CCreditSecret(const CKey& vchSecret) { SetKey(vchSecret); }
+    CCreditSecret() {}
 };
 
 template <typename K, int Size, CChainParams::Base58Type Type>
-class CDynamicExtKeyBase : public CBase58Data
+class CCreditExtKeyBase : public CBase58Data
 {
 public:
     void SetKey(const K& key)
@@ -172,20 +173,20 @@ public:
         return ret;
     }
 
-    CDynamicExtKeyBase(const K& key)
+    CCreditExtKeyBase(const K& key)
     {
         SetKey(key);
     }
 
-    CDynamicExtKeyBase(const std::string& strBase58c)
+    CCreditExtKeyBase(const std::string& strBase58c)
     {
         SetString(strBase58c.c_str(), Params().Base58Prefix(Type).size());
     }
 
-    CDynamicExtKeyBase() {}
+    CCreditExtKeyBase() {}
 };
 
-typedef CDynamicExtKeyBase<CExtKey, BIP32_EXTKEY_SIZE, CChainParams::EXT_SECRET_KEY> CDynamicExtKey;
-typedef CDynamicExtKeyBase<CExtPubKey, BIP32_EXTKEY_SIZE, CChainParams::EXT_PUBLIC_KEY> CDynamicExtPubKey;
+typedef CCreditExtKeyBase<CExtKey, BIP32_EXTKEY_SIZE, CChainParams::EXT_SECRET_KEY> CCreditExtKey;
+typedef CCreditExtKeyBase<CExtPubKey, BIP32_EXTKEY_SIZE, CChainParams::EXT_PUBLIC_KEY> CCreditExtPubKey;
 
-#endif // DYNAMIC_BASE58_H
+#endif // CREDIT_BASE58_H

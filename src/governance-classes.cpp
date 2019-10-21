@@ -1,9 +1,10 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-//#define ENABLE_DYNAMIC_DEBUG
+//#define ENABLE_CREDIT_DEBUG
 
 #include "governance-classes.h"
 
@@ -409,9 +410,9 @@ void CSuperblockManager::CreateSuperblock(CMutableTransaction& txNewRet, int nBl
 
             CTxDestination address1;
             ExtractDestination(payment.script, address1);
-            CDynamicAddress address2(address1);
+            CCreditAddress address2(address1);
 
-            // TODO: PRINT NICE N.N DYNAMIC OUTPUT
+            // TODO: PRINT NICE N.N CREDIT OUTPUT
 
             DBG(std::cout << "CSuperblockManager::CreateSuperblock Before LogPrintf call, nAmount = " << payment.nAmount << std::endl;);
             LogPrintf("NEW Superblock : output %d (addr %s, amount %d)\n", i, address2.ToString(), payment.nAmount);
@@ -583,10 +584,10 @@ void CSuperblock::ParsePaymentSchedule(const std::string& strPaymentAddresses, c
     DBG(std::cout << "CSuperblock::ParsePaymentSchedule vecParsed1.size() = " << vecParsed1.size() << std::endl;);
 
     for (int i = 0; i < (int)vecParsed1.size(); i++) {
-        CDynamicAddress address(vecParsed1[i]);
+        CCreditAddress address(vecParsed1[i]);
         if (!address.IsValid()) {
             std::ostringstream ostr;
-            ostr << "CSuperblock::ParsePaymentSchedule -- Invalid Dynamic Address : " << vecParsed1[i];
+            ostr << "CSuperblock::ParsePaymentSchedule -- Invalid Credit Address : " << vecParsed1[i];
             LogPrintf("%s\n", ostr.str());
             throw std::runtime_error(ostr.str());
         }
@@ -732,7 +733,7 @@ bool CSuperblock::IsValid(const CTransaction& txNew, int nBlockHeight, CAmount b
 
             CTxDestination address1;
             ExtractDestination(payment.script, address1);
-            CDynamicAddress address2(address1);
+            CCreditAddress address2(address1);
             LogPrintf("CSuperblock::IsValid -- ERROR: Block invalid: %d payment %d to %s not found\n", i, payment.nAmount, address2.ToString());
 
             return false;
@@ -806,7 +807,7 @@ std::string CSuperblockManager::GetRequiredPaymentsString(int nBlockHeight)
 
             CTxDestination address1;
             ExtractDestination(payment.script, address1);
-            CDynamicAddress address2(address1);
+            CCreditAddress address2(address1);
 
             // RETURN NICE OUTPUT FOR CONSOLE
 

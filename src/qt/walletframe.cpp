@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -7,7 +8,7 @@
 
 #include "walletframe.h"
 
-#include "dynamicgui.h"
+#include "creditgui.h"
 #include "walletview.h"
 
 #include <cstdio>
@@ -15,7 +16,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-WalletFrame::WalletFrame(const PlatformStyle* _platformStyle, DynamicGUI* _gui) : QFrame(_gui),
+WalletFrame::WalletFrame(const PlatformStyle* _platformStyle, CreditGUI* _gui) : QFrame(_gui),
                                                                                   gui(_gui),
                                                                                   platformStyle(_platformStyle)
 {
@@ -46,7 +47,7 @@ bool WalletFrame::addWallet(const QString& name, WalletModel* walletModel)
         return false;
 
     WalletView* walletView = new WalletView(platformStyle, this);
-    walletView->setDynamicGUI(gui);
+    walletView->setCreditGUI(gui);
     walletView->setClientModel(clientModel);
     walletView->setWalletModel(walletModel);
     walletView->showOutOfSyncWarning(bOutOfSync);
@@ -124,11 +125,11 @@ void WalletFrame::gotoHistoryPage()
         i.value()->gotoHistoryPage();
 }
 
-void WalletFrame::gotoDynodePage()
+void WalletFrame::gotoServiceNodePage()
 {
     QMap<QString, WalletView*>::const_iterator i;
     for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoDynodePage();
+        i.value()->gotoServiceNodePage();
 }
 
 void WalletFrame::gotoMiningPage()
@@ -138,12 +139,14 @@ void WalletFrame::gotoMiningPage()
         i.value()->gotoMiningPage();
 }
 
-void WalletFrame::gotoBdapPage()
-{
-    QMap<QString, WalletView*>::const_iterator i;
-    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoBdapPage();
-}
+/*
+ *  void WalletFrame::gotoBdapPage()
+ * {
+ *     QMap<QString, WalletView*>::const_iterator i;
+ *     for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+ *         i.value()->gotoBdapPage();
+ * }
+ */
 
 void WalletFrame::gotoReceiveCoinsPage()
 {

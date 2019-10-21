@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -350,7 +351,7 @@ static bool WriteBinaryFile(const std::string& filename, const std::string& data
     return true;
 }
 
-/****** Dynamic specific TorController implementation ********/
+/****** Credit specific TorController implementation ********/
 
 /** Controller that connects to Tor control socket, authenticate, then create
  * and maintain a ephemeral hidden service.

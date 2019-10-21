@@ -6,13 +6,13 @@ reset-files.bash
 *.tar.gz
 
 *.exe
-src/dynamic
-src/dynamicd
-src/dynamic-cli
-src/dynamic-tx
-src/test/test_dynamic
-src/qt/test/test_dynamic-qt
-src/bench/bench_dynamic
+src/credit
+src/creditd
+src/credit-cli
+src/credit-tx
+src/test/test_credit
+src/qt/test/test_credit-qt
+src/bench/bench_credit
 
 # autoreconf
 Makefile.in
@@ -35,8 +35,8 @@ config.log
 config.status
 configure
 libtool
-src/config/dynamic-config.h
-src/config/dynamic-config.h.in
+src/config/credit-config.h
+src/config/credit-config.h.in
 src/config/stamp-h1
 share/setup.nsi
 share/qt/Info.plist
@@ -63,7 +63,7 @@ libconftest.dylib*
 *.o-*
 *.patch
 !depends/patches/*/*.patch
-.dynamic
+.credit
 *.a
 *.pb.cc
 *.pb.h
@@ -83,14 +83,14 @@ libconftest.dylib*
 # Compilation and Qt preprocessor part
 *.qm
 Makefile
-dynamic-qt
-dynamic-Qt.app
+credit-qt
+credit-Qt.app
 /dist/
 /dist/*.*
 
 # Unit-tests
 Makefile.test
-dynamic-qt_test
+credit-qt_test
 src/test/buildenv.py
 
 # Resources cpp
@@ -104,7 +104,7 @@ build
 *.gcno
 *.gcda
 /*.info
-test_dynamic.coverage/
+test_credit.coverage/
 total.coverage/
 coverage_percent.txt
 
@@ -112,13 +112,13 @@ coverage_percent.txt
 linux-coverage-build
 linux-build
 win32-build
-qa/pull-tester/run-dynamicd-for-test.sh
+qa/pull-tester/run-creditd-for-test.sh
 qa/pull-tester/tests_config.py
 qa/pull-tester/cache/*
 qa/pull-tester/test.*/*
 qa/tmp
 cache/
-share/DynamicdComparisonTool.jar
+share/CreditdComparisonTool.jar
 
 !src/leveldb*/Makefile
 
@@ -127,14 +127,14 @@ share/DynamicdComparisonTool.jar
 .autotools
 /doc/doxygen/
 
-libdynamicconsensus.pc
-src/qt/dynamic-qt.bash
+libcreditconsensus.pc
+src/qt/credit-qt.bash
 qa/pull-tester/tests-config.sh
 
 #development symlinks
-dynamic-cli
-dynamicd
-dynamic-qt
+credit-cli
+creditd
+credit-qt
 make
 
 # Compiled Object files
@@ -145,7 +145,7 @@ make
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
+# Compiled Credit libraries
 *.so
 *.dylib
 *.dll

@@ -9,7 +9,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 
 #include <string>
 #include <vector>
@@ -20,10 +20,10 @@ static const std::string strSecret1 ("5i6n7o5TnTTW3hTZVY8vfejwkRGn1UwCY6ZvTcZXsC
 static const std::string strSecret2 ("5hzndwFToeWnwvFYqxRTr8ewTXLS6PaS3YW91aZe2TSpAoD5meV");
 static const std::string strSecret1C ("MnQW8zNhDdmyCuaEQxRysbaYee8df8JDvFaJxTxbEZvzHy1cdQbb");
 static const std::string strSecret2C ("Mmx4S2SqJtaVoQ3DZ5cyVrnTN4tmkneZYE3cMZ94RRiwBrTh8269");
-static const CDynamicAddress addr1 ("D6T9u5Am6wC35D1fHxAwtXZkqgsCCH1z5S");
-static const CDynamicAddress addr2 ("DADRng3sCSRZVQeP2Xv7z5nQtfpqNnMVr4");
-static const CDynamicAddress addr1C("D8G2LrvZNRJKafxEkPAJNqoitbFco5nmL5");
-static const CDynamicAddress addr2C("DBy6Fwx2f2gTtRpGfyoZa2GdrXYXae3aTn");
+static const CCreditAddress addr1 ("D6T9u5Am6wC35D1fHxAwtXZkqgsCCH1z5S");
+static const CCreditAddress addr2 ("DADRng3sCSRZVQeP2Xv7z5nQtfpqNnMVr4");
+static const CCreditAddress addr1C("D8G2LrvZNRJKafxEkPAJNqoitbFco5nmL5");
+static const CCreditAddress addr2C("DBy6Fwx2f2gTtRpGfyoZa2GdrXYXae3aTn");
 
 
 static const std::string strAddressBad("Xta1praZQjyELweyMByXyiREw1ZRsjXzVP");
@@ -32,7 +32,7 @@ BOOST_FIXTURE_TEST_SUITE(key_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(key_test1)
 {
-    CDynamicSecret bsecret1, bsecret2, bsecret1C, bsecret2C, baddress1;
+    CCreditSecret bsecret1, bsecret2, bsecret1C, bsecret2C, baddress1;
     BOOST_CHECK( bsecret1.SetString(strSecret1));
     BOOST_CHECK( bsecret2.SetString(strSecret2));
     BOOST_CHECK( bsecret1C.SetString(strSecret1C));

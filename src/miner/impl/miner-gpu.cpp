@@ -38,10 +38,10 @@ int64_t GPUMiner::TryMineBlock(CBlock& block)
         block.nNonce = result_nonce;
         uint256 cpuHash = block.GetHash();
          if (UintToArith256(cpuHash) <= _hash_target) {
-             LogPrintf("Dynamic GPU Miner Found Nonce %u \n", block.nNonce);
+             LogPrintf("Credit GPU Miner Found Nonce %u \n", block.nNonce);
              this->ProcessFoundSolution(block, cpuHash);
          }else{
-             LogPrintf("Dynamic GPU Miner False Nonce %u \n", block.nNonce);
+             LogPrintf("Credit GPU Miner False Nonce %u \n", block.nNonce);
          }
 
     }

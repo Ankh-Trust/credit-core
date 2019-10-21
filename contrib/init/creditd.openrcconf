@@ -1,0 +1,33 @@
+# /etc/conf.d/creditd: config file for /etc/init.d/creditd
+
+# Config file location
+#CREDITD_CONFIGFILE="/etc/credit/credit.conf"
+
+# What directory to write pidfile to?  (created and owned by $CREDITD_USER)
+#CREDITD_PIDDIR="/var/run/creditd"
+
+# What filename to give the pidfile
+#CREDITD_PIDFILE="${CREDITD_PIDDIR}/creditd.pid"
+
+# Where to write creditd data (be mindful that the blockchain is large)
+#CREDITD_DATADIR="/var/lib/creditd"
+
+# User and group to own creditd process
+#CREDITD_USER="credit"
+#CREDITD_GROUP="credit"
+
+# Path to creditd executable
+#CREDITD_BIN="/usr/bin/creditd"
+
+# Nice value to run creditd under
+#CREDITD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+CREDITD_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for creditd to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+CREDITD_SIGTERM_TIMEOUT=60

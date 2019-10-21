@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 
 #include "fluid.h"
@@ -28,7 +29,7 @@ extern CWallet* pwalletMain;
 
 bool IsTransactionFluid(const CScript& txOut)
 {
-    return (txOut.IsProtocolInstruction(MINT_TX) || txOut.IsProtocolInstruction(DYNODE_MODFIY_TX) || txOut.IsProtocolInstruction(MINING_MODIFY_TX) || txOut.IsProtocolInstruction(BDAP_REVOKE_TX));
+    return (txOut.IsProtocolInstruction(MINT_TX) || txOut.IsProtocolInstruction(SERVICENODE_MODFIY_TX) || txOut.IsProtocolInstruction(MINING_MODIFY_TX) || txOut.IsProtocolInstruction(BDAP_REVOKE_TX));
 }
 
 bool IsTransactionFluid(const CTransaction& tx, CScript& fluidScript)
@@ -47,8 +48,8 @@ int GetFluidOpCode(const CScript& fluidScript)
 {
     if (fluidScript.IsProtocolInstruction(MINT_TX)) {
         return OP_MINT;
-    } else if (fluidScript.IsProtocolInstruction(DYNODE_MODFIY_TX)) {
-        return OP_REWARD_DYNODE;
+    } else if (fluidScript.IsProtocolInstruction(SERVICENODE_MODFIY_TX)) {
+        return OP_REWARD_SERVICENODE;
     } else if (fluidScript.IsProtocolInstruction(MINING_MODIFY_TX)) {
         return OP_REWARD_MINING;
     } else if (fluidScript.IsProtocolInstruction(BDAP_REVOKE_TX)) {
@@ -58,35 +59,35 @@ int GetFluidOpCode(const CScript& fluidScript)
 }
 
 /** Initialise sovereign identities that are able to run fluid commands */
-std::vector<std::pair<std::string, CDynamicAddress> > CFluidParameters::InitialiseSovereignIdentities()
+std::vector<std::pair<std::string, CCreditAddress> > CFluidParameters::InitialiseSovereignIdentities()
 {
-    std::vector<std::pair<std::string, CDynamicAddress> > x;
+    std::vector<std::pair<std::string, CCreditAddress> > x;
     if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
-        x.push_back(std::make_pair("CEO", CDynamicAddress("D9avNWVBmaUNevMNnkcLMrQpze8M2mKURu")));
-        x.push_back(std::make_pair("CTO", CDynamicAddress("DRoyjRoxP4qfeAiiZHX1dmSkbUJiBSXBt7")));
-        x.push_back(std::make_pair("CFO", CDynamicAddress("DHkD6oBQ5PtCiKo4wX8CRWrG61Vy5hEu4t")));
-        x.push_back(std::make_pair("COO", CDynamicAddress("DKyqamefa7YdbqrP5pdTfNVVuq1gerNhMH")));
-        x.push_back(std::make_pair("CDOO", CDynamicAddress("DUDE1zFKK4fezCgcxdGbFh4yHJMcg8qpoP")));
+        x.push_back(std::make_pair("Sovereign01", CCreditAddress("CdZDm1oyNNAGzQtFQNKaZgvAxRV1NonZ3d")));
+        x.push_back(std::make_pair("Sovereign02", CCreditAddress("CefDhFaRf6rF2qknLrjGyWWFHE8RiaGyAN")));
+        x.push_back(std::make_pair("Sovereign03", CCreditAddress("CWCgTyxjBm7qdDLqt5nCYj7UAb4UspMF5i")));
+        x.push_back(std::make_pair("Sovereign04", CCreditAddress("CNXRGePs9ETB9sNnFpCTRberuoXyQkcCsw")));
+        x.push_back(std::make_pair("Sovereign05", CCreditAddress("CTcczS9HPb8fRi4qX77bsaxZYQMhRMpqWF")));
     } else if (Params().NetworkIDString() == CBaseChainParams::TESTNET) {
-        x.push_back(std::make_pair("Test01", CDynamicAddress("DSCex4e189aULrig3nLd42gVf7AbjTwnP5"))); //importprivkey QVKXuZ2hSo2cT9BhkN3CApLuZYVsuzNvidJRt1ucyniHheZ2Pfq5
-        x.push_back(std::make_pair("Test02", CDynamicAddress("DMAh37n3RUdDxox3uiWAnc1zEPp5yFbHiL"))); //importprivkey QU4VGDcVoej7nDZiyaSgoL7foG8xKiaVyk5odHnJdtyv4tYkmBw1
-        x.push_back(std::make_pair("Test03", CDynamicAddress("DN4KvqtXyygooPV3oha72TyBB5nqBbkxwj"))); //importprivkey QWjTe6sCFVtKBsXfrYDyrHzn7eBeJktsQnWzfiANkMd9PhVM4Qnp
-        x.push_back(std::make_pair("Test04", CDynamicAddress("DHVmS621KBBZJTJSxGDdLxoU7LCmpexWDa"))); //importprivkey QScWuazWgWDTj8cXXz1YFKJW7mNJHJgMFY2FB6hkNyh3SJDUhPZt
-        x.push_back(std::make_pair("Test05", CDynamicAddress("DCZXDSRB3cJdCCUSerE4pvSfGQoXUivUxo"))); //importprivkey QUt4pEDanRPzos3meoiNGUG9g7RctCtiwLoPjhDKfNPK99oLuzcU
+        x.push_back(std::make_pair("Test01", CCreditAddress("cC6ZjChd9RuT1UT8F1fthenMxzQvf5FLYu"))); //importprivkey QQsjqVhcW1kRkqmG7HUBhM1sFxdYNhaptUHNjNVDaB3yVzPU9Ymc
+        x.push_back(std::make_pair("Test02", CCreditAddress("cNAo2KEiLVuqdASnAFQ3eCdfNmcx5DRzMi"))); //importprivkey QVgnvSqPBEVU8qCC4pjpZfQeGdqFXP3Kpj17xfQ9GHh8rz5h4JH6
+        x.push_back(std::make_pair("Test03", CCreditAddress("cB9FffQjGpk29QSMDamJguQXaeJajubZwz"))); //importprivkey QSUhmccNvUC2dPAhpqVCn52uETTskNFqvTmahRYMUhUHD2SywLn1
+        x.push_back(std::make_pair("Test04", CCreditAddress("cQ5iucF3iSxrx6RUhx3BH2B8hxqEpQQvwC"))); //importprivkey QP1LrKjWDp9fgmLL491PP34F3viGATLjMnNRbkW8Eze8dnYyUMdG
+        x.push_back(std::make_pair("Test05", CCreditAddress("cCpVLf1byKmip8yREHabqmSHt3TxRCYaBp"))); //importprivkey QRgEwXx9xKEzZQUyXMwRnh7GfCaNAg4muu4NT3M7GW2aJ3szUywX
     } else if (Params().NetworkIDString() == CBaseChainParams::REGTEST) {
-        x.push_back(std::make_pair("RegTest01", CDynamicAddress("DSCex4e189aULrig3nLd42gVf7AbjTwnP5"))); //importprivkey QVKXuZ2hSo2cT9BhkN3CApLuZYVsuzNvidJRt1ucyniHheZ2Pfq5
-        x.push_back(std::make_pair("RegTest02", CDynamicAddress("DMAh37n3RUdDxox3uiWAnc1zEPp5yFbHiL"))); //importprivkey QU4VGDcVoej7nDZiyaSgoL7foG8xKiaVyk5odHnJdtyv4tYkmBw1
-        x.push_back(std::make_pair("RegTest03", CDynamicAddress("DN4KvqtXyygooPV3oha72TyBB5nqBbkxwj"))); //importprivkey QWjTe6sCFVtKBsXfrYDyrHzn7eBeJktsQnWzfiANkMd9PhVM4Qnp
-        x.push_back(std::make_pair("RegTest04", CDynamicAddress("DHVmS621KBBZJTJSxGDdLxoU7LCmpexWDa"))); //importprivkey QScWuazWgWDTj8cXXz1YFKJW7mNJHJgMFY2FB6hkNyh3SJDUhPZt
-        x.push_back(std::make_pair("RegTest05", CDynamicAddress("DCZXDSRB3cJdCCUSerE4pvSfGQoXUivUxo"))); //importprivkey QUt4pEDanRPzos3meoiNGUG9g7RctCtiwLoPjhDKfNPK99oLuzcU
+        x.push_back(std::make_pair("RegTest01", CCreditAddress("yWtXxFrXkH1JAt4CifAz8aZzAwJbLuBTux"))); //importprivkey cQ8B2aRdhCTS3mmWZtrkDZSigJhEsfL58DzJ5q3Wd4s7gLdZbQR5
+        x.push_back(std::make_pair("RegTest02", CCreditAddress("yX6CvHRR9dLhT1odtMhuRB8YUGQ9wRxL7n"))); //importprivkey cPn1CzEjB6sL7rcDHAhuYTYTqgLMbah52kcDAqxUcDgdogc8UiSd
+        x.push_back(std::make_pair("RegTest03", CCreditAddress("ySpGiCQTcHCV2oDZYdHtqzdYG8o4mC7USC"))); //importprivkey cTfn7EcmhQoBky9h49b1yXTpFTGMCUbwHP7HMbUqWQmCbynQDaid
+        x.push_back(std::make_pair("RegTest04", CCreditAddress("ybsHirAxwHXw8UXMwjD7P4rL3dVDaN8rkd"))); //importprivkey cRmS7or9XdhMLJemVMFPNkUu89JzuSdmmkNq6TkerQPAAkkh8w4E
+        x.push_back(std::make_pair("RegTest05", CCreditAddress("yfAwgoU5Vqzvd9skRmFJvJjbY75veNa69k"))); //importprivkey cNzWnJV9h7vNXvEZpcuW2hzcdhCLpvDVvvHfxA1aqJ43ZqDyRKrE
     }
     else if (Params().NetworkIDString() == CBaseChainParams::PRIVATENET) {
-        x.push_back(std::make_pair("Priv01", CDynamicAddress("D6wUMdGtoXtj4zjyk4kYu6cL8LM5j6bEd7"))); //importprivkey QUQsWaE1LRdW95gLgyQgjkUjR4eqhbigmDHENzyTVYy7JCgQcYMd
-        x.push_back(std::make_pair("Priv02", CDynamicAddress("DKLWazjY91KKWekxPxwjznx56tX1KYtTiy"))); //importprivkey QWR6WRSKZZrpDBM3q2jqyhB5xmE5YDdc72trHzznTLwBEJBbeWKm
-        x.push_back(std::make_pair("Priv03", CDynamicAddress("DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd"))); //importprivkey QPWaY6RAm44zFQ9gktpHFwaCLQc1nCGwPaVAnXAZsFMyGXzLce35
-        x.push_back(std::make_pair("Priv04", CDynamicAddress("DG2NCt5Z35cLRYnNCDXdVJTbPh3NSScAmF"))); //importprivkey QRF11rngYqeVv4mSE4SCGU8P3MQgZwJaRQQJsknjVa5QqhkFCGW4
-        x.push_back(std::make_pair("Priv05", CDynamicAddress("DRqqngX1mPUjKFXPQDdHRmy2jBk9DKUjkx"))); //importprivkey QQja2KMbhyaat4HJLUiEr2PVmb33CtuVN7KgbmTq9ivVwnaZvFUE
-    } 
+        x.push_back(std::make_pair("Priv01", CCreditAddress("zBDMNDQPHABBcC22gRWZaM6QuLagEjVgCa"))); //importprivkey QUxBDcUzbu89YxiyHUC1rg1iCg4YkXkfPPTfoLxipHKkehpQ5n8s
+        x.push_back(std::make_pair("Priv02", CCreditAddress("zJL5xoa8Qe6WkQ9FiRZPy94q1wrha9mD7a"))); //importprivkey QVDuombFQrFNfNYbJcveCZcnaKEvC7wAArJssF1ZByVbzZxf6sk8
+        x.push_back(std::make_pair("Priv03", CCreditAddress("zCJb6eSNZSUKvAUbTQmbcc1tretzFDW9jx"))); //importprivkey QRsApJaWv54gjz9abRT3LMaa8uaYJCX8vXhsgU6MZteHaAnqFmiP
+        x.push_back(std::make_pair("Priv04", CCreditAddress("zSRLZ6UWcAp5Vfdn2ZWJ8eq514jE9AbxKt"))); //importprivkey QNfABE1r9ATDRqgjvUmevQqEak4CdvRHvqC47LXGCC21s3sCHzmV
+        x.push_back(std::make_pair("Priv05", CCreditAddress("zUdz9KteRkSCc6u5sw9qjY12nsviEJxCvy"))); //importprivkey QQhSSTBbM5auEoepsJNQnrf6xGhPqxgWQzbK9kQG4qgUwenaoN6N
+    }
     return x;
 }
 
@@ -99,8 +100,8 @@ std::vector<std::string> InitialiseAddresses()
 std::vector<std::string> CFluidParameters::InitialiseAddresses()
 {
     std::vector<std::string> initialSovereignAddresses;
-    std::vector<std::pair<std::string, CDynamicAddress> > fluidIdentities = InitialiseSovereignIdentities();
-    for (const std::pair<std::string, CDynamicAddress>& sovereignId : fluidIdentities) {
+    std::vector<std::pair<std::string, CCreditAddress> > fluidIdentities = InitialiseSovereignIdentities();
+    for (const std::pair<std::string, CCreditAddress>& sovereignId : fluidIdentities) {
         initialSovereignAddresses.push_back(sovereignId.second.ToString());
     }
     return initialSovereignAddresses;
@@ -109,8 +110,8 @@ std::vector<std::string> CFluidParameters::InitialiseAddresses()
 std::vector<std::vector<unsigned char> > CFluidParameters::InitialiseAddressCharVector()
 {
     std::vector<std::vector<unsigned char> > initialSovereignAddresses;
-    std::vector<std::pair<std::string, CDynamicAddress> > fluidIdentities = InitialiseSovereignIdentities();
-    for (const std::pair<std::string, CDynamicAddress>& sovereignId : fluidIdentities) {
+    std::vector<std::pair<std::string, CCreditAddress> > fluidIdentities = InitialiseSovereignIdentities();
+    for (const std::pair<std::string, CCreditAddress>& sovereignId : fluidIdentities) {
         initialSovereignAddresses.push_back(CharVectorFromString(sovereignId.second.ToString()));
     }
     return initialSovereignAddresses;
@@ -132,12 +133,12 @@ bool CFluid::CheckFluidOperationScript(const CScript& fluidScriptPubKey, const i
         std::string strUnHexedFluidOpScript = HexToString(verificationWithoutOpCode);
         std::vector<std::string> vecSplitScript;
         SeparateString(strUnHexedFluidOpScript, vecSplitScript, "$");
-        if (strOperationCode == "OP_MINT" || strOperationCode == "OP_REWARD_MINING" || strOperationCode == "OP_REWARD_DYNODE") {
+        if (strOperationCode == "OP_MINT" || strOperationCode == "OP_REWARD_MINING" || strOperationCode == "OP_REWARD_SERVICENODE") {
             if (vecSplitScript.size() > 1) {
                 std::string strAmount = vecSplitScript[0];
                 CAmount fluidAmount;
                 if (ParseFixedPoint(strAmount, 8, &fluidAmount)) {
-                    if ((strOperationCode == "OP_REWARD_MINING" || strOperationCode == "OP_REWARD_DYNODE") && fluidAmount < 0) {
+                    if ((strOperationCode == "OP_REWARD_MINING" || strOperationCode == "OP_REWARD_SERVICENODE") && fluidAmount < 0) {
                         errorMessage = "CheckFluidOperationScript fluid reward amount is less than zero: " + strAmount;
                         return false;
                     } else if (strOperationCode == "OP_MINT" && (fluidAmount > FLUID_MAX_FOR_MINT)) {
@@ -146,8 +147,8 @@ bool CFluid::CheckFluidOperationScript(const CScript& fluidScriptPubKey, const i
                     } else if (strOperationCode == "OP_REWARD_MINING" && (fluidAmount > FLUID_MAX_REWARD_FOR_MINING)) {
                         errorMessage = "CheckFluidOperationScript fluid OP_REWARD_MINING amount exceeds maximum: " + strAmount;
                         return false;
-                    } else if (strOperationCode == "OP_REWARD_DYNODE" && (fluidAmount > FLUID_MAX_REWARD_FOR_DYNODE)) {
-                        errorMessage = "CheckFluidOperationScript fluid OP_REWARD_DYNODE amount exceeds maximum: " + strAmount;
+                    } else if (strOperationCode == "OP_REWARD_SERVICENODE" && (fluidAmount > FLUID_MAX_REWARD_FOR_SERVICENODE)) {
+                        errorMessage = "CheckFluidOperationScript fluid OP_REWARD_SERVICENODE amount exceeds maximum: " + strAmount;
                         return false;
                     }
                 }
@@ -225,7 +226,7 @@ bool CFluid::CheckAccountBanScript(const CScript& fluidScript, const uint256& tx
         strErrorMessage = "Could not split fluid command script.";
         return false;
     }
-    
+
     for (uint32_t iter = 1; iter != vecSplitScript.size(); iter++) {
         CDomainEntry entry;
         std::string strBanAccountFQDN = DecodeBase64(vecSplitScript[iter]);
@@ -245,9 +246,9 @@ bool CFluid::CheckAccountBanScript(const CScript& fluidScript, const uint256& tx
 bool CFluid::CheckIfQuorumExists(const std::string& consentToken, std::string& message, const bool individual)
 {
     std::vector<std::string> fluidSovereigns;
-    std::pair<CDynamicAddress, bool> keyOne;
-    std::pair<CDynamicAddress, bool> keyTwo;
-    std::pair<CDynamicAddress, bool> keyThree;
+    std::pair<CCreditAddress, bool> keyOne;
+    std::pair<CCreditAddress, bool> keyTwo;
+    std::pair<CCreditAddress, bool> keyThree;
     keyOne.second = false, keyTwo.second = false;
     keyThree.second = false;
 
@@ -261,7 +262,7 @@ bool CFluid::CheckIfQuorumExists(const std::string& consentToken, std::string& m
         fluidSovereigns = InitialiseAddresses();
 
     for (const std::string& address : fluidSovereigns) {
-        CDynamicAddress attemptKey, xAddress(address);
+        CCreditAddress attemptKey, xAddress(address);
 
         if (!xAddress.IsValid())
             return false;
@@ -300,7 +301,7 @@ bool CFluid::CheckNonScriptQuorum(const std::string& consentToken, std::string& 
 }
 
 /** It will append a signature of the new information */
-bool CFluid::GenericConsentMessage(const std::string& message, std::string& signedString, const CDynamicAddress& signer)
+bool CFluid::GenericConsentMessage(const std::string& message, std::string& signedString, const CCreditAddress& signer)
 {
     std::string token, digest;
 
@@ -312,7 +313,7 @@ bool CFluid::GenericConsentMessage(const std::string& message, std::string& sign
 
     if (token == "")
         return false;
-    
+
     if (!SignTokenMessage(signer, token, digest, false))
         return false;
 
@@ -340,7 +341,7 @@ bool CFluid::ExtractCheckTimestamp(const std::string& strOpCode, const std::stri
         return false;
 
     std::string ls;
-    if (strOpCode == "OP_MINT" || strOpCode == "OP_REWARD_MINING" || strOpCode == "OP_REWARD_DYNODE") {
+    if (strOpCode == "OP_MINT" || strOpCode == "OP_REWARD_MINING" || strOpCode == "OP_REWARD_SERVICENODE") {
         ls = ptrs.at(1);
     }
     else if (strOpCode == "OP_BDAP_REVOKE") {
@@ -401,7 +402,7 @@ bool CFluid::GenericParseNumber(const std::string consentToken, const int64_t ti
     return true;
 }
 
-CDynamicAddress CFluid::GetAddressFromDigestSignature(const std::string& digestSignature, const std::string& messageTokenKey)
+CCreditAddress CFluid::GetAddressFromDigestSignature(const std::string& digestSignature, const std::string& messageTokenKey)
 {
     bool fInvalid = false;
     std::vector<unsigned char> vchSig = DecodeBase64(digestSignature.c_str(), &fInvalid);
@@ -421,13 +422,13 @@ CDynamicAddress CFluid::GetAddressFromDigestSignature(const std::string& digestS
         LogPrintf("GetAddressFromDigestSignature(): Public Key Recovery Failed! Hash: %s\n", ss.GetHash().ToString());
         return nullptr;
     }
-    CDynamicAddress newAddress;
+    CCreditAddress newAddress;
     newAddress.Set(pubkey.GetID());
     return newAddress;
 }
 
 /** Individually checks the validity of an instruction */
-bool CFluid::GenericVerifyInstruction(const std::string& consentToken, CDynamicAddress& signer, std::string& messageTokenKey, const int& whereToLook)
+bool CFluid::GenericVerifyInstruction(const std::string& consentToken, CCreditAddress& signer, std::string& messageTokenKey, const int& whereToLook)
 {
     std::string consentTokenNoScript = GetRidOfScriptStatement(consentToken);
     messageTokenKey = "";
@@ -449,7 +450,7 @@ bool CFluid::GenericVerifyInstruction(const std::string& consentToken, CDynamicA
     return true;
 }
 
-bool CFluid::ParseMintKey(const int64_t& nTime, CDynamicAddress& destination, CAmount& coinAmount, const std::string& uniqueIdentifier, const bool txCheckPurpose)
+bool CFluid::ParseMintKey(const int64_t& nTime, CCreditAddress& destination, CAmount& coinAmount, const std::string& uniqueIdentifier, const bool txCheckPurpose)
 {
     std::vector<std::string> ptrs;
 
@@ -501,7 +502,7 @@ bool GetFluidBlock(const CBlockIndex* pblockindex, CBlock& block)
     return true;
 }
 
-bool CFluid::GetMintingInstructions(const CBlockIndex* pblockindex, CDynamicAddress& toMintAddress, CAmount& mintAmount)
+bool CFluid::GetMintingInstructions(const CBlockIndex* pblockindex, CCreditAddress& toMintAddress, CAmount& mintAmount)
 {
     CBlock block;
     if (GetFluidBlock(pblockindex, block)) {
@@ -552,18 +553,18 @@ CAmount GetStandardPoWBlockPayment(const int nHeight)
         return BLOCKCHAIN_INIT_REWARD; // Burn transaction fees
     } else if (nHeight > Params().GetConsensus().nRewardsStart) {
         LogPrint("creation", "GetStandardPoWBlockPayment() : create=%s PoW Reward=%d\n", FormatMoney(PHASE_1_POW_REWARD), PHASE_1_POW_REWARD);
-        return PHASE_1_POW_REWARD; // 1 DYN  and burn transaction fees
+        return PHASE_1_POW_REWARD; // 1 0AC  and burn transaction fees
     } else
         return BLOCKCHAIN_INIT_REWARD; // Burn transaction fees
 }
 
-CAmount GetStandardDynodePayment(const int nHeight)
+CAmount GetStandardServiceNodePayment(const int nHeight)
 {
-    if (nHeight > Params().GetConsensus().nDynodePaymentsStartBlock) {
-        LogPrint("fluid", "GetStandardDynodePayment() : create=%s DN Payment=%d\n", FormatMoney(PHASE_2_DYNODE_PAYMENT), PHASE_2_DYNODE_PAYMENT);
-        return PHASE_2_DYNODE_PAYMENT; // 1.618 DYN
+    if (nHeight > Params().GetConsensus().nServiceNodePaymentsStartBlock) {
+        LogPrint("fluid", "GetStandardServiceNodePayment() : create=%s DN Payment=%d\n", FormatMoney(PHASE_2_SERVICENODE_PAYMENT), PHASE_2_SERVICENODE_PAYMENT);
+        return PHASE_2_SERVICENODE_PAYMENT; // 1.618 0AC
     } else {
-        return BLOCKCHAIN_INIT_REWARD; // 0 DYN
+        return BLOCKCHAIN_INIT_REWARD; // 0 0AC
     }
 }
 
@@ -571,7 +572,7 @@ bool CFluid::ValidationProcesses(CValidationState& state, const CScript& txOut, 
 {
     std::string message;
     CAmount mintAmount;
-    CDynamicAddress toMintAddress;
+    CCreditAddress toMintAddress;
 
     if (IsTransactionFluid(txOut)) {
         if (!CheckIfQuorumExists(ScriptToAsmStr(txOut), message)) {
@@ -583,7 +584,7 @@ bool CFluid::ValidationProcesses(CValidationState& state, const CScript& txOut, 
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-fluid-mint-auth-failure");
         }
 
-        if ((txOut.IsProtocolInstruction(DYNODE_MODFIY_TX) ||
+        if ((txOut.IsProtocolInstruction(SERVICENODE_MODFIY_TX) ||
                 txOut.IsProtocolInstruction(MINING_MODIFY_TX)) &&
             !GenericParseNumber(ScriptToAsmStr(txOut), 0, mintAmount, true)) {
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-fluid-modify-parse-failure");
@@ -669,7 +670,7 @@ bool CFluid::ExtractTimestampWithAddresses(const std::string& strOpCode, const C
         return false;
 
     std::string strTimeStamp;
-    if (strOpCode == "OP_MINT" || strOpCode == "OP_REWARD_MINING" || strOpCode == "OP_REWARD_DYNODE") {
+    if (strOpCode == "OP_MINT" || strOpCode == "OP_REWARD_MINING" || strOpCode == "OP_REWARD_SERVICENODE") {
         strTimeStamp = ptrs.at(1);
     } else if (strOpCode == "OP_BDAP_REVOKE") {
         strTimeStamp = ptrs.at(0);
@@ -683,7 +684,7 @@ bool CFluid::ExtractTimestampWithAddresses(const std::string& strOpCode, const C
         std::string strToken = strs.at(0);
         for (uint32_t iter = 1; iter != strs.size(); iter++) {
             std::string strSignature = strs.at(iter);
-            CDynamicAddress address = GetAddressFromDigestSignature(strSignature, strToken);
+            CCreditAddress address = GetAddressFromDigestSignature(strSignature, strToken);
             vSovereignAddresses.push_back(CharVectorFromString(address.ToString()));
         }
     }

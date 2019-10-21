@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -10,7 +11,7 @@
 #include "data/proposals_valid.json.h"
 #include "data/proposals_invalid.json.h"
 
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 
 #include <boost/test/unit_test.hpp>
 
@@ -32,7 +33,7 @@ std::string CreateEncodedProposalObject(const UniValue& objJSON)
 
     UniValue outerArray(UniValue::VARR);
     outerArray.push_back(innerArray);
-    
+
     std::string strData = outerArray.write();
     std::string strHex = HexStr(strData);
     return strHex;

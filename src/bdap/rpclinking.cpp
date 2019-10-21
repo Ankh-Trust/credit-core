@@ -16,7 +16,7 @@
 #include "dht/datarecord.h" // for CDataRecord
 #include "dht/session.h" // for CDataRecord
 #include "core_io.h" // needed for ScriptToAsmStr
-#include "dynodeman.h"
+#include "servicenodeman.h"
 #include "hash.h"
 #include "rpcprotocol.h"
 #include "rpcserver.h"
@@ -186,7 +186,7 @@ static UniValue SendLinkRequest(const JSONRPCRequest& request)
     if (!GetDomainEntry(vchRecipientFQDN, entryRecipient))
         throw std::runtime_error("BDAP_SEND_LINK_RPC_ERROR: ERRCODE: 4005 - Recipient " + strRecipientFQDN + _(" not found."));
 
-    CDynamicAddress addressRequestor = entryRequestor.GetWalletAddress();
+    CCreditAddress addressRequestor = entryRequestor.GetWalletAddress();
     CKeyID keyID;
     if (!addressRequestor.GetKeyID(keyID))
         throw std::runtime_error("BDAP_SEND_LINK_RPC_ERROR: ERRCODE: 4006 - Could not get " + strRequestorFQDN + _("'s wallet address key ") + addressRequestor.ToString());
@@ -363,7 +363,7 @@ static UniValue SendLinkAccept(const JSONRPCRequest& request)
     if (!GetDomainEntry(vchRequestorFQDN, entryRequestor))
         throw std::runtime_error("BDAP_ACCEPT_LINK_RPC_ERROR: ERRCODE: 4107 - Requestor " + strRequestorFQDN + _(" not found."));
 
-    CDynamicAddress addressAcceptor = entryAcceptor.GetWalletAddress();
+    CCreditAddress addressAcceptor = entryAcceptor.GetWalletAddress();
     CKeyID keyID;
     if (!addressAcceptor.GetKeyID(keyID))
         throw std::runtime_error("BDAP_ACCEPT_LINK_RPC_ERROR: ERRCODE: 4108 - Could not get " + strAcceptorFQDN + _("'s wallet address key ") + addressAcceptor.ToString());
@@ -1068,7 +1068,7 @@ static UniValue SendMessage(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, "Error: Keypool ran out, please call keypoolrefill first");
 
     CKeyID keyID = newPubKey.GetID();
-    CDynamicAddress walletAddress = CDynamicAddress(keyID);
+    CCreditAddress walletAddress = CCreditAddress(keyID);
     std::vector<unsigned char> vchWalletPubKey(newPubKey.begin(), newPubKey.end());
 
     CUnsignedVGPMessage unsignedMessage(subjectID, messageID, vchWalletPubKey, timestamp, stoptime);

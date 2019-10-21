@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_KEYSTORE_H
-#define DYNAMIC_KEYSTORE_H
+#ifndef CREDIT_KEYSTORE_H
+#define CREDIT_KEYSTORE_H
 
 #include "dht/ed25519.h"
 #include "hdchain.h"
@@ -41,7 +42,7 @@ public:
     virtual bool GetDHTPubKeys(std::vector<std::vector<unsigned char>>& vvchDHTPubKeys) const =0;
     virtual bool GetDHTKey(const CKeyID& address, CKeyEd25519& keyOut) const =0;
     virtual bool AddDHTKey(const CKeyEd25519& key, const std::vector<unsigned char>& vchPubKey) =0;
-    
+
     //! Support for BIP 0013 : see https://github.com/bitcoin/bips/blob/master/bip-0013.mediawiki
     virtual bool AddCScript(const CScript& redeemScript) = 0;
     virtual bool HaveCScript(const CScriptID& hash) const = 0;
@@ -138,4 +139,4 @@ typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMate
 typedef std::map<CKeyID, std::pair<CPubKey, std::vector<unsigned char> > > CryptedKeyMap;
 typedef std::map<CKeyID, std::pair<std::vector<unsigned char>, std::vector<unsigned char> > > CryptedDHTKeyMap;
 
-#endif // DYNAMIC_KEYSTORE_H
+#endif // CREDIT_KEYSTORE_H

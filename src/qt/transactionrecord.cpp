@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -61,9 +62,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 sub.credit = txout.nValue;
                 sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address)) {
-                    // Received by Dynamic Address
+                    // Received by Credit Address
                     sub.type = TransactionRecord::RecvWithAddress;
-                    sub.address = CDynamicAddress(address).ToString();
+                    sub.address = CCreditAddress(address).ToString();
                 } else {
                     // Received by IP connection (deprecated features), or a multisignature or other non-simple transaction
                     sub.type = TransactionRecord::RecvFromOther;
@@ -129,8 +130,8 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 sub.type = TransactionRecord::PrivateSend;
                 CTxDestination address;
                 if (ExtractDestination(wtx.tx->vout[0].scriptPubKey, address)) {
-                    // Sent to Dynamic Address
-                    sub.address = CDynamicAddress(address).ToString();
+                    // Sent to Credit Address
+                    sub.address = CCreditAddress(address).ToString();
                 } else {
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.address = mapValue["to"];
@@ -198,9 +199,9 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
 
                 CTxDestination address;
                 if (ExtractDestination(txout.scriptPubKey, address)) {
-                    // Sent to Dynamic Address
+                    // Sent to Credit Address
                     sub.type = TransactionRecord::SendToAddress;
-                    sub.address = CDynamicAddress(address).ToString();
+                    sub.address = CCreditAddress(address).ToString();
                 } else {
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.type = TransactionRecord::SendToOther;

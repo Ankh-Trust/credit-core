@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include <cstddef>

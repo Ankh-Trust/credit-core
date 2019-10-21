@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_UTILS_H
-#define DYNAMIC_BDAP_UTILS_H
+#ifndef CREDIT_BDAP_UTILS_H
+#define CREDIT_BDAP_UTILS_H
 
 #include "bdap/bdap.h"
 #include "primitives/transaction.h"
@@ -12,7 +12,7 @@
 #include <vector>
 
 class CCoinsViewCache;
-class CDynamicAddress;
+class CCreditAddress;
 struct CRecipient;
 class CScript;
 class CTxOut;
@@ -55,7 +55,7 @@ bool IsBDAPOperationOutput(const CTxOut& out);
 int GetBDAPOperationOutIndex(const CTransactionRef& tx);
 int GetBDAPOperationOutIndex(int nHeight, const uint256& txHash);
 bool GetBDAPTransaction(int nHeight, const uint256& hash, CTransactionRef &txOut, const Consensus::Params& consensusParams);
-CDynamicAddress GetScriptAddress(const CScript& pubScript);
+CCreditAddress GetScriptAddress(const CScript& pubScript);
 int GetBDAPOpCodeFromOutput(const CTxOut& out);
 bool ExtractOpTypeValue(const CScript& script, std::string& strOpType, std::vector<unsigned char>& vchValue);
 bool GetScriptOpTypeValue(const std::vector<CRecipient>& vecSend, CScript& bdapOpScript, std::string& strOpType, std::vector<unsigned char>& vchValue);
@@ -70,4 +70,4 @@ std::string GetOpCodeType(const std::string& strOpCode);
 std::vector<unsigned char> AddVersionToLinkData(const std::vector<unsigned char>& vchData, const int& nVersion);
 std::vector<unsigned char> RemoveVersionFromLinkData(const std::vector<unsigned char>& vchData, int& nVersion);
 
-#endif // DYNAMIC_BDAP_UTILS_H
+#endif // CREDIT_BDAP_UTILS_H

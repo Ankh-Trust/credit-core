@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,10 +6,10 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_TRANSACTIONTABLEMODEL_H
-#define DYNAMIC_QT_TRANSACTIONTABLEMODEL_H
+#ifndef CREDIT_QT_TRANSACTIONTABLEMODEL_H
+#define CREDIT_QT_TRANSACTIONTABLEMODEL_H
 
-#include "dynamicunits.h"
+#include "creditunits.h"
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -32,12 +33,12 @@ public:
 
     enum ColumnIndex {
         Status = 0,
-        Watchonly = 1,
-        InstantSend = 2,
-        Date = 3,
-        Type = 4,
-        ToAddress = 5,
-        Amount = 6
+        Date = 1,
+        Type = 2,
+        ToAddress = 3,
+        Amount = 4,
+        Watchonly = 5
+        // InstantSend = 6,
     };
 
     /** Roles to get specific information from a transaction row.
@@ -106,7 +107,7 @@ private:
     QString formatTxDate(const TransactionRecord* wtx) const;
     QString formatTxType(const TransactionRecord* wtx) const;
     QString formatTxToAddress(const TransactionRecord* wtx, bool tooltip) const;
-    QString formatTxAmount(const TransactionRecord* wtx, bool showUnconfirmed = true, DynamicUnits::SeparatorStyle separators = DynamicUnits::separatorStandard) const;
+    QString formatTxAmount(const TransactionRecord* wtx, bool showUnconfirmed = true, CreditUnits::SeparatorStyle separators = CreditUnits::separatorStandard) const;
     QString formatTooltip(const TransactionRecord* rec) const;
     QVariant txStatusDecoration(const TransactionRecord* wtx) const;
     QVariant txWatchonlyDecoration(const TransactionRecord* wtx) const;
@@ -126,4 +127,4 @@ public Q_SLOTS:
     friend class TransactionTablePriv;
 };
 
-#endif // DYNAMIC_QT_TRANSACTIONTABLEMODEL_H
+#endif // CREDIT_QT_TRANSACTIONTABLEMODEL_H

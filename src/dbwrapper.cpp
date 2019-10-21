@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -20,7 +21,7 @@
 
 #include <boost/filesystem.hpp>
 
-class CDynamicLevelDBLogger : public leveldb::Logger
+class CCreditLevelDBLogger : public leveldb::Logger
 {
 public:
     // This code is adapted from posix_logger.h, which is why it is using vsprintf.
@@ -85,7 +86,7 @@ static leveldb::Options GetOptions(size_t nCacheSize)
     options.filter_policy = leveldb::NewBloomFilterPolicy(10);
     options.compression = leveldb::kNoCompression;
     options.max_open_files = 64;
-    options.info_log = new CDynamicLevelDBLogger();
+    options.info_log = new CCreditLevelDBLogger();
     if (leveldb::kMajorVersion > 1 || (leveldb::kMajorVersion == 1 && leveldb::kMinorVersion >= 16)) {
         // LevelDB versions before 1.16 consider short writes to be corruption. Only trigger error
         // on corruption in later versions.

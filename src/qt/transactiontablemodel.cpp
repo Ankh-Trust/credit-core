@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -31,14 +32,15 @@
 
 #include <boost/foreach.hpp>
 
+// Amount column is right-aligned it contains numbers
 static int column_alignments[] = {
-    Qt::AlignLeft | Qt::AlignVCenter, /* status */
     Qt::AlignLeft | Qt::AlignVCenter, /* watchonly */
-    Qt::AlignLeft|Qt::AlignVCenter, /* instantsend */
+    Qt::AlignLeft | Qt::AlignVCenter, /* instantsend */
     Qt::AlignLeft | Qt::AlignVCenter, /* date */
     Qt::AlignLeft | Qt::AlignVCenter, /* type */
     Qt::AlignLeft | Qt::AlignVCenter, /* address */
-    Qt::AlignLeft | Qt::AlignVCenter  /* amount */
+    Qt::AlignLeft | Qt::AlignVCenter, /* status */
+    Qt::AlignRight | Qt::AlignVCenter  /* amount */
 };
 
 // Comparison operator for sort/binary search of model tx list
@@ -229,7 +231,7 @@ TransactionTableModel::TransactionTableModel(const PlatformStyle* _platformStyle
                                                                                                                            fProcessingQueuedTransactions(false),
                                                                                                                            platformStyle(_platformStyle)
 {
-    columns << QString() << QString() << QString() << tr("Date") << tr("Type") << tr("Address / Label") << DynamicUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
+    columns << QString() << tr("Date") << tr("Type") << tr("Address / Label") << CreditUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
     priv->refreshWallet();
 
     connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
@@ -246,7 +248,7 @@ TransactionTableModel::~TransactionTableModel()
 /** Updates the column title to "Amount (DisplayUnit)" and emits headerDataChanged() signal for table headers to react. */
 void TransactionTableModel::updateAmountColumnTitle()
 {
-    columns[Amount] = DynamicUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
+    columns[Amount] = CreditUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
     Q_EMIT headerDataChanged(Qt::Horizontal, Amount, Amount);
 }
 
@@ -397,20 +399,19 @@ QString TransactionTableModel::formatTxType(const TransactionRecord* wtx) const
 
 QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx) const
 {
-    QString theme = GUIUtil::getThemeName();
     switch (wtx->type) {
     case TransactionRecord::Fluid:
-        return QIcon(":/icons/" + theme + "/fluid");
+        return QIcon(":/icons/fluid");
     case TransactionRecord::Generated:
-        return QIcon(":/icons/" + theme + "/tx_mined");
+        return QIcon(":/icons/tx_mined");
     case TransactionRecord::RecvWithPrivateSend:
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
-        return QIcon(":/icons/" + theme + "/tx_input");
+        return QIcon(":/icons/tx_input");
     case TransactionRecord::PrivateSend:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
-        return QIcon(":/icons/" + theme + "/tx_output");
+        return QIcon(":/icons/tx_output");
     case TransactionRecord::NewDomainUser:
     case TransactionRecord::UpdateDomainUser:
     case TransactionRecord::DeleteDomainUser:
@@ -419,12 +420,12 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx
     case TransactionRecord::UpdateDomainGroup:
     case TransactionRecord::DeleteDomainGroup:
     case TransactionRecord::RevokeDomainGroup:
-        return QIcon(":/icons/" + theme + "/tx_bdap");
+        return QIcon(":/icons/tx_bdap");
     case TransactionRecord::LinkRequest:
     case TransactionRecord::LinkAccept:
-        return QIcon(":/icons/" + theme + "/tx_bdap");
+        return QIcon(":/icons/tx_bdap");
     default:
-        return QIcon(":/icons/" + theme + "/tx_inout");
+        return QIcon(":/icons/tx_inout");
     }
 }
 
@@ -511,9 +512,9 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord* wtx) const
     return QVariant();
 }
 
-QString TransactionTableModel::formatTxAmount(const TransactionRecord* wtx, bool showUnconfirmed, DynamicUnits::SeparatorStyle separators) const
+QString TransactionTableModel::formatTxAmount(const TransactionRecord* wtx, bool showUnconfirmed, CreditUnits::SeparatorStyle separators) const
 {
-    QString str = DynamicUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->credit + wtx->debit, false, separators);
+    QString str = CreditUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->credit + wtx->debit, false, separators);
     if (showUnconfirmed) {
         if (!wtx->status.countsForBalance) {
             str = QString("[") + str + QString("]");
@@ -524,7 +525,6 @@ QString TransactionTableModel::formatTxAmount(const TransactionRecord* wtx, bool
 
 QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord* wtx) const
 {
-    QString theme = GUIUtil::getThemeName();
     switch (wtx->status.status) {
     case TransactionStatus::OpenUntilBlock:
     case TransactionStatus::OpenUntilDate:
@@ -532,34 +532,34 @@ QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord* wtx)
     case TransactionStatus::Offline:
         return COLOR_TX_STATUS_OFFLINE;
     case TransactionStatus::Unconfirmed:
-        return QIcon(":/icons/" + theme + "/transaction_0");
+        return QIcon(":/icons/transaction_0");
     case TransactionStatus::Abandoned:
-        return QIcon(":/icons/" + theme + "/transaction_abandoned");
+        return QIcon(":/icons/transaction_abandoned");
     case TransactionStatus::Confirming:
         switch (wtx->status.depth) {
-        case 1: 
-            return QIcon(":/icons/" + theme + "/transaction_1");
-        case 2: 
-            return QIcon(":/icons/" + theme + "/transaction_2");
-        case 3: 
-            return QIcon(":/icons/" + theme + "/transaction_3");
-        case 4: 
-            return QIcon(":/icons/" + theme + "/transaction_4");
-        default: 
-            return QIcon(":/icons/" + theme + "/transaction_5");
+        case 1:
+            return QIcon(":/icons/transaction_1");
+        case 2:
+            return QIcon(":/icons/transaction_2");
+        case 3:
+            return QIcon(":/icons/transaction_3");
+        case 4:
+            return QIcon(":/icons/transaction_4");
+        default:
+            return QIcon(":/icons/transaction_5");
         };
     case TransactionStatus::Confirmed:
-        return QIcon(":/icons/" + theme + "/transaction_confirmed");
+        return QIcon(":/icons/transaction_confirmed");
     case TransactionStatus::Conflicted:
-        return QIcon(":/icons/" + theme + "/transaction_conflicted");
+        return QIcon(":/icons/transaction_conflicted");
     case TransactionStatus::Immature: {
         int total = wtx->status.depth + wtx->status.matures_in;
         int part = (wtx->status.depth * 4 / total) + 1;
-        return QIcon(QString(":/icons/" + theme + "/transaction_%1").arg(part));
+        return QIcon(QString(":/icons/transaction_%1").arg(part));
     }
     case TransactionStatus::MaturesWarning:
     case TransactionStatus::NotAccepted:
-        return QIcon(":/icons/" + theme + "/transaction_0");
+        return QIcon(":/icons/transaction_0");
     default:
         return COLOR_BLACK;
     }
@@ -567,9 +567,8 @@ QVariant TransactionTableModel::txStatusDecoration(const TransactionRecord* wtx)
 
 QVariant TransactionTableModel::txWatchonlyDecoration(const TransactionRecord* wtx) const
 {
-    QString theme = GUIUtil::getThemeName();
     if (wtx->involvesWatchAddress)
-        return QIcon(":/icons/" + theme + "/eye");
+        return QIcon(":/icons/eye");
     else
         return QVariant();
 }
@@ -577,8 +576,7 @@ QVariant TransactionTableModel::txWatchonlyDecoration(const TransactionRecord* w
 QVariant TransactionTableModel::txInstantSendDecoration(const TransactionRecord *wtx) const
 {
     if (wtx->status.lockedByInstantSend) {
-        QString theme = GUIUtil::getThemeName();
-        return QIcon(":/icons/" + theme + "/verify");
+        return QIcon(":/icons/lock_closed");
     }
     return QVariant();
 }
@@ -606,8 +604,8 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
             return txStatusDecoration(rec);
         case Watchonly:
             return txWatchonlyDecoration(rec);
-        case InstantSend:
-            return txInstantSendDecoration(rec);
+        // case InstantSend:
+        //    return txInstantSendDecoration(rec);
         case ToAddress:
             return txAddressDecoration(rec);
         }
@@ -624,7 +622,7 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
         case ToAddress:
             return formatTxToAddress(rec, false);
         case Amount:
-            return formatTxAmount(rec, true, DynamicUnits::separatorAlways);
+            return formatTxAmount(rec, true, CreditUnits::separatorAlways);
         }
         break;
     case Qt::EditRole:
@@ -638,8 +636,8 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
             return formatTxType(rec);
         case Watchonly:
             return (rec->involvesWatchAddress ? 1 : 0);
-        case InstantSend:
-            return (rec->status.lockedByInstantSend ? 1 : 0);
+        // case InstantSend:
+        //     return (rec->status.lockedByInstantSend ? 1 : 0);
         case ToAddress:
             return formatTxToAddress(rec, true);
         case Amount:
@@ -700,9 +698,10 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
         return priv->getTxHex(rec);
     case TxPlainTextRole: {
         QString details;
+        QDateTime date = QDateTime::fromTime_t(static_cast<uint>(rec->time));
         QString txLabel = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(rec->address));
 
-        details.append(formatTxDate(rec));
+        details.append(date.toString("M/d/yy HH:mm"));
         details.append(" ");
         details.append(formatTxStatus(rec));
         details.append(". ");
@@ -721,14 +720,14 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
             details.append(QString::fromStdString(rec->address));
             details.append(" ");
         }
-        details.append(formatTxAmount(rec, false, DynamicUnits::separatorNever));
+        details.append(formatTxAmount(rec, false, CreditUnits::separatorNever));
         return details;
     }
     case ConfirmedRole:
         return rec->status.countsForBalance;
     case FormattedAmountRole:
         // Used for copy/export, so don't include separators
-        return formatTxAmount(rec, false, DynamicUnits::separatorNever);
+        return formatTxAmount(rec, false, CreditUnits::separatorNever);
     case StatusRole:
         return rec->status.status;
     }
@@ -752,8 +751,8 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
                 return tr("Type of transaction.");
             case Watchonly:
                 return tr("Whether or not a watch-only address is involved in this transaction.");
-            case InstantSend:
-                return tr("Whether or not this transaction was locked by InstantSend.");
+            // case InstantSend:
+            //     return tr("Whether or not this transaction was locked by InstantSend.");
             case ToAddress:
                 return tr("User-defined intent/purpose of the transaction.");
             case Amount:

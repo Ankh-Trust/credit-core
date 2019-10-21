@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,7 +7,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "intro.h"
@@ -184,7 +185,7 @@ bool Intro::pickDataDirectory()
         /* Let the user choose one */
         Intro intro;
         intro.setDataDirectory(dataDirDefaultCurrent);
-        intro.setWindowIcon(QIcon(":icons/dynamic"));
+        intro.setWindowIcon(QIcon(":icons/credit"));
 
         while (true) {
             if (!intro.exec()) {
@@ -196,7 +197,7 @@ bool Intro::pickDataDirectory()
                 TryCreateDirectory(GUIUtil::qstringToBoostPath(dataDir));
                 break;
             } catch (const fs::filesystem_error&) {
-                QMessageBox::critical(0, tr("Dynamic"),
+                QMessageBox::critical(0, tr("Ankh Credit"),
                     tr("Error: Specified data directory \"%1\" cannot be created.").arg(dataDir));
                 /* fall through, back to choosing screen */
             }
@@ -206,8 +207,8 @@ bool Intro::pickDataDirectory()
         settings.setValue("strDataDirDefault", dataDirDefaultCurrent);
     }
     /* Only override -datadir if different from the default, to make it possible to
-     * override -datadir in the dynamic.conf file in the default data directory
-     * (to be consistent with dynamicd behavior)
+     * override -datadir in the credit.conf file in the default data directory
+     * (to be consistent with creditd behavior)
      */
     if (dataDir != dataDirDefaultCurrent)
         SoftSetArg("-datadir", GUIUtil::qstringToBoostPath(dataDir).string()); // use OS locale for path setting
@@ -223,7 +224,7 @@ void Intro::setStatus(int status, const QString& message, quint64 bytesAvailable
         break;
     case FreespaceChecker::ST_ERROR:
         ui->errorMessage->setText(tr("Error") + ": " + message);
-        ui->errorMessage->setStyleSheet("QLabel { color: #800000 }");
+        ui->errorMessage->setStyleSheet("QLabel { color: #66023c }");
         break;
     }
     /* Indicate number of bytes available */
@@ -233,7 +234,7 @@ void Intro::setStatus(int status, const QString& message, quint64 bytesAvailable
         QString freeString = tr("%1 GB of free space available").arg(bytesAvailable / GB_BYTES);
         if (bytesAvailable < requiredSpace * GB_BYTES) {
             freeString += " " + tr("(of %1 GB needed)").arg(requiredSpace);
-            ui->freeSpace->setStyleSheet("QLabel { color: #800000 }");
+            ui->freeSpace->setStyleSheet("QLabel { color: #66023c }");
         } else {
             ui->freeSpace->setStyleSheet("");
         }

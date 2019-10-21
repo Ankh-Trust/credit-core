@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -11,7 +12,7 @@
 #include "checkpoints.h"
 #include "coins.h"
 #include "consensus/validation.h"
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "hash.h"
 #include "instantsend.h"
 #include "policy/policy.h"
@@ -1011,8 +1012,8 @@ UniValue gettxout(const JSONRPCRequest& request)
                             "     \"hex\" : \"hex\",        (string) \n"
                             "     \"reqSigs\" : n,          (numeric) Number of required signatures\n"
                             "     \"type\" : \"pubkeyhash\", (string) The type, eg pubkeyhash\n"
-                            "     \"addresses\" : [          (array of string) array of dynamic addresses\n"
-                            "        \"dynamicaddress\"     (string) dynamic address\n"
+                            "     \"addresses\" : [          (array of string) array of credit addresses\n"
+                            "        \"creditaddress\"     (string) credit address\n"
                             "        ,...\n"
                             "     ]\n"
                             "  },\n"
@@ -1246,7 +1247,7 @@ UniValue syncstatus(const JSONRPCRequest& request)
     if (request.fHelp || request.params.size() != 0)
         throw std::runtime_error(
             "syncstatus\n"
-            "Returns an object containing blockchain, spork and Dynode sync status.\n"
+            "Returns an object containing blockchain, spork and ServiceNode sync status.\n"
             "\nResult:\n"
             "{\n"
             "  \"chain_name\": \"xxxx\",          (string)  Current network name as defined in BIP70 (main, test, regtest)\n"
@@ -1255,13 +1256,13 @@ UniValue syncstatus(const JSONRPCRequest& request)
             "  \"headers\": xxxxxx,               (numeric) The current number of headers we have validated\n"
             "  \"blocks\": xxxxxx,                (numeric) The current number of blocks processed in the server\n"
             "  \"current_block_height\": xxxxxx,  (numeric) Maximum starting height from peers when headers are not fully synced.\n"
-            "  \"sync_progress\": xxxx,           (numeric) Estimated blockchain synchronization completion percentage including headers, blocks and Dynodes\n"
+            "  \"sync_progress\": xxxx,           (numeric) Estimated blockchain synchronization completion percentage including headers, blocks and ServiceNodes\n"
             "  \"status_description\": \"xxxx\",  (string)  Displays the current sync step description\n"
-            "  \"fully_synced\": xxxx,            (boolean) Returns true when the blockchain and Dynodes are completely synced.\n"
+            "  \"fully_synced\": xxxx,            (boolean) Returns true when the blockchain and ServiceNodes are completely synced.\n"
             "  \"failed\": xxxx,                  (boolean) True if sync failed.\n"
             "}\n"
             "\nExamples:\n" +
-            HelpExampleCli("syncstatus", "") + 
+            HelpExampleCli("syncstatus", "") +
             HelpExampleRpc("syncstatus", ""));
 
     LOCK(cs_main);
@@ -1285,14 +1286,14 @@ UniValue syncstatus(const JSONRPCRequest& request)
         nChainProgress = ((double)nHeaderCount/(double)nMaxChainHeight * 0.1) + ((double)nBlockHeight/(double)nMaxChainHeight * 0.8);
     }
     else if ((nMaxChainHeight > 0) && ((nMaxChainHeight - nHeaderCount) < 100)) {
-        // Headers completed, add block and Dynode sync percent
-        strSyncStatus = dynodeSync.GetSyncStatus();
+        // Headers completed, add block and ServiceNode sync percent
+        strSyncStatus = servicenodeSync.GetSyncStatus();
         if (strSyncStatus == "Synchronizing blockchain...") {
             nChainProgress = ((double)nBlockHeight/(double)nMaxChainHeight * 0.8) + 0.1;
         }
         else {
-            // This assumes Dynode sync takes 10%  of the total download time.
-            nChainProgress = 0.9 + (dynodeSync.SyncProgress() * 0.1);
+            // This assumes ServiceNode sync takes 10%  of the total download time.
+            nChainProgress = 0.9 + (servicenodeSync.SyncProgress() * 0.1);
         }
     }
     else {
@@ -1311,8 +1312,8 @@ UniValue syncstatus(const JSONRPCRequest& request)
     obj.push_back(Pair("current_block_height", nMaxChainHeight));
     obj.push_back(Pair("sync_progress", nChainProgress));
     obj.push_back(Pair("status_description", strSyncStatus));
-    obj.push_back(Pair("fully_synced", dynodeSync.IsSynced()));
-    obj.push_back(Pair("failed", dynodeSync.IsFailed()));
+    obj.push_back(Pair("fully_synced", servicenodeSync.IsSynced()));
+    obj.push_back(Pair("failed", servicenodeSync.IsFailed()));
 
     return obj;
 }
@@ -1374,7 +1375,7 @@ UniValue getchaintips(const JSONRPCRequest& request)
     LOCK(cs_main);
 
     /*
-     * Idea:  the set of chain tips is chainActive.tip, plus orphan blocks which do not have another orphan building off of them. 
+     * Idea:  the set of chain tips is chainActive.tip, plus orphan blocks which do not have another orphan building off of them.
      * Algorithm:
      *  - Make one pass through mapBlockIndex, picking out the orphan blocks, and also storing a set of the orphan block's pprev pointers.
      *  - Iterate through the orphan blocks. If the block isn't pointed to by another orphan, it is a chain tip.

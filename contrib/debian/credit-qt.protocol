@@ -1,0 +1,11 @@
+[Protocol]
+exec=credit-qt '%u'
+protocol=credit
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false

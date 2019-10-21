@@ -1,11 +1,12 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_THREADINTERRUPT_H
-#define DYNAMIC_THREADINTERRUPT_H
+#ifndef CREDIT_THREADINTERRUPT_H
+#define CREDIT_THREADINTERRUPT_H
 
 #include <atomic>
 #include <chrono>
@@ -33,4 +34,4 @@ private:
     std::atomic<bool> flag;
 };
 
-#endif //DYNAMIC_THREADINTERRUPT_H
+#endif //CREDIT_THREADINTERRUPT_H

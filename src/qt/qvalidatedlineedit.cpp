@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developerss
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -7,7 +8,7 @@
 
 #include "qvalidatedlineedit.h"
 
-#include "dynamicaddressvalidator.h"
+#include "creditaddressvalidator.h"
 #include "guiconstants.h"
 
 QValidatedLineEdit::QValidatedLineEdit(QWidget* parent) : QLineEdit(parent),

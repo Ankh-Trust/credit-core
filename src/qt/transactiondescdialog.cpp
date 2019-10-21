@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -20,9 +21,6 @@ TransactionDescDialog::TransactionDescDialog(const QModelIndex& idx, QWidget* pa
 {
     ui->setupUi(this);
     setWindowTitle(tr("Details for %1").arg(idx.data(TransactionTableModel::TxIDRole).toString()));
-
-    /* Open CSS when configured */
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
 
     QString desc = idx.data(TransactionTableModel::LongDescriptionRole).toString();
     ui->detailText->setHtml(desc);

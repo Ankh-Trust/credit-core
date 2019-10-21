@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,18 +6,18 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_SPLASHSCREEN_H
-#define DYNAMIC_QT_SPLASHSCREEN_H
+#ifndef CREDIT_QT_SPLASHSCREEN_H
+#define CREDIT_QT_SPLASHSCREEN_H
 
-#include <QSplashScreen>
 #include <functional>
+#include <QSplashScreen>
 
 class CWallet;
 class NetworkStyle;
 
 /** Class for the splashscreen with information of the running client.
  *
- * @note this is intentionally not a QSplashScreen. Dynamic initialization
+ * @note this is intentionally not a QSplashScreen. Credit initialization
  * can take a long time, and in that case a progress window that cannot be
  * moved around and minimized has turned out to be frustrating to the user.
  */
@@ -40,7 +41,7 @@ public Q_SLOTS:
     void showMessage(const QString& message, int alignment, const QColor& color);
 
     /** Sets the break action */
-    void setBreakAction(const std::function<void(void)>& action);
+    void setBreakAction(const std::function<void(void)> &action);
 
 protected:
     bool eventFilter(QObject* obj, QEvent* ev);
@@ -63,4 +64,4 @@ private:
     std::function<void(void)> breakAction;
 };
 
-#endif // DYNAMIC_QT_SPLASHSCREEN_H
+#endif // CREDIT_QT_SPLASHSCREEN_H

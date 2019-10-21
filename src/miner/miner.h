@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_MINER_H
-#define DYNAMIC_MINER_H
+#ifndef CREDIT_MINER_H
+#define CREDIT_MINER_H
 
 #include "miner-util.h" // IWYU pragma: keep
 
@@ -38,4 +38,4 @@ void SetCPUMinerThreads(uint8_t target);
 /** Sets amount of GPU miner threads */
 void SetGPUMinerThreads(uint8_t target);
 
-#endif // DYNAMIC_MINER_H
+#endif // CREDIT_MINER_H

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -20,17 +21,17 @@ const std::string CSporkManager::SERIALIZATION_VERSION_STRING = "CSporkManager-V
 CSporkManager sporkManager;
 
 std::map<int, int64_t> mapSporkDefaults = {
-    {SPORK_2_INSTANTSEND_ENABLED, 0},                    // ON
-    {SPORK_3_INSTANTSEND_BLOCK_FILTERING, 0},            // ON
-    {SPORK_5_INSTANTSEND_MAX_VALUE, 1000},               // 1000 DYN
-    {SPORK_6_NEW_SIGS, 4070908800ULL},                   // OFF
-    {SPORK_8_DYNODE_PAYMENT_ENFORCEMENT, 4070908800ULL}, // OFF
-    {SPORK_9_SUPERBLOCKS_ENABLED, 4070908800ULL},        // OFF
-    {SPORK_10_DYNODE_PAY_UPDATED_NODES, 4070908800ULL},  // OFF
-    {SPORK_12_RECONSIDER_BLOCKS, 0},                     // 0 BLOCKS
-    {SPORK_14_REQUIRE_SENTINEL_FLAG, 4070908800ULL},     // OFF
-    {SPORK_15_INSTANTSEND_AUTOLOCKS, 4070908800ULL},     // OFF
-    {SPORK_30_ACTIVATE_BDAP, 4070908800ULL},             // OFF
+    {SPORK_2_INSTANTSEND_ENABLED, 0},                         // ON
+    {SPORK_3_INSTANTSEND_BLOCK_FILTERING, 0},                 // ON
+    {SPORK_5_INSTANTSEND_MAX_VALUE, 1000000},                 // 1000000 0AC
+    {SPORK_6_NEW_SIGS, 4070908800ULL},                        // OFF
+    {SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT, 4070908800ULL}, // OFF
+    {SPORK_9_SUPERBLOCKS_ENABLED, 4070908800ULL},             // OFF
+    {SPORK_10_SERVICENODE_PAY_UPDATED_NODES, 4070908800ULL},  // OFF
+    {SPORK_12_RECONSIDER_BLOCKS, 0},                          // 0 BLOCKS
+    {SPORK_14_REQUIRE_SENTINEL_FLAG, 4070908800ULL},          // OFF
+    {SPORK_15_INSTANTSEND_AUTOLOCKS, 4070908800ULL},          // OFF
+    {SPORK_30_ACTIVATE_BDAP, 4070908800ULL},                  // OFF
 };
 
 bool CSporkManager::SporkValueIsActive(int nSporkID, int64_t& nActiveValueRet) const
@@ -111,7 +112,7 @@ void CSporkManager::CheckAndRemove()
 void CSporkManager::ProcessSpork(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman)
 {
     if (fLiteMode)
-        return; // disable all Dynamic specific functionality
+        return; // disable all Credit specific functionality
 
     if (strCommand == NetMsgType::SPORK) {
         CSporkMessage spork;
@@ -274,12 +275,12 @@ int CSporkManager::GetSporkIDByName(std::string strName)
         return SPORK_5_INSTANTSEND_MAX_VALUE;
     if (strName == "SPORK_6_NEW_SIGS")
         return SPORK_6_NEW_SIGS;
-    if (strName == "SPORK_8_DYNODE_PAYMENT_ENFORCEMENT")
-        return SPORK_8_DYNODE_PAYMENT_ENFORCEMENT;
+    if (strName == "SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT")
+        return SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT;
     if (strName == "SPORK_9_SUPERBLOCKS_ENABLED")
         return SPORK_9_SUPERBLOCKS_ENABLED;
-    if (strName == "SPORK_10_DYNODE_PAY_UPDATED_NODES")
-        return SPORK_10_DYNODE_PAY_UPDATED_NODES;
+    if (strName == "SPORK_10_SERVICENODE_PAY_UPDATED_NODES")
+        return SPORK_10_SERVICENODE_PAY_UPDATED_NODES;
     if (strName == "SPORK_12_RECONSIDER_BLOCKS")
         return SPORK_12_RECONSIDER_BLOCKS;
     if (strName == "SPORK_13_OLD_SUPERBLOCK_FLAG")
@@ -305,12 +306,12 @@ std::string CSporkManager::GetSporkNameByID(int nSporkID)
         return "SPORK_5_INSTANTSEND_MAX_VALUE";
     case SPORK_6_NEW_SIGS:
         return "SPORK_6_NEW_SIGS";
-    case SPORK_8_DYNODE_PAYMENT_ENFORCEMENT:
-        return "SPORK_8_DYNODE_PAYMENT_ENFORCEMENT";
+    case SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT:
+        return "SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT";
     case SPORK_9_SUPERBLOCKS_ENABLED:
         return "SPORK_9_SUPERBLOCKS_ENABLED";
-    case SPORK_10_DYNODE_PAY_UPDATED_NODES:
-        return "SPORK_10_DYNODE_PAY_UPDATED_NODES";
+    case SPORK_10_SERVICENODE_PAY_UPDATED_NODES:
+        return "SPORK_10_SERVICENODE_PAY_UPDATED_NODES";
     case SPORK_12_RECONSIDER_BLOCKS:
         return "SPORK_12_RECONSIDER_BLOCKS";
     case SPORK_13_OLD_SUPERBLOCK_FLAG:
@@ -340,7 +341,7 @@ bool CSporkManager::GetSporkByHash(const uint256& hash, CSporkMessage& sporkRet)
 bool CSporkManager::SetSporkAddress(const std::string& strAddress)
 {
     LOCK(cs);
-    CDynamicAddress address(strAddress);
+    CCreditAddress address(strAddress);
     CKeyID keyid;
     if (!address.IsValid() || !address.GetKeyID(keyid)) {
         LogPrintf("CSporkManager::SetSporkAddress -- Failed to parse spork address\n");

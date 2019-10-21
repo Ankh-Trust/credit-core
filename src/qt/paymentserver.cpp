@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -7,7 +8,7 @@
 
 #include "paymentserver.h"
 
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 
@@ -50,15 +51,15 @@
 #include <QUrlQuery>
 #endif
 
-const int DYNAMIC_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
-const QString DYNAMIC_IPC_PREFIX("dynamic:");
+const int CREDIT_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
+const QString CREDIT_IPC_PREFIX("credit:");
 // BIP70 payment protocol messages
 const char* BIP70_MESSAGE_PAYMENTACK = "PaymentACK";
 const char* BIP70_MESSAGE_PAYMENTREQUEST = "PaymentRequest";
 // BIP71 payment protocol media types
-const char* BIP71_MIMETYPE_PAYMENT = "application/dynamic-payment";
-const char* BIP71_MIMETYPE_PAYMENTACK = "application/dynamic-paymentack";
-const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/dynamic-paymentrequest";
+const char* BIP71_MIMETYPE_PAYMENT = "application/credit-payment";
+const char* BIP71_MIMETYPE_PAYMENTACK = "application/credit-paymentack";
+const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/credit-paymentrequest";
 // BIP70 max payment request size in bytes (DoS protection)
 const qint64 BIP70_MAX_PAYMENTREQUEST_SIZE = 50000;
 
@@ -85,7 +86,7 @@ std::unique_ptr<X509_STORE, X509StoreDeleter> certStore;
 //
 static QString ipcServerName()
 {
-    QString name("DynamicQt");
+    QString name("CreditQt");
 
     // Append a simple hash of the datadir
     // Note that GetDataDir(true) returns a different path
@@ -209,17 +210,17 @@ void PaymentServer::ipcParseCommandLine(int argc, char* argv[])
         if (arg.startsWith("-"))
             continue;
 
-        // If the dynamic: URI contains a payment request, we are not able to detect the
+        // If the credit: URI contains a payment request, we are not able to detect the
         // network as that would require fetching and parsing the payment request.
         // That means clicking such an URI which contains a testnet payment request
         // will start a mainnet instance and throw a "wrong network" error.
-        if (arg.startsWith(DYNAMIC_IPC_PREFIX, Qt::CaseInsensitive)) // dynamic: URI
+        if (arg.startsWith(CREDIT_IPC_PREFIX, Qt::CaseInsensitive)) // credit: URI
         {
             savedPaymentRequests.append(arg);
 
             SendCoinsRecipient r;
-            if (GUIUtil::parseDynamicURI(arg, &r) && !r.address.isEmpty()) {
-                CDynamicAddress address(r.address.toStdString());
+            if (GUIUtil::parseCreditURI(arg, &r) && !r.address.isEmpty()) {
+                CCreditAddress address(r.address.toStdString());
 
                 if (address.IsValid(Params(CBaseChainParams::MAIN))) {
                     SelectParams(CBaseChainParams::MAIN);
@@ -259,7 +260,7 @@ bool PaymentServer::ipcSendCommandLine()
     Q_FOREACH (const QString& r, savedPaymentRequests) {
         QLocalSocket* socket = new QLocalSocket();
         socket->connectToServer(ipcServerName(), QIODevice::WriteOnly);
-        if (!socket->waitForConnected(DYNAMIC_IPC_CONNECT_TIMEOUT)) {
+        if (!socket->waitForConnected(CREDIT_IPC_CONNECT_TIMEOUT)) {
             delete socket;
             socket = NULL;
             return false;
@@ -273,7 +274,7 @@ bool PaymentServer::ipcSendCommandLine()
 
         socket->write(block);
         socket->flush();
-        socket->waitForBytesWritten(DYNAMIC_IPC_CONNECT_TIMEOUT);
+        socket->waitForBytesWritten(CREDIT_IPC_CONNECT_TIMEOUT);
         socket->disconnectFromServer();
 
         delete socket;
@@ -295,7 +296,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) : QObject(p
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     // Install global event filter to catch QFileOpenEvents
-    // on Mac: sent when you click dynamic: links
+    // on Mac: sent when you click credit: links
     // other OSes: helpful when dealing with payment request files
     if (parent)
         parent->installEventFilter(this);
@@ -311,7 +312,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) : QObject(p
         if (!uriServer->listen(name)) {
             // constructor is called early in init, so don't use "Q_EMIT message()" here
             QMessageBox::critical(0, tr("Payment request error"),
-                tr("Cannot start dynamic: click-to-pay handler"));
+                tr("Cannot start credit: click-to-pay handler"));
         } else {
             connect(uriServer, SIGNAL(newConnection()), this, SLOT(handleURIConnection()));
             connect(this, SIGNAL(receivedPaymentACK(QString)), this, SLOT(handlePaymentACK(QString)));
@@ -325,7 +326,7 @@ PaymentServer::~PaymentServer()
 }
 
 //
-// OSX-specific way of handling dynamic: URIs and PaymentRequest mime types.
+// OSX-specific way of handling credit: URIs and PaymentRequest mime types.
 // Also used by paymentservertests.cpp and when opening a payment request file
 // via "Open URI..." menu entry.
 //
@@ -351,7 +352,7 @@ void PaymentServer::initNetManager()
     if (netManager != NULL)
         delete netManager;
 
-    // netManager is used to fetch paymentrequests given in dynamic: URIs
+    // netManager is used to fetch paymentrequests given in credit: URIs
     netManager = new QNetworkAccessManager(this);
 
     QNetworkProxy proxy;
@@ -388,7 +389,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
         return;
     }
 
-    if (s.startsWith(DYNAMIC_IPC_PREFIX, Qt::CaseInsensitive)) // dynamic: URI
+    if (s.startsWith(CREDIT_IPC_PREFIX, Qt::CaseInsensitive)) // credit: URI
     {
 #if QT_VERSION < 0x050000
         QUrl uri(s);
@@ -416,8 +417,8 @@ void PaymentServer::handleURIOrFile(const QString& s)
         } else // normal URI
         {
             SendCoinsRecipient recipient;
-            if (GUIUtil::parseDynamicURI(s, &recipient)) {
-                CDynamicAddress address(recipient.address.toStdString());
+            if (GUIUtil::parseCreditURI(s, &recipient)) {
+                CCreditAddress address(recipient.address.toStdString());
                 if (!address.IsValid()) {
                     Q_EMIT message(tr("URI handling"), tr("Invalid payment address %1").arg(recipient.address),
                         CClientUIInterface::MSG_ERROR);
@@ -425,7 +426,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
                     Q_EMIT receivedPaymentRequest(recipient);
             } else
                 Q_EMIT message(tr("URI handling"),
-                    tr("URI cannot be parsed! This can be caused by an invalid Dynamic address or malformed URI parameters."),
+                    tr("URI cannot be parsed! This can be caused by an invalid Credit address or malformed URI parameters."),
                     CClientUIInterface::ICON_WARNING);
 
             return;
@@ -532,9 +533,9 @@ bool PaymentServer::processPaymentRequest(const PaymentRequestPlus& request, Sen
         CTxDestination dest;
         if (ExtractDestination(sendingTo.first, dest)) {
             // Append destination address
-            addresses.append(QString::fromStdString(CDynamicAddress(dest).ToString()));
+            addresses.append(QString::fromStdString(CCreditAddress(dest).ToString()));
         } else if (!recipient.authenticatedMerchant.isEmpty()) {
-            // Unauthenticated payment requests to custom dynamic addresses are not supported
+            // Unauthenticated payment requests to custom credit addresses are not supported
             // (there is no good way to tell the user where they are paying in a way they'd
             // have a chance of understanding).
             Q_EMIT message(tr("Payment request rejected"),
@@ -543,7 +544,7 @@ bool PaymentServer::processPaymentRequest(const PaymentRequestPlus& request, Sen
             return false;
         }
 
-        // Dynamic amounts are stored as (optional) uint64 in the protobuf messages (see paymentrequest.proto),
+        // Credit amounts are stored as (optional) uint64 in the protobuf messages (see paymentrequest.proto),
         // but CAmount is defined as int64_t. Because of that we need to verify that amounts are in a valid range
         // and no overflow has happened.
         if (!verifyAmount(sendingTo.second)) {
@@ -554,7 +555,7 @@ bool PaymentServer::processPaymentRequest(const PaymentRequestPlus& request, Sen
         // Extract and check amounts
         CTxOut txOut(sendingTo.second, sendingTo.first);
         if (txOut.IsDust(dustRelayFee)) {
-            Q_EMIT message(tr("Payment request error"), tr("Requested payment amount of %1 is too small (considered dust).").arg(DynamicUnits::formatWithUnit(optionsModel->getDisplayUnit(), sendingTo.second)),
+            Q_EMIT message(tr("Payment request error"), tr("Requested payment amount of %1 is too small (considered dust).").arg(CreditUnits::formatWithUnit(optionsModel->getDisplayUnit(), sendingTo.second)),
                 CClientUIInterface::MSG_ERROR);
 
             return false;

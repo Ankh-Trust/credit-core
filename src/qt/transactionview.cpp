@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,7 +10,7 @@
 
 #include "addresstablemodel.h"
 #include "csvmodelwriter.h"
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "editaddressdialog.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
@@ -53,31 +54,34 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     hlayout->setContentsMargins(0, 0, 0, 0);
     if (platformStyle->getUseExtraSpacing()) {
         hlayout->setSpacing(0);
-        hlayout->addSpacing(6);
+        hlayout->addSpacing(STATUS_COLUMN_WIDTH -1);
     } else {
-        hlayout->setSpacing(1);
-        hlayout->addSpacing(5);
+        hlayout->setSpacing(0);
+        hlayout->addSpacing(STATUS_COLUMN_WIDTH);
     }
-    QString theme = GUIUtil::getThemeName();
+
+
     watchOnlyWidget = new QComboBox(this);
-    watchOnlyWidget->setFixedWidth(24);
+    watchOnlyWidget->setFixedWidth(30);
     watchOnlyWidget->addItem("", TransactionFilterProxy::WatchOnlyFilter_All);
-    watchOnlyWidget->addItem(QIcon(":/icons/" + theme + "/eye_plus"), "", TransactionFilterProxy::WatchOnlyFilter_Yes);
-    watchOnlyWidget->addItem(QIcon(":/icons/" + theme + "/eye_minus"), "", TransactionFilterProxy::WatchOnlyFilter_No);
+    watchOnlyWidget->addItem(QIcon(":/icons/eye_plus"), "", TransactionFilterProxy::WatchOnlyFilter_Yes);
+    watchOnlyWidget->addItem(QIcon(":/icons/eye_minus"), "", TransactionFilterProxy::WatchOnlyFilter_No);
     hlayout->addWidget(watchOnlyWidget);
 
-    instantsendWidget = new QComboBox(this);
-    instantsendWidget->setFixedWidth(24);
-    instantsendWidget->addItem(tr("All"), TransactionFilterProxy::InstantSendFilter_All);
-    instantsendWidget->addItem(tr("Locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_Yes);
-    instantsendWidget->addItem(tr("Not locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_No);
-    hlayout->addWidget(instantsendWidget);
+/*
+ *    instantsendWidget = new QComboBox(this);
+ *    instantsendWidget->setFixedWidth(24);
+ *    instantsendWidget->addItem(tr("All"), TransactionFilterProxy::InstantSendFilter_All);
+ *    instantsendWidget->addItem(tr("Locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_Yes);
+ *    instantsendWidget->addItem(tr("Not locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_No);
+ *    hlayout->addWidget(instantsendWidget);
+ */
 
     dateWidget = new QComboBox(this);
     if (platformStyle->getUseExtraSpacing()) {
-        dateWidget->setFixedWidth(120);
+        dateWidget->setFixedWidth(DATE_COLUMN_WIDTH - 1);
     } else {
-        dateWidget->setFixedWidth(120);
+        dateWidget->setFixedWidth(DATE_COLUMN_WIDTH);
     }
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
@@ -91,9 +95,9 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
 
     typeWidget = new QComboBox(this);
     if (platformStyle->getUseExtraSpacing()) {
-        typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
-    } else {
         typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH - 1);
+    } else {
+        typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
     }
 
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
@@ -137,9 +141,9 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     amountWidget->setPlaceholderText(tr("Min amount"));
 #endif
     if (platformStyle->getUseExtraSpacing()) {
-        amountWidget->setFixedWidth(118);
+        amountWidget->setFixedWidth(AMOUNT_MINIMUM_COLUMN_WIDTH - 1);
     } else {
-        amountWidget->setFixedWidth(125);
+        amountWidget->setFixedWidth(AMOUNT_MINIMUM_COLUMN_WIDTH);
     }
     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
     amountWidget->setObjectName("amountWidget");
@@ -201,7 +205,7 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
     connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
     connect(watchOnlyWidget, SIGNAL(activated(int)), this, SLOT(chooseWatchonly(int)));
-    connect(instantsendWidget, SIGNAL(activated(int)), this, SLOT(chooseInstantSend(int)));
+    // connect(instantsendWidget, SIGNAL(activated(int)), this, SLOT(chooseInstantSend(int)));
     connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
     connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
 
@@ -242,11 +246,11 @@ void TransactionView::setModel(WalletModel* _model)
         transactionView->sortByColumn(TransactionTableModel::Date, Qt::DescendingOrder);
         transactionView->verticalHeader()->hide();
 
-        transactionView->setColumnWidth(TransactionTableModel::Status, STATUS_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Watchonly, WATCHONLY_COLUMN_WIDTH);
-        transactionView->setColumnWidth(TransactionTableModel::InstantSend, INSTANTSEND_COLUMN_WIDTH);
+        // transactionView->setColumnWidth(TransactionTableModel::InstantSend, INSTANTSEND_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Date, DATE_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Type, TYPE_COLUMN_WIDTH);
+        transactionView->setColumnWidth(TransactionTableModel::Status, STATUS_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH);
 
         // Note: it's a good idea to connect this signal AFTER the model is set
@@ -356,14 +360,15 @@ void TransactionView::chooseWatchonly(int idx)
         (TransactionFilterProxy::WatchOnlyFilter)watchOnlyWidget->itemData(idx).toInt());
 }
 
-void TransactionView::chooseInstantSend(int idx)
-{
-    if(!transactionProxyModel)
-        return;
-    transactionProxyModel->setInstantSendFilter(
-        (TransactionFilterProxy::InstantSendFilter)instantsendWidget->itemData(idx).toInt());
-}
-
+/*
+ * void TransactionView::chooseInstantSend(int idx)
+ * {
+ *     if(!transactionProxyModel)
+ *         return;
+ *     transactionProxyModel->setInstantSendFilter(
+ *         (TransactionFilterProxy::InstantSendFilter)instantsendWidget->itemData(idx).toInt());
+ * }
+ */
 void TransactionView::changedPrefix(const QString& prefix)
 {
     if (!transactionProxyModel)
@@ -377,11 +382,11 @@ void TransactionView::changedAmount(const QString& amount)
         return;
     CAmount amount_parsed = 0;
 
-    // Replace "," by "." so DynamicUnits::parse will not fail for users entering "," as decimal separator
+    // Replace "," by "." so CreditUnits::parse will not fail for users entering "," as decimal separator
     QString newAmount = amount;
     newAmount.replace(QString(","), QString("."));
 
-    if (DynamicUnits::parse(model->getOptionsModel()->getDisplayUnit(), newAmount, &amount_parsed)) {
+    if (CreditUnits::parse(model->getOptionsModel()->getDisplayUnit(), newAmount, &amount_parsed)) {
         transactionProxyModel->setMinAmount(amount_parsed);
     } else {
         transactionProxyModel->setMinAmount(0);
@@ -409,7 +414,7 @@ void TransactionView::exportClicked()
     writer.addColumn(tr("Type"), TransactionTableModel::Type, Qt::EditRole);
     writer.addColumn(tr("Label"), 0, TransactionTableModel::LabelRole);
     writer.addColumn(tr("Address"), 0, TransactionTableModel::AddressRole);
-    writer.addColumn(DynamicUnits::getAmountColumnTitle(model->getOptionsModel()->getDisplayUnit()), 0, TransactionTableModel::FormattedAmountRole);
+    writer.addColumn(CreditUnits::getAmountColumnTitle(model->getOptionsModel()->getDisplayUnit()), 0, TransactionTableModel::FormattedAmountRole);
     writer.addColumn(tr("ID"), 0, TransactionTableModel::TxIDRole);
 
     if (!writer.write()) {
@@ -549,9 +554,9 @@ void TransactionView::computeSum()
     Q_FOREACH (QModelIndex index, selection) {
         amount += index.data(TransactionTableModel::AmountRole).toLongLong();
     }
-    QString strAmount(DynamicUnits::formatWithUnit(nDisplayUnit, amount, true, DynamicUnits::separatorAlways));
+    QString strAmount(CreditUnits::formatWithUnit(nDisplayUnit, amount, true, CreditUnits::separatorAlways));
     if (amount < 0)
-        strAmount = "<span style='color:red;'>" + strAmount + "</span>";
+        strAmount = "<span style='color: #66023c;'>" + strAmount + "</span>";
     Q_EMIT trxAmount(strAmount);
 }
 
@@ -658,6 +663,6 @@ bool TransactionView::eventFilter(QObject* obj, QEvent* event)
 // show/hide column Watch-only
 void TransactionView::updateWatchOnlyColumn(bool fHaveWatchOnly)
 {
-    watchOnlyWidget->setVisible(true);
+    watchOnlyWidget->setVisible(false);
     transactionView->setColumnHidden(TransactionTableModel::Watchonly, !fHaveWatchOnly);
 }

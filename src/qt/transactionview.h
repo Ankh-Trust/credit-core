@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_TRANSACTIONVIEW_H
-#define DYNAMIC_QT_TRANSACTIONVIEW_H
+#ifndef CREDIT_QT_TRANSACTIONVIEW_H
+#define CREDIT_QT_TRANSACTIONVIEW_H
 
 #include "guiutil.h"
 
@@ -54,12 +55,12 @@ public:
 
     enum ColumnWidths {
         STATUS_COLUMN_WIDTH = 30,
-        WATCHONLY_COLUMN_WIDTH = 23,
-        INSTANTSEND_COLUMN_WIDTH = 23,
+        WATCHONLY_COLUMN_WIDTH = 30,
+        INSTANTSEND_COLUMN_WIDTH = 30,
         DATE_COLUMN_WIDTH = 120,
         TYPE_COLUMN_WIDTH = 240,
         AMOUNT_MINIMUM_COLUMN_WIDTH = 120,
-        MINIMUM_COLUMN_WIDTH = 23
+        MINIMUM_COLUMN_WIDTH = 30
     };
 
 private:
@@ -69,7 +70,7 @@ private:
     QComboBox* dateWidget;
     QComboBox* typeWidget;
     QComboBox* watchOnlyWidget;
-    QComboBox *instantsendWidget;
+    // QComboBox *instantsendWidget;
     QLineEdit* addressWidget;
     QLineEdit* amountWidget;
 
@@ -117,7 +118,7 @@ public Q_SLOTS:
     void chooseDate(int idx);
     void chooseType(int idx);
     void chooseWatchonly(int idx);
-    void chooseInstantSend(int idx);
+    // void chooseInstantSend(int idx);
     void changedPrefix(const QString& prefix);
     void changedAmount(const QString& amount);
     void exportClicked();
@@ -125,4 +126,4 @@ public Q_SLOTS:
     void computeSum();
 };
 
-#endif // DYNAMIC_QT_TRANSACTIONVIEW_H
+#endif // CREDIT_QT_TRANSACTIONVIEW_H

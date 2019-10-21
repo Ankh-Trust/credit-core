@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_DHT_STORAGE_H
-#define DYNAMIC_DHT_STORAGE_H
+#ifndef CREDIT_DHT_STORAGE_H
+#define CREDIT_DHT_STORAGE_H
 
 #include <libtorrent/kademlia/dht_storage.hpp>
 #include <libtorrent/kademlia/dht_settings.hpp>
@@ -57,4 +57,4 @@ void ExtractValueFromSpan(std::unique_ptr<char[]>& value, const span<char const>
 
 std::unique_ptr<dht_storage_interface> CDHTStorageConstructor(dht_settings const& settings);
 
-#endif // DYNAMIC_DHT_STORAGE_H
+#endif // CREDIT_DHT_STORAGE_H

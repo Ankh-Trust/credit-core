@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_GUIUTIL_H
-#define DYNAMIC_QT_GUIUTIL_H
+#ifndef CREDIT_QT_GUIUTIL_H
+#define CREDIT_QT_GUIUTIL_H
 
 #include "amount.h"
 #include "miner/miner.h"
@@ -35,15 +36,15 @@ class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
-/** Utility functions used by the Dynamic Qt UI.
+/** Utility functions used by the Credit Qt UI.
  */
 namespace GUIUtil
 {
 // Create human-readable string from date
 QString dateTimeStr(const QDateTime& datetime);
 QString dateTimeStr(qint64 nTime);
-// Render Dynamic addresses in monospace font
-QFont DynamicAddressFont();
+// Render Credit addresses in monospace font
+QFont CreditAddressFont();
 // Return a monospace font
 QFont fixedPitchFont();
 
@@ -51,10 +52,10 @@ QFont fixedPitchFont();
 void setupAddressWidget(QValidatedLineEdit* widget, QWidget* parent);
 void setupAmountWidget(QLineEdit* widget, QWidget* parent);
 
-// Parse "dynamic:" URI into recipient object, return true on successful parsing
-bool parseDynamicURI(const QUrl& uri, SendCoinsRecipient* out);
-bool parseDynamicURI(QString uri, SendCoinsRecipient* out);
-QString formatDynamicURI(const SendCoinsRecipient& info);
+// Parse "credit:" URI into recipient object, return true on successful parsing
+bool parseCreditURI(const QUrl& uri, SendCoinsRecipient* out);
+bool parseCreditURI(QString uri, SendCoinsRecipient* out);
+QString formatCreditURI(const SendCoinsRecipient& info);
 
 // Returns true if given address+amount meets "dust" definition
 bool isDust(const QString& address, const CAmount& amount);
@@ -116,10 +117,10 @@ bool isObscured(QWidget* w);
 // Open debug.log
 void openDebugLogfile();
 
-// Open dynamic.conf
+// Open credit.conf
 void openConfigfile();
 
-// Open dynode.conf
+// Open servicenode.conf
 void openDNConfigfile();
 
 // Browse backup folder
@@ -196,12 +197,6 @@ void saveWindowGeometry(const QString& strSetting, QWidget* parent);
 /** Restore window size and position */
 void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSizeIn, QWidget* parent);
 
-/** Load global CSS theme */
-QString loadStyleSheet();
-
-/** Return name of current CSS theme */
-QString getThemeName();
-
 /* Convert QString to OS specific boost path through UTF-8 */
 boost::filesystem::path qstringToBoostPath(const QString& path);
 
@@ -277,4 +272,4 @@ QString HashRateUnits(int64_t hashRate);
 
 } // namespace GUIUtil
 
-#endif // DYNAMIC_QT_GUIUTIL_H
+#endif // CREDIT_QT_GUIUTIL_H

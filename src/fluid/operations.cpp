@@ -90,11 +90,11 @@ std::string GetRidOfScriptStatement(const std::string& input, const int& positio
 //
 /////////////////////////////////////////////////////////////
 
-bool COperations::VerifyAddressOwnership(const CDynamicAddress& dynamicAddress)
+bool COperations::VerifyAddressOwnership(const CCreditAddress& creditAddress)
 {
 #ifdef ENABLE_WALLET
     LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
-    CDynamicAddress address(dynamicAddress);
+    CCreditAddress address(creditAddress);
 
     if (address.IsValid()) {
         CTxDestination dest = address.Get();
@@ -111,14 +111,14 @@ bool COperations::VerifyAddressOwnership(const CDynamicAddress& dynamicAddress)
 #endif //ENABLE_WALLET
 }
 
-bool COperations::SignTokenMessage(const CDynamicAddress& address, std::string unsignedMessage, std::string& stitchedMessage, bool stitch)
+bool COperations::SignTokenMessage(const CCreditAddress& address, std::string unsignedMessage, std::string& stitchedMessage, bool stitch)
 {
 #ifdef ENABLE_WALLET
     CHashWriter ss(SER_GETHASH, 0);
     ss << strMessageMagic;
     ss << unsignedMessage;
 
-    CDynamicAddress addr(address);
+    CCreditAddress addr(address);
 
     CKeyID keyID;
     if (!addr.GetKeyID(keyID))
@@ -142,7 +142,7 @@ bool COperations::SignTokenMessage(const CDynamicAddress& address, std::string u
 #endif //ENABLE_WALLET
 }
 
-bool COperations::GenericSignMessage(const std::string& message, std::string& signedString, const CDynamicAddress& signer)
+bool COperations::GenericSignMessage(const std::string& message, std::string& signedString, const CCreditAddress& signer)
 {
     if (!SignTokenMessage(signer, message, signedString, true))
         return false;

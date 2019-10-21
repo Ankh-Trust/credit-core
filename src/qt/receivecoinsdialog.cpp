@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -10,7 +11,7 @@
 
 #include "addressbookpage.h"
 #include "addresstablemodel.h"
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include "platformstyle.h"
@@ -32,7 +33,6 @@ ReceiveCoinsDialog::ReceiveCoinsDialog(const PlatformStyle* _platformStyle, QWid
                                                                                                platformStyle(_platformStyle)
 {
     ui->setupUi(this);
-    QString theme = GUIUtil::getThemeName();
 
     if (!_platformStyle->getImagesOnButtons()) {
         ui->clearButton->setIcon(QIcon());
@@ -40,10 +40,10 @@ ReceiveCoinsDialog::ReceiveCoinsDialog(const PlatformStyle* _platformStyle, QWid
         ui->showRequestButton->setIcon(QIcon());
         ui->removeRequestButton->setIcon(QIcon());
     } else {
-        ui->clearButton->setIcon(QIcon(":/icons/" + theme + "/remove"));
-        ui->receiveButton->setIcon(QIcon(":/icons/" + theme + "/receiving_addresses"));
-        ui->showRequestButton->setIcon(QIcon(":/icons/" + theme + "/edit"));
-        ui->removeRequestButton->setIcon(QIcon(":/icons/" + theme + "/remove"));
+        ui->clearButton->setIcon(QIcon(":/icons/remove"));
+        ui->receiveButton->setIcon(QIcon(":/icons/receiving_addresses"));
+        ui->showRequestButton->setIcon(QIcon(":/icons/edit"));
+        ui->removeRequestButton->setIcon(QIcon(":/icons/remove"));
     }
 
     // context menu actions
@@ -274,7 +274,7 @@ void ReceiveCoinsDialog::copyURI()
     }
 
     const RecentRequestsTableModel* const submodel = model->getRecentRequestsTableModel();
-    const QString uri = GUIUtil::formatDynamicURI(submodel->entry(sel.row()).recipient);
+    const QString uri = GUIUtil::formatCreditURI(submodel->entry(sel.row()).recipient);
     GUIUtil::setClipboard(uri);
 }
 

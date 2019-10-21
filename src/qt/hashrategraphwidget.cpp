@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2011-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
@@ -37,7 +38,7 @@ void HashRateGraphWidget::initGraph(QPainter& painter)
     int m_width = width();
 
     QColor axisCol(Qt::gray);
-    QColor firstCol(Qt::yellow);
+    QColor firstCol(Qt::black);
     painter.setPen(firstCol);
 
     //Compute height and width steps
@@ -79,16 +80,16 @@ void HashRateGraphWidget::drawHashRate(QPainter& painter)
         }
         path.lineTo(x, YMARGIN + h);
         if (graphType == MINER_CPU_HASHRATE || graphType == MINER_GPU_HASHRATE) {
-            painter.fillPath(path, QColor(0, 255, 0, 128)); //green
-            painter.setPen(Qt::red);
+            painter.fillPath(path, QColor(19, 98, 7, 128)); //green
+            painter.setPen(QColor(229, 228, 226, 128)); //platinum
         } else if (graphType == NETWORK_HASHRATE) {
-            painter.fillPath(path, QColor(255, 0, 0, 128)); //red
-            painter.setPen(Qt::green);
+            painter.fillPath(path, QColor(229, 228, 226, 128)); //platinum
+            painter.setPen(QColor(19, 98, 7, 128)); //green
         }
         painter.drawPath(path);
     }
     // Write axis hashrate label
-    painter.setPen(Qt::yellow);
+    painter.setPen(Qt::black);
     painter.drawText(XMARGIN, YMARGIN + (GRID_HEIGHT / 2), QString("%1").arg(GUIUtil::FormatHashRate(iMaxHashRate)));
 }
 

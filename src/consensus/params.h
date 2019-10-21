@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CONSENSUS_PARAMS_H
-#define DYNAMIC_CONSENSUS_PARAMS_H
+#ifndef CREDIT_CONSENSUS_PARAMS_H
+#define CREDIT_CONSENSUS_PARAMS_H
 
 #include "uint256.h"
 
@@ -43,8 +43,8 @@ struct BIP9Deployment {
 struct Params {
     uint256 hashGenesisBlock;
     int nRewardsStart;
-    int nDynodePaymentsStartBlock;
-    int nMinCountDynodesPaymentStart;
+    int nServiceNodePaymentsStartBlock;
+    int nMinCountServiceNodesPaymentStart;
     int nInstantSendConfirmationsRequired; // in blocks
     int nInstantSendKeepLock;              // in blocks
     int nBudgetPaymentsStartBlock;
@@ -56,7 +56,7 @@ struct Params {
     int nSuperblockCycle;     // in blocks
     int nGovernanceMinQuorum; // Min absolute vote count to trigger an action
     int nGovernanceFilterElements;
-    int nDynodeMinimumConfirmations;
+    int nServiceNodeMinimumConfirmations;
     /** Used to check majorities for block version upgrade */
     int nMajorityEnforceBlockUpgrade;
     int nMajorityRejectBlockOutdated;
@@ -91,4 +91,4 @@ struct Params {
 };
 } // namespace Consensus
 
-#endif // DYNAMIC_CONSENSUS_PARAMS_H
+#endif // CREDIT_CONSENSUS_PARAMS_H

@@ -4,22 +4,22 @@
 
 	* means the category has an associated class
 	
-	CDynamicNetwork: DYNAMIC NETWORK (ROOT)
+	CCreditNetwork: CREDIT NETWORK (ROOT)
 	has:
 		vector<CNetworkVariable> vecNetworkVariables;
-		vector<CDynamicProject> vecProjects;
+		vector<CCreditProject> vecProjects;
 		vector<CGovernanceObject> vecProposals;
 		vector<CBudgetContract> vecContracts;
 		vector<CBudgetUsers> vecUsers;
 
-	CDynamicProject:
+	CCreditProject:
 	has:
 		name
 		employees
 
 */
 
-	// DYNAMIC NETWORK (ROOT)
+	// CREDIT NETWORK (ROOT)
 	// 	-> NETWORK VARIABLE
 	// 		-> switch, setting
 	// 	-> CATEGORIES
@@ -49,7 +49,7 @@
 	// 			-> USER1 (only users are allowed here in this scope)
 	// 			-> USER2
 	// 		-> GROUP2 (EVO)
-	// 			-> VALUEOVERRIDE (STORE=DYNAMICDRIVE)
+	// 			-> VALUEOVERRIDE (STORE=CREDITDRIVE)
 	// 			-> USER1
 
 	// 	-> COMPANIES

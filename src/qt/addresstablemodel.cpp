@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -81,7 +82,7 @@ public:
         {
             LOCK(wallet->cs_wallet);
             BOOST_FOREACH (const PAIRTYPE(CTxDestination, CAddressBookData) & item, wallet->mapAddressBook) {
-                const CDynamicAddress& address = item.first;
+                const CCreditAddress& address = item.first;
                 bool fMine = IsMine(*wallet, address.Get());
                 AddressTableEntry::Type addressType = translateTransactionType(
                     QString::fromStdString(item.second.purpose), fMine);
@@ -226,7 +227,7 @@ bool AddressTableModel::setData(const QModelIndex& index, const QVariant& value,
 
     if (role == Qt::EditRole) {
         LOCK(wallet->cs_wallet); /* For SetAddressBook / DelAddressBook */
-        CTxDestination curAddress = CDynamicAddress(rec->address.toStdString()).Get();
+        CTxDestination curAddress = CCreditAddress(rec->address.toStdString()).Get();
         if (index.column() == Label) {
             // Do nothing, if old label == new label
             if (rec->label == value.toString()) {
@@ -235,7 +236,7 @@ bool AddressTableModel::setData(const QModelIndex& index, const QVariant& value,
             }
             wallet->SetAddressBook(curAddress, value.toString().toStdString(), strPurpose);
         } else if (index.column() == Address) {
-            CTxDestination newAddress = CDynamicAddress(value.toString().toStdString()).Get();
+            CTxDestination newAddress = CCreditAddress(value.toString().toStdString()).Get();
             // Refuse to set invalid address, set error status and return false
             if (boost::get<CNoDestination>(&newAddress)) {
                 editStatus = INVALID_ADDRESS;
@@ -308,7 +309,7 @@ void AddressTableModel::updateEntry(const QString& address,
     const QString& purpose,
     int status)
 {
-    // Update address book model from Dynamic
+    // Update address book model from Credit
     priv->updateEntry(address, label, isMine, purpose, status);
 }
 
@@ -327,7 +328,7 @@ QString AddressTableModel::addRow(const QString& type, const QString& label, con
         // Check for duplicate addresses
         {
             LOCK(wallet->cs_wallet);
-            if (wallet->mapAddressBook.count(CDynamicAddress(strAddress).Get())) {
+            if (wallet->mapAddressBook.count(CCreditAddress(strAddress).Get())) {
                 editStatus = DUPLICATE_ADDRESS;
                 return QString();
             }
@@ -348,7 +349,7 @@ QString AddressTableModel::addRow(const QString& type, const QString& label, con
                 return QString();
             }
         }
-        strAddress = CDynamicAddress(newKey.GetID()).ToString();
+        strAddress = CCreditAddress(newKey.GetID()).ToString();
     } else {
         return QString();
     }
@@ -356,7 +357,7 @@ QString AddressTableModel::addRow(const QString& type, const QString& label, con
     // Add entry
     {
         LOCK(wallet->cs_wallet);
-        wallet->SetAddressBook(CDynamicAddress(strAddress).Get(), strLabel,
+        wallet->SetAddressBook(CCreditAddress(strAddress).Get(), strLabel,
             (type == Send ? "send" : "receive"));
     }
     return QString::fromStdString(strAddress);
@@ -373,7 +374,7 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex& parent
     }
     {
         LOCK(wallet->cs_wallet);
-        wallet->DelAddressBook(CDynamicAddress(rec->address.toStdString()).Get());
+        wallet->DelAddressBook(CCreditAddress(rec->address.toStdString()).Get());
     }
     return true;
 }
@@ -384,7 +385,7 @@ QString AddressTableModel::labelForAddress(const QString& address) const
 {
     {
         LOCK(wallet->cs_wallet);
-        CDynamicAddress address_parsed(address.toStdString());
+        CCreditAddress address_parsed(address.toStdString());
         std::map<CTxDestination, CAddressBookData>::iterator mi = wallet->mapAddressBook.find(address_parsed.Get());
         if (mi != wallet->mapAddressBook.end()) {
             return QString::fromStdString(mi->second.name);

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,19 +6,19 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_WALLETVIEW_H
-#define DYNAMIC_QT_WALLETVIEW_H
+#ifndef CREDIT_QT_WALLETVIEW_H
+#define CREDIT_QT_WALLETVIEW_H
 
 #include "amount.h"
 
-#include "dynodelist.h"
+#include "servicenodelist.h"
 
 #include <QStackedWidget>
 
-class DynamicGUI;
+class CreditGUI;
 class ClientModel;
 class MiningPage;
-class BdapPage;
+// class BdapPage;
 class OverviewPage;
 class PlatformStyle;
 class SendCoinsDialog;
@@ -47,13 +48,13 @@ public:
     explicit WalletView(const PlatformStyle* platformStyle, QWidget* parent);
     ~WalletView();
 
-    void setDynamicGUI(DynamicGUI* gui);
+    void setCreditGUI(CreditGUI* gui);
     /** Set the client model.
         The client model represents the part of the core that communicates with the P2P network, and is wallet-agnostic.
     */
     void setClientModel(ClientModel* clientModel);
     /** Set the wallet model.
-        The wallet model represents a dynamic wallet, and offers access to the list of transactions, address book and sending
+        The wallet model represents a credit wallet, and offers access to the list of transactions, address book and sending
         functionality.
     */
     void setWalletModel(WalletModel* walletModel);
@@ -73,9 +74,9 @@ private:
     AddressBookPage* usedReceivingAddressesPage;
     QWidget* transactionsPage;
     TransactionView* transactionView;
-    DynodeList* dynodeListPage;
+    ServiceNodeList* servicenodeListPage;
     MiningPage* miningPage;
-    BdapPage* bdapPage;
+//    BdapPage* bdapPage;
 
     QProgressDialog* progressDialog;
     QLabel* transactionSum;
@@ -90,12 +91,12 @@ public Q_SLOTS:
     void gotoReceiveCoinsPage();
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
-    /** Switch to Dynode page */
-    void gotoDynodePage();
+    /** Switch to ServiceNode page */
+    void gotoServiceNodePage();
     /** Switch to mining page */
     void gotoMiningPage();
     /** Switch to bdap page */
-    void gotoBdapPage();
+    // void gotoBdapPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
@@ -135,7 +136,7 @@ public Q_SLOTS:
     /** User has requested more information about the out of sync state */
     void requestedSyncWarningInfo();
 
-    /** Update selected DYN amount from transactionview */
+    /** Update selected 0AC amount from transactionview */
     void trxAmount(QString amount);
 
 Q_SIGNALS:
@@ -153,4 +154,4 @@ Q_SIGNALS:
     void outOfSyncWarningClicked();
 };
 
-#endif // DYNAMIC_QT_WALLETVIEW_H
+#endif // CREDIT_QT_WALLETVIEW_H

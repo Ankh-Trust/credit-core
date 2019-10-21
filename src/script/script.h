@@ -2,11 +2,12 @@
 // Copyright (c) 2009-2015 The Bitcoin Core developers
 // Copyright (c) 2009-2017 The Syscoin Core developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_SCRIPT_SCRIPT_H
-#define DYNAMIC_SCRIPT_SCRIPT_H
+#ifndef CREDIT_SCRIPT_SCRIPT_H
+#define CREDIT_SCRIPT_SCRIPT_H
 
 #include "crypto/common.h"
 #include "prevector.h"
@@ -186,7 +187,7 @@ enum opcodetype {
 
     // Fluid Autonomus Monetary Management System (FAM2S)
     OP_MINT = 0xc0,
-    OP_REWARD_DYNODE = 0xc3,
+    OP_REWARD_SERVICENODE = 0xc3,
     OP_REWARD_MINING = 0xc4,
     OP_SWAP_SOVEREIGN_ADDRESS = 0xc5,
     OP_UPDATE_FEES = 0xc6,
@@ -200,7 +201,7 @@ enum opcodetype {
     OP_BDAP_EXPIRE = 0x03,               // = BDAP expire entry
     OP_BDAP_MODIFY = 0x04,               // = BDAP update entry
     OP_BDAP_MOVE = 0x05,                 // = BDAP move entry
-    OP_BDAP_ACCOUNT_ENTRY  = 0x06,       // = BDAP domain account entry (users and groups) 
+    OP_BDAP_ACCOUNT_ENTRY  = 0x06,       // = BDAP domain account entry (users and groups)
     OP_BDAP_LINK_REQUEST = 0x07,         // = BDAP link request
     OP_BDAP_LINK_ACCEPT = 0x08,          // = BDAP link accept
     OP_BDAP_AUDIT = 0x09,                // = BDAP entry audit entry
@@ -211,8 +212,8 @@ enum opcodetype {
     OP_BDAP_SIDECHAIN_CHECKPOINT = 0x0e, // = BDAP sub chain checkpoint
     OP_BDAP_ASSET = 0x0f,                // = BDAP asset
 
-    // dynamic extended reserved
-    OP_DYNAMIC_EXTENDED = 0x10,
+    // credit extended reserved
+    OP_CREDIT_EXTENDED = 0x10,
 
     // invalid operation code
     OP_INVALIDOPCODE = 0xff,
@@ -223,7 +224,7 @@ const char* GetOpName(opcodetype opcode);
 // Identification codes for Fluid and BDAP Transactions
 enum ProtocolCodes {
     MINT_TX = 1,
-    DYNODE_MODFIY_TX = 2,
+    SERVICENODE_MODFIY_TX = 2,
     MINING_MODIFY_TX = 3,
     BDAP_NEW_TX = 4,
     BDAP_DELETE_TX = 5,
@@ -675,8 +676,8 @@ public:
         case MINT_TX:
             return (size() > 0 && *begin() == OP_MINT);
             break;
-        case DYNODE_MODFIY_TX:
-            return (size() > 0 && *begin() == OP_REWARD_DYNODE);
+        case SERVICENODE_MODFIY_TX:
+            return (size() > 0 && *begin() == OP_REWARD_SERVICENODE);
             break;
         case MINING_MODIFY_TX:
             return (size() > 0 && *begin() == OP_REWARD_MINING);
@@ -766,4 +767,4 @@ bool DecodeBDAPScript(const CScript& script, int& op, int& op2, std::vector<std:
 bool DecodeBDAPScript(const CScript& script, int& op1, int& op2, std::vector<std::vector<unsigned char> >& vvch);
 bool RemoveBDAPScript(const CScript& scriptIn, CScript& scriptOut);
 
-#endif // DYNAMIC_SCRIPT_SCRIPT_H
+#endif // CREDIT_SCRIPT_SCRIPT_H

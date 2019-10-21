@@ -5,20 +5,20 @@ AM_CXXFLAGS = $(HARDENED_CXXFLAGS)
 AM_CPPFLAGS = $(HARDENED_CPPFLAGS)
 EXTRA_LIBRARIES =
 
-DYNAMIC_CONFIG_INCLUDES=-I$(builddir)/config
-DYNAMIC_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(LIBTORRENT_CPPFLAGS) $(LIBVGP_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
+CREDIT_CONFIG_INCLUDES=-I$(builddir)/config
+CREDIT_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(LIBTORRENT_CPPFLAGS) $(LIBVGP_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
 
-DYNAMIC_INCLUDES += -I$(srcdir)/secp256k1/include
-DYNAMIC_INCLUDES += -I$(srcdir)/univalue/include
+CREDIT_INCLUDES += -I$(srcdir)/secp256k1/include
+CREDIT_INCLUDES += -I$(srcdir)/univalue/include
 
-LIBDYNAMIC_SERVER=libdynamic_server.a
-LIBDYNAMIC_WALLET=libdynamic_wallet.a
-LIBDYNAMIC_CONSENSUS=libdynamic_consensus.a
-LIBDYNAMIC_COMMON=libdynamic_common.a
-LIBDYNAMIC_CLI=libdynamic_cli.a
-LIBDYNAMIC_UTIL=libdynamic_util.a
-LIBDYNAMIC_CRYPTO=crypto/libdynamic_crypto.a
-LIBDYNAMICQT=qt/libdynamicqt.a
+LIBCREDIT_SERVER=libcredit_server.a
+LIBCREDIT_WALLET=libcredit_wallet.a
+LIBCREDIT_CONSENSUS=libcredit_consensus.a
+LIBCREDIT_COMMON=libcredit_common.a
+LIBCREDIT_CLI=libcredit_cli.a
+LIBCREDIT_UTIL=libcredit_util.a
+LIBCREDIT_CRYPTO=crypto/libcredit_crypto.a
+LIBCREDITQT=qt/libcreditqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
 LIBUNIVALUE=univalue/libunivalue.la
 
@@ -31,27 +31,27 @@ $(LIBUNIVALUE): $(wildcard univalue/lib/*) $(wildcard univalue/include/*)
 # Make is not made aware of per-object dependencies to avoid limiting building parallelization
 # But to build the less dependent modules first, we manually select their order here:
 EXTRA_LIBRARIES += \
-  $(LIBDYNAMIC_CRYPTO) \
-  $(LIBDYNAMIC_UTIL) \
-  $(LIBDYNAMIC_COMMON) \
-  $(LIBDYNAMIC_CONSENSUS) \
-  $(LIBDYNAMIC_SERVER) \
-  $(LIBDYNAMIC_CLI) \
-  $(LIBDYNAMIC_WALLET)
+  $(LIBCREDIT_CRYPTO) \
+  $(LIBCREDIT_UTIL) \
+  $(LIBCREDIT_COMMON) \
+  $(LIBCREDIT_CONSENSUS) \
+  $(LIBCREDIT_SERVER) \
+  $(LIBCREDIT_CLI) \
+  $(LIBCREDIT_WALLET)
 
 if ENABLE_WALLET
-DYNAMIC_INCLUDES += $(BDB_CPPFLAGS)
-EXTRA_LIBRARIES += libdynamic_wallet.a
+CREDIT_INCLUDES += $(BDB_CPPFLAGS)
+EXTRA_LIBRARIES += libcredit_wallet.a
 endif
 if ENABLE_ZMQ
-EXTRA_LIBRARIES += libdynamic_zmq.a
+EXTRA_LIBRARIES += libcredit_zmq.a
 endif
 
-if BUILD_DYNAMIC_LIBS
-lib_LTLIBRARIES = libdynamicconsensus.la
-LIBDYNAMICCONSENSUS=libdynamicconsensus.la
+if BUILD_CREDIT_LIBS
+lib_LTLIBRARIES = libcreditconsensus.la
+LIBCREDITCONSENSUS=libcreditconsensus.la
 else
-LIBDYNAMICCONSENSUS=
+LIBCREDITCONSENSUS=
 endif
 
 bin_PROGRAMS =
@@ -59,18 +59,18 @@ TESTS =
 BENCHMARKS =
 DHT_TESTS =
 
-if BUILD_DYNAMICD
-  bin_PROGRAMS += dynamicd
+if BUILD_CREDITD
+  bin_PROGRAMS += creditd
 endif
 
-if BUILD_DYNAMIC_UTILS
-  bin_PROGRAMS += dynamic-cli dynamic-tx
+if BUILD_CREDIT_UTILS
+  bin_PROGRAMS += credit-cli credit-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
-# dynamic #
-DYNAMIC_CORE_H = \
-  activedynode.h \
+# credit #
+CREDIT_CORE_H = \
+  activeservicenode.h \
   addrdb.h \
   addressindex.h \
   addrman.h \
@@ -133,16 +133,16 @@ DYNAMIC_CORE_H = \
   dht/sessionevents.h \
   dht/settings.h \
   dht/storage.h \
-  dynode.h \
-  dynode-payments.h \
-  dynode-sync.h \
-  dynodeman.h \
-  dynodeconfig.h \
+  servicenode.h \
+  servicenode-payments.h \
+  servicenode-sync.h \
+  servicenodeman.h \
+  servicenodeconfig.h \
   flat-database.h \
   fluid/banaccount.h \
   fluid/fluid.h \
   fluid/fluiddb.h \
-  fluid/fluiddynode.h \
+  fluid/fluidservicenode.h \
   fluid/fluidmining.h \
   fluid/fluidmint.h \
   fluid/fluidsovereign.h \
@@ -247,13 +247,13 @@ obj/build.h: FORCE
 	@$(MKDIR_P) $(builddir)/obj
 	@$(top_srcdir)/share/genbuild.sh $(abs_top_builddir)/src/obj/build.h \
 	  $(abs_top_srcdir)
-libdynamic_util_a-clientversion.$(OBJEXT): obj/build.h
+libcredit_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between dynamicd and dynamic-qt
-libdynamic_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
-libdynamic_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_server_a_SOURCES = \
-  activedynode.cpp \
+# server: shared between creditd and credit-qt
+libcredit_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+libcredit_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_server_a_SOURCES = \
+  activeservicenode.cpp \
   addrdb.cpp \
   addrman.cpp \
   alert.cpp \
@@ -286,15 +286,15 @@ libdynamic_server_a_SOURCES = \
   dht/sessionevents.cpp \
   dht/settings.cpp \
   dht/storage.cpp \
-  dynode.cpp \
-  dynode-payments.cpp\
-  dynode-sync.cpp \
-  dynodeconfig.cpp \
-  dynodeman.cpp \
+  servicenode.cpp \
+  servicenode-payments.cpp\
+  servicenode-sync.cpp \
+  servicenodeconfig.cpp \
+  servicenodeman.cpp \
   fluid/banaccount.cpp \
   fluid/fluid.cpp \
   fluid/fluiddb.cpp \
-  fluid/fluiddynode.cpp \
+  fluid/fluidservicenode.cpp \
   fluid/fluidmining.cpp \
   fluid/fluidmint.cpp \
   fluid/rpcfluid.cpp \
@@ -333,7 +333,7 @@ libdynamic_server_a_SOURCES = \
   psnotificationinterface.cpp \
   rest.cpp \
   rpcblockchain.cpp \
-  rpcdynode.cpp \
+  rpcservicenode.cpp \
   rpcgovernance.cpp \
   rpcmining.cpp \
   rpcmisc.cpp \
@@ -352,24 +352,24 @@ libdynamic_server_a_SOURCES = \
   validationinterface.cpp \
   versionbits.cpp \
   warnings.cpp \
-  $(DYNAMIC_CORE_H)
+  $(CREDIT_CORE_H)
 
 if ENABLE_ZMQ
-LIBDYNAMIC_ZMQ=libdynamic_zmq.a
+LIBCREDIT_ZMQ=libcredit_zmq.a
 
-libdynamic_zmq_a_CPPFLAGS = $(DYNAMIC_INCLUDES) $(ZMQ_CFLAGS)
-libdynamic_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_zmq_a_SOURCES = \
+libcredit_zmq_a_CPPFLAGS = $(CREDIT_INCLUDES) $(ZMQ_CFLAGS)
+libcredit_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_zmq_a_SOURCES = \
   zmq/zmqabstractnotifier.cpp \
   zmq/zmqnotificationinterface.cpp \
   zmq/zmqpublishnotifier.cpp
 endif
 
-# wallet: shared between dynamicd and dynamic-qt, but only linked
+# wallet: shared between creditd and credit-qt, but only linked
 # when wallet enabled
-libdynamic_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-libdynamic_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_wallet_a_SOURCES = \
+libcredit_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+libcredit_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_wallet_a_SOURCES = \
   bdap/stealth.cpp \
   keepass.cpp \
   policy/rbf.cpp \
@@ -382,12 +382,12 @@ libdynamic_wallet_a_SOURCES = \
   wallet/wallet.cpp \
   wallet/wallet_ismine.cpp \
   wallet/walletdb.cpp \
-  $(DYNAMIC_CORE_H)
+  $(CREDIT_CORE_H)
 
 # crypto primitives library
-crypto_libdynamic_crypto_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_CONFIG_INCLUDES) $(PIC_FLAGS)
-crypto_libdynamic_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) $(PIC_FLAGS)
-crypto_libdynamic_crypto_a_SOURCES = \
+crypto_libcredit_crypto_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_CONFIG_INCLUDES) $(PIC_FLAGS)
+crypto_libcredit_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) $(PIC_FLAGS)
+crypto_libcredit_crypto_a_SOURCES = \
   crypto/argon2d/argon2.c \
   crypto/argon2d/argon2.h \
   crypto/argon2d/core.c \
@@ -423,9 +423,9 @@ crypto_libdynamic_crypto_a_SOURCES = \
   crypto/sha512.h
 
 # consensus: shared between all executables that validate any consensus rules.
-libdynamic_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-libdynamic_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_consensus_a_SOURCES = \
+libcredit_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+libcredit_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_consensus_a_SOURCES = \
   amount.cpp \
   amount.h \
   arith_uint256.cpp \
@@ -443,7 +443,7 @@ libdynamic_consensus_a_SOURCES = \
   primitives/transaction.h \
   pubkey.cpp \
   pubkey.h \
-  script/dynamicconsensus.cpp \
+  script/creditconsensus.cpp \
   script/interpreter.cpp \
   script/interpreter.h \
   script/script.cpp \
@@ -456,10 +456,10 @@ libdynamic_consensus_a_SOURCES = \
   uint256.h \
   version.h
 
-# common: shared between dynamicd, and dynamic-qt and non-server tools
-libdynamic_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-libdynamic_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_common_a_SOURCES = \
+# common: shared between creditd, and credit-qt and non-server tools
+libcredit_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+libcredit_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_common_a_SOURCES = \
   base58.cpp \
   bdap/stealth.cpp \
   bip39.cpp \
@@ -479,14 +479,14 @@ libdynamic_common_a_SOURCES = \
   script/sign.cpp \
   script/standard.cpp \
   wallet/wallet_ismine.cpp \
-  $(DYNAMIC_CORE_H)
+  $(CREDIT_CORE_H)
 
 # util: shared between all executables.
 # This library *must* be included to make sure that the glibc
 # backward-compatibility objects and their sanity checks are linked.
-libdynamic_util_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-libdynamic_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_util_a_SOURCES = \
+libcredit_util_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+libcredit_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_util_a_SOURCES = \
   chainparamsbase.cpp \
   clientversion.cpp \
   compat/glibc_sanity.cpp \
@@ -502,40 +502,40 @@ libdynamic_util_a_SOURCES = \
   utilmoneystr.cpp \
   utilstrencodings.cpp \
   utiltime.cpp \
-  $(DYNAMIC_CORE_H)
+  $(CREDIT_CORE_H)
 
 if GLIBC_BACK_COMPAT
-libdynamic_util_a_SOURCES += compat/glibc_compat.cpp
+libcredit_util_a_SOURCES += compat/glibc_compat.cpp
 AM_LDFLAGS += $(COMPAT_LDFLAGS)
 endif
 
-# cli: shared between dynamic-cli and dynamic-qt
-libdynamic_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-libdynamic_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_cli_a_SOURCES = \
+# cli: shared between credit-cli and credit-qt
+libcredit_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+libcredit_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcredit_cli_a_SOURCES = \
   rpcclient.cpp \
-  $(DYNAMIC_CORE_H)
+  $(CREDIT_CORE_H)
 
-nodist_libdynamic_util_a_SOURCES = $(srcdir)/obj/build.h
+nodist_libcredit_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# dynamicd binary #
-dynamicd_SOURCES = dynamicd.cpp
-dynamicd_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-dynamicd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dynamicd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# creditd binary #
+creditd_SOURCES = creditd.cpp
+creditd_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+creditd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+creditd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-dynamicd_SOURCES += dynamicd-res.rc
+creditd_SOURCES += creditd-res.rc
 endif
 
-dynamicd_LDADD = \
-  $(LIBDYNAMIC_SERVER) \
-  $(LIBDYNAMIC_COMMON) \
+creditd_LDADD = \
+  $(LIBCREDIT_SERVER) \
+  $(LIBCREDIT_COMMON) \
   $(LIBUNIVALUE) \
-  $(LIBDYNAMIC_UTIL) \
-  $(LIBDYNAMIC_CONSENSUS) \
-  $(LIBDYNAMIC_CRYPTO) \
+  $(LIBCREDIT_UTIL) \
+  $(LIBCREDIT_CONSENSUS) \
+  $(LIBCREDIT_CRYPTO) \
   $(LIBVGP) \
   $(LIBLEVELDB) \
   $(LIBLEVELDB_SSE42) \
@@ -544,70 +544,70 @@ dynamicd_LDADD = \
   $(LIBTORRENT)
 
 if ENABLE_ZMQ
-dynamicd_LDADD += $(LIBDYNAMIC_ZMQ) $(ZMQ_LIBS)
+creditd_LDADD += $(LIBCREDIT_ZMQ) $(ZMQ_LIBS)
 endif
 
 if ENABLE_WALLET
-dynamicd_LDADD += libdynamic_wallet.a
+creditd_LDADD += libcredit_wallet.a
 endif
 
-dynamicd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+creditd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 
-# dynamic-cli binary #
-dynamic_cli_SOURCES = dynamic-cli.cpp
-dynamic_cli_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(EVENT_CFLAGS)
-dynamic_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dynamic_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# credit-cli binary #
+credit_cli_SOURCES = credit-cli.cpp
+credit_cli_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES) $(EVENT_CFLAGS)
+credit_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+credit_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-dynamic_cli_SOURCES += dynamic-cli-res.rc
+credit_cli_SOURCES += credit-cli-res.rc
 endif
 
-dynamic_cli_LDADD = \
-  $(LIBDYNAMIC_CLI) \
+credit_cli_LDADD = \
+  $(LIBCREDIT_CLI) \
   $(LIBUNIVALUE) \
-  $(LIBDYNAMIC_UTIL) \
-  $(LIBDYNAMIC_CRYPTO)
+  $(LIBCREDIT_UTIL) \
+  $(LIBCREDIT_CRYPTO)
 
-dynamic_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+credit_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
-# dynamic-tx binary #
-dynamic_tx_SOURCES = dynamic-tx.cpp
-dynamic_tx_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-dynamic_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dynamic_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# credit-tx binary #
+credit_tx_SOURCES = credit-tx.cpp
+credit_tx_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
+credit_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+credit_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-dynamic_tx_SOURCES += dynamic-tx-res.rc
+credit_tx_SOURCES += credit-tx-res.rc
 endif
 
-dynamic_tx_LDADD = \
+credit_tx_LDADD = \
   $(LIBUNIVALUE) \
-  $(LIBDYNAMIC_COMMON) \
-  $(LIBDYNAMIC_UTIL) \
-  $(LIBDYNAMIC_CONSENSUS) \
-  $(LIBDYNAMIC_CRYPTO) \
+  $(LIBCREDIT_COMMON) \
+  $(LIBCREDIT_UTIL) \
+  $(LIBCREDIT_CONSENSUS) \
+  $(LIBCREDIT_CRYPTO) \
   $(LIBVGP) \
   $(LIBSECP256K1)  \
   $(LIBTORRENT)
 
-dynamic_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+credit_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
-# dynamicconsensus library #
-if BUILD_DYNAMIC_LIBS
-include_HEADERS = script/dynamicconsensus.h
-libdynamicconsensus_la_SOURCES = $(crypto_libdynamic_crypto_a_SOURCES) $(libdynamic_consensus_a_SOURCES)
+# creditconsensus library #
+if BUILD_CREDIT_LIBS
+include_HEADERS = script/creditconsensus.h
+libcreditconsensus_la_SOURCES = $(crypto_libcredit_crypto_a_SOURCES) $(libcredit_consensus_a_SOURCES)
 
 if GLIBC_BACK_COMPAT
-  libdynamicconsensus_la_SOURCES += compat/glibc_compat.cpp
+  libcreditconsensus_la_SOURCES += compat/glibc_compat.cpp
 endif
 
-libdynamicconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
-libdynamicconsensus_la_LIBADD = $(LIBSECP256K1) $(BOOST_LIBS)
-libdynamicconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_DYNAMIC_INTERNAL
-libdynamicconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcreditconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
+libcreditconsensus_la_LIBADD = $(LIBSECP256K1) $(BOOST_LIBS)
+libcreditconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_CREDIT_INTERNAL
+libcreditconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
 #
@@ -640,7 +640,7 @@ clean-local:
 	-$(MAKE) -C secp256k1 clean
 	-$(MAKE) -C univalue clean
 	-rm -f leveldb/*/*.gcda leveldb/*/*.gcno leveldb/helpers/memenv/*.gcda leveldb/helpers/memenv/*.gcno
-	-rm -f config/dynamic-config.* config/stamp-h1
+	-rm -f config/credit-config.* config/stamp-h1
 
 .rc.o:
 	@test -f $(WINDRES)

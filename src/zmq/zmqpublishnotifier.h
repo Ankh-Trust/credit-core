@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_ZMQ_ZMQPUBLISHNOTIFIER_H
-#define DYNAMIC_ZMQ_ZMQPUBLISHNOTIFIER_H
+#ifndef CREDIT_ZMQ_ZMQPUBLISHNOTIFIER_H
+#define CREDIT_ZMQ_ZMQPUBLISHNOTIFIER_H
 
 #include "zmqabstractnotifier.h"
 
@@ -101,4 +101,4 @@ class CZMQPublishRawInstantSendDoubleSpendNotifier : public CZMQAbstractPublishN
 public:
     bool NotifyInstantSendDoubleSpendAttempt(const CTransaction &currentTx, const CTransaction &previousTx) override;
 };
-#endif // DYNAMIC_ZMQ_ZMQPUBLISHNOTIFIER_H
+#endif // CREDIT_ZMQ_ZMQPUBLISHNOTIFIER_H

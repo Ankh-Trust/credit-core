@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -46,11 +47,11 @@ bool CBasicKeyStore::AddDHTKey(const CKeyEd25519& key, const std::vector<unsigne
     LOCK(cs_KeyStore);
 
     CKeyID keyID(Hash160(vchPubKey.begin(), vchPubKey.end()));
-    LogPrint("dht", "CBasicKeyStore::AddDHTKey, \nkeyID = %s, \npubkey = %s, \nprivkey = %s, \nprivseed = %s\n", 
-                                                keyID.ToString(), key.GetPubKeyString(), 
+    LogPrint("dht", "CBasicKeyStore::AddDHTKey, \nkeyID = %s, \npubkey = %s, \nprivkey = %s, \nprivseed = %s\n",
+                                                keyID.ToString(), key.GetPubKeyString(),
                                                 key.GetPrivKeyString(), key.GetPrivSeedString());
     if (keyID != key.GetID()) {
-        LogPrint("dht", "CBasicKeyStore::AddDHTKey GetID does't match \nvchPubKey.GetID() = %s, \nkey.GetID() = %s\n", 
+        LogPrint("dht", "CBasicKeyStore::AddDHTKey GetID does't match \nvchPubKey.GetID() = %s, \nkey.GetID() = %s\n",
                                                                 keyID.ToString(), key.GetID().ToString());
         return false;
     }

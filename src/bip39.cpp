@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -120,7 +121,7 @@ void CMnemonic::getWordList(const char* const* &input, Language selectLanguage) 
         case Language::CHINESE_TRADITIONAL:
             input = wordlist_chinese_traditional;
             break;
-        //exclude for now but include later    
+        //exclude for now but include later
         // case Language::GERMAN:
         //     input = wordlist_german;
         //     break;
@@ -151,7 +152,7 @@ void CMnemonic::getWordList(const char* const* &input, Language selectLanguage) 
 }
 
 CMnemonic::Language CMnemonic::getLanguageEnumFromLabel(const std::string &input) {
-    
+
     if (boost::algorithm::to_lower_copy(input) == "english") return CMnemonic::Language::ENGLISH;
     else if (boost::algorithm::to_lower_copy(input) == "french") return CMnemonic::Language::FRENCH;
     else if (boost::algorithm::to_lower_copy(input) == "chinesesimplified") return CMnemonic::Language::CHINESE_SIMPLIFIED;

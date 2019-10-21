@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,8 +10,8 @@
  * Utilities for converting data from/to strings.
  */
 
-#ifndef DYNAMIC_UTILSTRENCODINGS_H
-#define DYNAMIC_UTILSTRENCODINGS_H
+#ifndef CREDIT_UTILSTRENCODINGS_H
+#define CREDIT_UTILSTRENCODINGS_H
 
 #include <cstdlib>
 #include <stdint.h>
@@ -43,7 +44,7 @@ enum SafeChars {
 std::string SanitizeString(const std::string& str, int rule = SAFE_CHARS_DEFAULT);
 /// Formats the network peer user agent text (or subversion)
 /// by removing the begining and ending charactors(/).
-/// example: /Dynamic:1.0.0/ --> Dynamic:1.0.0
+/// example: /Credit:1.0.0/ --> Credit:1.0.0
 std::string SanitizeSubVersionString(const std::string& str);
 std::vector<unsigned char> ParseHex(const char* psz);
 std::vector<unsigned char> ParseHex(const std::string& str);
@@ -152,4 +153,4 @@ bool TimingResistantEqual(const T& a, const T& b)
  */
 bool ParseFixedPoint(const std::string& val, int decimals, int64_t* amount_out);
 
-#endif // DYNAMIC_UTILSTRENCODINGS_H
+#endif // CREDIT_UTILSTRENCODINGS_H

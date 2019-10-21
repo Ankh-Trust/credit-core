@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -8,8 +9,8 @@
 #include "guiutil.h"
 
 #include "arith_uint256.h"
-#include "dynamicaddressvalidator.h"
-#include "dynamicunits.h"
+#include "creditaddressvalidator.h"
+#include "creditunits.h"
 #include "qvalidatedlineedit.h"
 #include "walletmodel.h"
 
@@ -101,7 +102,7 @@ QString dateTimeStr(qint64 nTime)
     return dateTimeStr(QDateTime::fromTime_t((qint32)nTime));
 }
 
-QFont DynamicAddressFont()
+QFont CreditAddressFont()
 {
     QFont font("Monospace");
 #if QT_VERSION >= 0x040800
@@ -137,7 +138,7 @@ static std::string DummyAddress(const CChainParams& params)
     sourcedata.insert(sourcedata.end(), dummydata, dummydata + sizeof(dummydata));
     for (int i = 0; i < 256; ++i) { // Try every trailing byte
         std::string s = EncodeBase58(sourcedata.data(), sourcedata.data() + sourcedata.size());
-        if (!CDynamicAddress(s).IsValid())
+        if (!CCreditAddress(s).IsValid())
             return s;
         sourcedata[sourcedata.size() - 1] += 1;
     }
@@ -152,10 +153,10 @@ void setupAddressWidget(QValidatedLineEdit* widget, QWidget* parent)
 #if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a Dynamic address (e.g. %1)").arg(QString::fromStdString(DummyAddress(Params()))));
+    widget->setPlaceholderText(QObject::tr("Enter a Credit address (e.g. %1)").arg(QString::fromStdString(DummyAddress(Params()))));
 #endif
-    widget->setValidator(new DynamicAddressEntryValidator(parent));
-    widget->setCheckValidator(new DynamicAddressCheckValidator(parent));
+    widget->setValidator(new CreditAddressEntryValidator(parent));
+    widget->setCheckValidator(new CreditAddressCheckValidator(parent));
 }
 
 void setupAmountWidget(QLineEdit* widget, QWidget* parent)
@@ -167,10 +168,10 @@ void setupAmountWidget(QLineEdit* widget, QWidget* parent)
     widget->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 }
 
-bool parseDynamicURI(const QUrl& uri, SendCoinsRecipient* out)
+bool parseCreditURI(const QUrl& uri, SendCoinsRecipient* out)
 {
-    // return if URI is not valid or is no dynamic: URI
-    if (!uri.isValid() || uri.scheme() != QString("dynamic"))
+    // return if URI is not valid or is no credit: URI
+    if (!uri.isValid() || uri.scheme() != QString("credit"))
         return false;
 
     SendCoinsRecipient rv;
@@ -211,7 +212,7 @@ bool parseDynamicURI(const QUrl& uri, SendCoinsRecipient* out)
             fShouldReturnFalse = false;
         } else if (i->first == "amount") {
             if (!i->second.isEmpty()) {
-                if (!DynamicUnits::parse(DynamicUnits::DYN, i->second, &rv.amount)) {
+                if (!CreditUnits::parse(CreditUnits::_AC, i->second, &rv.amount)) {
                     return false;
                 }
             }
@@ -227,26 +228,26 @@ bool parseDynamicURI(const QUrl& uri, SendCoinsRecipient* out)
     return true;
 }
 
-bool parseDynamicURI(QString uri, SendCoinsRecipient* out)
+bool parseCreditURI(QString uri, SendCoinsRecipient* out)
 {
-    // Convert dynamic:// to dynamic:
+    // Convert credit:// to credit:
     //
-    //    Cannot handle this later, because dynamic:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because credit:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
-    if (uri.startsWith("dynamic://", Qt::CaseInsensitive)) {
-        uri.replace(0, 7, "dynamic:");
+    if (uri.startsWith("credit://", Qt::CaseInsensitive)) {
+        uri.replace(0, 7, "credit:");
     }
     QUrl uriInstance(uri);
-    return parseDynamicURI(uriInstance, out);
+    return parseCreditURI(uriInstance, out);
 }
 
-QString formatDynamicURI(const SendCoinsRecipient& info)
+QString formatCreditURI(const SendCoinsRecipient& info)
 {
-    QString ret = QString("dynamic:%1").arg(info.address);
+    QString ret = QString("credit:%1").arg(info.address);
     int paramCount = 0;
 
     if (info.amount) {
-        ret += QString("?amount=%1").arg(DynamicUnits::format(DynamicUnits::DYN, info.amount, false, DynamicUnits::separatorNever));
+        ret += QString("?amount=%1").arg(CreditUnits::format(CreditUnits::_AC, info.amount, false, CreditUnits::separatorNever));
         paramCount++;
     }
 
@@ -272,7 +273,7 @@ QString formatDynamicURI(const SendCoinsRecipient& info)
 
 bool isDust(const QString& address, const CAmount& amount)
 {
-    CTxDestination dest = CDynamicAddress(address.toStdString()).Get();
+    CTxDestination dest = CCreditAddress(address.toStdString()).Get();
     CScript script = GetScriptForDestination(dest);
     CTxOut txOut(amount, script);
     return txOut.IsDust(dustRelayFee);
@@ -420,18 +421,18 @@ void openDebugLogfile()
 
 void openConfigfile()
 {
-    boost::filesystem::path pathConfig = GetConfigFile(GetArg("-conf", DYNAMIC_CONF_FILENAME));
+    boost::filesystem::path pathConfig = GetConfigFile(GetArg("-conf", CREDIT_CONF_FILENAME));
 
-    /* Open dynamic.conf with the associated application */
+    /* Open credit.conf with the associated application */
     if (boost::filesystem::exists(pathConfig))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 }
 
 void openDNConfigfile()
 {
-    boost::filesystem::path pathConfig = GetDynodeConfigFile();
+    boost::filesystem::path pathConfig = GetServiceNodeConfigFile();
 
-    /* Open dynode.conf with the associated application */
+    /* Open servicenode.conf with the associated application */
     if (boost::filesystem::exists(pathConfig))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 }
@@ -620,15 +621,15 @@ boost::filesystem::path static StartupShortcutPath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Dynamic.lnk";
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "Credit.lnk";
     if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Dynamic (testnet).lnk";
-    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("Dynamic (%s).lnk", chain);
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "Credit (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("Credit (%s).lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for Dynamic*.lnk
+    // check for Credit*.lnk
     return boost::filesystem::exists(StartupShortcutPath());
 }
 
@@ -719,8 +720,8 @@ boost::filesystem::path static GetAutostartFilePath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetAutostartDir() / "dynamic.desktop";
-    return GetAutostartDir() / strprintf("dynamic-%s.lnk", chain);
+        return GetAutostartDir() / "credit.desktop";
+    return GetAutostartDir() / strprintf("credit-%s.lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
@@ -757,13 +758,13 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         if (!optionFile.good())
             return false;
         std::string chain = ChainNameFromCommandLine();
-        // Write a dynamic.desktop file to the autostart directory:
+        // Write a credit.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
         if (chain == CBaseChainParams::MAIN)
-            optionFile << "Name=Dynamic\n";
+            optionFile << "Name=Credit\n";
         else
-            optionFile << strprintf("Name=Dynamic (%s)\n", chain);
+            optionFile << strprintf("Name=Credit (%s)\n", chain);
         optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", GetBoolArg("-testnet", false), GetBoolArg("-regtest", false));
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -789,7 +790,7 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
         return nullptr;
     }
 
-    // loop through the list of startup items and try to find the Dynamic app
+    // loop through the list of startup items and try to find the Credit app
     for (int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
         UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
@@ -821,21 +822,21 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
 
 bool GetStartOnSystemStartup()
 {
-    CFURLRef dynamicAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    CFURLRef creditAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, dynamicAppUrl);
+    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, creditAppUrl);
     return !!foundItem; // return boolified object
 }
 
 bool SetStartOnSystemStartup(bool fAutoStart)
 {
-    CFURLRef dynamicAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    CFURLRef creditAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, dynamicAppUrl);
+    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, creditAppUrl);
 
     if (fAutoStart && !foundItem) {
-        // add Dynamic Core app to startup item list
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, dynamicAppUrl, NULL, NULL);
+        // add Credit Core app to startup item list
+        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, creditAppUrl, NULL, NULL);
     } else if (!fAutoStart && foundItem) {
         // remove item
         LSSharedFileListItemRemove(loginItems, foundItem);
@@ -887,37 +888,6 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
         parent->resize(defaultSize);
         parent->move(defaultPos);
     }
-}
-
-// Return name of current UI-theme or default theme if no theme was found
-QString getThemeName()
-{
-    QSettings settings;
-    QString theme = settings.value("theme", "").toString();
-
-    if (!theme.isEmpty()) {
-        return theme;
-    }
-    return QString("drk");
-}
-
-// Open CSS when configured
-QString loadStyleSheet()
-{
-    QString styleSheet;
-    QSettings settings;
-    QString cssName;
-    QString theme = settings.value("theme", "").toString();
-
-    cssName = QString(":/css/drk");
-    settings.setValue("theme", "drk");
-
-    QFile qFile(cssName);
-    if (qFile.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(qFile.readAll());
-    }
-
-    return styleSheet;
 }
 
 void setClipboard(const QString& str)

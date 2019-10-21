@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_POLICY_POLICY_H
-#define DYNAMIC_POLICY_POLICY_H
+#ifndef CREDIT_POLICY_POLICY_H
+#define CREDIT_POLICY_POLICY_H
 
 #include "consensus/consensus.h"
 #include "script/interpreter.h"
@@ -77,4 +77,4 @@ bool AreInputsStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 
 extern CFeeRate incrementalRelayFee;
 extern CFeeRate dustRelayFee;
-#endif // DYNAMIC_POLICY_POLICY_H
+#endif // CREDIT_POLICY_POLICY_H

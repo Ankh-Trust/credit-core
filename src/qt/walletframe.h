@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,14 +6,14 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_WALLETFRAME_H
-#define DYNAMIC_QT_WALLETFRAME_H
+#ifndef CREDIT_QT_WALLETFRAME_H
+#define CREDIT_QT_WALLETFRAME_H
 
 #include <QFrame>
 #include <QMap>
 
 class ClientModel;
-class DynamicGUI;
+class CreditGUI;
 class PlatformStyle;
 class SendCoinsRecipient;
 class WalletModel;
@@ -27,7 +28,7 @@ class WalletFrame : public QFrame
     Q_OBJECT
 
 public:
-    explicit WalletFrame(const PlatformStyle* platformStyle, DynamicGUI* _gui = 0);
+    explicit WalletFrame(const PlatformStyle* platformStyle, CreditGUI* _gui = 0);
     ~WalletFrame();
 
     void setClientModel(ClientModel* clientModel);
@@ -47,7 +48,7 @@ Q_SIGNALS:
 
 private:
     QStackedWidget* walletStack;
-    DynamicGUI* gui;
+    CreditGUI* gui;
     ClientModel* clientModel;
     QMap<QString, WalletView*> mapWalletViews;
 
@@ -62,12 +63,12 @@ public Q_SLOTS:
     void gotoOverviewPage();
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
-    /** Switch to Dynode page */
-    void gotoDynodePage();
+    /** Switch to ServiceNode page */
+    void gotoServiceNodePage();
     /** Switch to mining page */
     void gotoMiningPage();
     /** Switch to bdap page */
-    void gotoBdapPage();
+    /** Svoid gotoBdapPage(); */
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
@@ -98,4 +99,4 @@ public Q_SLOTS:
     void outOfSyncWarningClicked();
 };
 
-#endif // DYNAMIC_QT_WALLETFRAME_H
+#endif // CREDIT_QT_WALLETFRAME_H

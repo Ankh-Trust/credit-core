@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -33,18 +34,16 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle* _platformStyle, QWidget* par
     ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
 #endif
 
-    QString theme = GUIUtil::getThemeName();
-
     // These icons are needed on Mac also!
-    ui->addressBookButton->setIcon(QIcon(":/icons/" + theme + "/address-book"));
-    ui->pasteButton->setIcon(QIcon(":/icons/" + theme + "/editpaste"));
-    ui->deleteButton->setIcon(QIcon(":/icons/" + theme + "/remove"));
-    ui->deleteButton_is->setIcon(QIcon(":/icons/" + theme + "/remove"));
-    ui->deleteButton_s->setIcon(QIcon(":/icons/" + theme + "/remove"));
+    ui->addressBookButton->setIcon(QIcon(":/icons/address-book"));
+    ui->pasteButton->setIcon(QIcon(":/icons/editpaste"));
+    ui->deleteButton->setIcon(QIcon(":/icons/remove"));
+    ui->deleteButton_is->setIcon(QIcon(":/icons/remove"));
+    ui->deleteButton_s->setIcon(QIcon(":/icons/remove"));
 
-    // normal dynamic address field
+    // normal credit address field
     GUIUtil::setupAddressWidget(ui->payTo, this);
-    // just a label for displaying dynamic address(es)
+    // just a label for displaying credit address(es)
     ui->payTo_is->setFont(GUIUtil::fixedPitchFont());
 
     // Connect signals
@@ -112,7 +111,7 @@ void SendCoinsEntry::clear()
     ui->memoTextLabel_s->clear();
     ui->payAmount_s->clear();
 
-    // update the display unit, to not use the default ("DYN")
+    // update the display unit, to not use the default ("0AC")
     updateDisplayUnit();
 }
 

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -256,7 +257,7 @@ static bool DecryptKey(const CKeyingMaterial& vMasterKey, const std::vector<unsi
     }
     // Ed25519 private seed are stored as hex so it is twice the size.
     // TODO (DHT): Store Ed25519 keys are raw bytes in wallet to reduce the size.
-    if (vchSecret.size() != 64) { 
+    if (vchSecret.size() != 64) {
         LogPrint("dht", "DecryptKey CKeyEd25519 error incorrect size %u.\n", vchSecret.size());
         return false;
     }
@@ -394,7 +395,7 @@ bool CCryptoKeyStore::AddDHTKey(const CKeyEd25519& key, const std::vector<unsign
         if (IsLocked(true))
             return false;
 
-        LogPrint("dht", "CCryptoKeyStore::AddDHTKey \npubkey = %s, \nprivkey = %s, \nprivseed = %s\n", 
+        LogPrint("dht", "CCryptoKeyStore::AddDHTKey \npubkey = %s, \nprivkey = %s, \nprivseed = %s\n",
                     key.GetPubKeyString(), key.GetPrivKeyString(), key.GetPrivSeedString());
 
         std::vector<unsigned char> vchDHTPrivSeed = key.GetPrivSeed();
@@ -431,7 +432,7 @@ bool CCryptoKeyStore::AddCryptedDHTKey(const std::vector<unsigned char>& vchPubK
         LOCK(cs_KeyStore);
         if (!SetCrypted())
             return false;
-        
+
         CKeyID keyID(Hash160(vchPubKey.begin(), vchPubKey.end()));
         mapCryptedDHTKeys[keyID] = make_pair(vchPubKey, vchCryptedSecret);
     }

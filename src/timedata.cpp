@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -53,20 +54,20 @@ int64_t GetAdjustedTime()
     return GetTime() + GetTimeOffset();
 }
 
-#define DYNAMIC_TIMEDATA_MAX_SAMPLES 200
+#define CREDIT_TIMEDATA_MAX_SAMPLES 200
 
 void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)
 {
     LOCK(cs_nTimeOffset);
     // Ignore duplicates
     static std::set<CNetAddr> setKnown;
-    if (setKnown.size() == DYNAMIC_TIMEDATA_MAX_SAMPLES)
+    if (setKnown.size() == CREDIT_TIMEDATA_MAX_SAMPLES)
         return;
     if (!setKnown.insert(ip).second)
         return;
 
     // Add data
-    static CMedianFilter<int64_t> vTimeOffsets(DYNAMIC_TIMEDATA_MAX_SAMPLES, 0);
+    static CMedianFilter<int64_t> vTimeOffsets(CREDIT_TIMEDATA_MAX_SAMPLES, 0);
     vTimeOffsets.input(nOffsetSample);
     LogPrint("net", "added time data, samples %d, offset %+d (%+d minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample / 60);
 
@@ -106,7 +107,7 @@ void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)
 
                 if (!fMatch) {
                     fDone = true;
-                    std::string strMessage = _("Please check that your computer's date and time are correct! If your clock is wrong Dynamic will not work properly.");
+                    std::string strMessage = _("Please check that your computer's date and time are correct! If your clock is wrong Credit will not work properly.");
                     SetMiscWarning(strMessage);
                     uiInterface.ThreadSafeMessageBox(strMessage, "", CClientUIInterface::MSG_WARNING);
                 }

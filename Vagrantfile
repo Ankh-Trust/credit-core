@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VM_NAME = "dynamic-v2.4"
-DYNAMIC_PATH = "/opt/dynamic"
+VM_NAME = "credit-v2.4"
+CREDIT_PATH = "/opt/credit"
 
 # ugly hack to prevent hashicorp's bitrot. See https://github.com/hashicorp/vagrant/issues/9442
 # this setting is required for pre-2.0 vagrant, but causes an error as of 2.0.3,
@@ -51,16 +51,16 @@ Vagrant.configure("2") do |config|
   # NOTE: This will enable public access to the opened port
   
   # Main net
-  config.vm.network "forwarded_port", guest: 33300, host: 33300 # P2P
-  config.vm.network "forwarded_port", guest: 33350, host: 33350, host_ip: "127.0.0.1" # RPC
+  config.vm.network "forwarded_port", guest: 33600, host: 33600 # P2P
+  config.vm.network "forwarded_port", guest: 33650, host: 33650, host_ip: "127.0.0.1" # RPC
   
   # Test net
-  config.vm.network "forwarded_port", guest: 33400, host: 33400 # P2P
-  config.vm.network "forwarded_port", guest: 33450, host: 33450, host_ip: "127.0.0.1" # RPC
+  config.vm.network "forwarded_port", guest: 33700, host: 33700 # P2P
+  config.vm.network "forwarded_port", guest: 33750, host: 33750, host_ip: "127.0.0.1" # RPC
   
   # ReqTest net
-  config.vm.network "forwarded_port", guest: 33500, host: 33500 # P2P
-  config.vm.network "forwarded_port", guest: 33550, host: 33550, host_ip: "127.0.0.1" # RPC
+  config.vm.network "forwarded_port", guest: 33800, host: 33800 # P2P
+  config.vm.network "forwarded_port", guest: 33850, host: 33850, host_ip: "127.0.0.1" # RPC
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -118,9 +118,9 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
 
     # enables symlinks for windows
-    override.vm.synced_folder ".", DYNAMIC_PATH
-    override.vm.synced_folder ".dynamic", "/home/vagrant/.dynamic"
-    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/#{DYNAMIC_PATH}", "1"]
+    override.vm.synced_folder ".", CREDIT_PATH
+    override.vm.synced_folder ".credit", "/home/vagrant/.credit"
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/#{CREDIT_PATH}", "1"]
   end
 
   config.vm.provider :libvirt do |libvirt, override|
@@ -128,9 +128,9 @@ Vagrant.configure("2") do |config|
     libvirt.memory = assign_ram_mb
     libvirt.default_prefix = VM_NAME
 
-    # /opt/dynamic/dynamic and /root/.dynamic are used by vagrant-spk
-    override.vm.synced_folder ".", DYNAMIC_PATH, type: "9p", accessmode: "passthrough"
-    override.vm.synced_folder ".dynamic", "/home/vagrant/.dynamic", type: "9p", accessmode: "passthrough"
+    # /opt/credit/credit and /root/.credit are used by vagrant-spk
+    override.vm.synced_folder ".", CREDIT_PATH, type: "9p", accessmode: "passthrough"
+    override.vm.synced_folder ".credit", "/home/vagrant/.credit", type: "9p", accessmode: "passthrough"
   end
 
   # View the documentation for the provider you are using for more
@@ -139,13 +139,13 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: "bash #{DYNAMIC_PATH}/dynamic-devenv/scripts/setup.sh", keep_color: true, env: {"VAGRANT" => "1"}
+  # config.vm.provision "shell", inline: "bash #{CREDIT_PATH}/credit-devenv/scripts/setup.sh", keep_color: true, env: {"VAGRANT" => "1"}
   config.vm.provision "shell", inline: <<-SHELL
     sudo add-apt-repository -y ppa:bitcoin/bitcoin
     sudo apt-get update
     sudo apt-get install -qy libdb4.8-dev libdb4.8++-dev build-essential libtool autotools-dev autoconf pkg-config libssl-dev libcrypto++-dev libevent-dev git libboost-all-dev libminiupnpc-dev libzmq3-dev
-    sudo bash -c 'echo "Dynamic in /opt/dynamic" >/etc/motd'
-    cd /opt/dynamic && ./autogen.sh && ./configure --without-gui --disable-gpu && make -j12
+    sudo bash -c 'echo "Credit in /opt/credit" >/etc/motd'
+    cd /opt/credit && ./autogen.sh && ./configure --without-gui --disable-gpu && make -j12
   SHELL
 
 end

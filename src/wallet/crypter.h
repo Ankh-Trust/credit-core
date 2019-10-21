@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_WALLET_CRYPTER_H
-#define DYNAMIC_WALLET_CRYPTER_H
+#ifndef CREDIT_WALLET_CRYPTER_H
+#define CREDIT_WALLET_CRYPTER_H
 
 #include "keystore.h"
 #include "serialize.h"
@@ -21,13 +22,13 @@ const unsigned int WALLET_CRYPTO_IV_SIZE = 16;
 /**
  * Private key encryption is done based on a CMasterKey,
  * which holds a salt and random encryption key.
- * 
+ *
  * CMasterKeys are encrypted using AES-256-CBC using a key
  * derived using derivation method nDerivationMethod
  * (0 == EVP_sha512()) and derivation iterations nDeriveIterations.
  * vchOtherDerivationParameters is provided for alternative algorithms
  * which may require more parameters (such as scrypt).
- * 
+ *
  * Wallet Private Keys are then encrypted using AES-256-CBC
  * with the double-sha256 of the public key as the IV, and the
  * master key's key as the encryption key (see keystore.[ch]).
@@ -241,4 +242,4 @@ public:
     boost::signals2::signal<void(CCryptoKeyStore* wallet)> NotifyStatusChanged;
 };
 
-#endif // DYNAMIC_WALLET_CRYPTER_H
+#endif // CREDIT_WALLET_CRYPTER_H

@@ -1,11 +1,12 @@
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_RPCCONSOLE_H
-#define DYNAMIC_QT_RPCCONSOLE_H
+#ifndef CREDIT_QT_RPCCONSOLE_H
+#define CREDIT_QT_RPCCONSOLE_H
 
 #include "guiutil.h"
 #include "peertablemodel.h"
@@ -30,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class QItemSelection;
 QT_END_NAMESPACE
 
-/** Local Dynamic RPC console. */
+/** Local Credit RPC console. */
 class RPCConsole : public QDialog
 {
     Q_OBJECT
@@ -98,11 +99,12 @@ public Q_SLOTS:
     void walletUpgrade();
     void walletReindex();
 
+        /** Append the message to the message widget */
     void message(int category, const QString& message, bool html = false);
     /** Set number of connections shown in the UI */
     void setNumConnections(int count);
-    /** Set number of Dynodes shown in the UI */
-    void setDynodeCount(const QString& strDynodes);
+    /** Set number of ServiceNodes shown in the UI */
+    void setServiceNodeCount(const QString& strServiceNodes);
     /** Set number of blocks shown in the UI */
     void setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool headers);
     /** Go forward or back in history */
@@ -172,4 +174,4 @@ private:
     QThread thread;
 };
 
-#endif // DYNAMIC_QT_RPCCONSOLE_H
+#endif // CREDIT_QT_RPCCONSOLE_H

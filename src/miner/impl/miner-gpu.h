@@ -2,11 +2,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_MINER_IMPL_GPU_H
-#define DYNAMIC_MINER_IMPL_GPU_H
+#ifndef CREDIT_MINER_IMPL_GPU_H
+#define CREDIT_MINER_IMPL_GPU_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #ifdef ENABLE_GPU
@@ -68,4 +68,4 @@ private:
 };
 
 #endif // ENABLE_GPU
-#endif // DYNAMIC_MINER_IMPL_GPU_H
+#endif // CREDIT_MINER_IMPL_GPU_H

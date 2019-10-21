@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
@@ -32,7 +33,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
     txNew.nVersion = 1;
     txNew.vin.resize(1);
     txNew.vout.resize(1);
-    txNew.vin[0].scriptSig = CScript() << 1512926956 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+    txNew.vin[0].scriptSig = CScript() << 1568397693 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
     txNew.vout[0].nValue = genesisReward;
     txNew.vout[0].scriptPubKey = genesisOutputScript;
 
@@ -98,7 +99,7 @@ static void MineGenesis(CBlockHeader& genesisBlock, const uint256& powLimit, boo
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "NY Times Monday 18th Dec 2017: Google Thinks I’m Dead";
+    const char* pszTimestamp = "BBC News 13 Sep - Macron pension reform: Paris paralysed by massive strike";
     const CScript genesisOutputScript = CScript() << ParseHex("") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
@@ -113,35 +114,35 @@ public:
     CMainParams()
     {
         strNetworkID = "main";
-        consensus.nRewardsStart = 5137;               // PoW Rewards begin on block 5137
-        consensus.nDynodePaymentsStartBlock = 10273;  // Dynode Payments begin on block 10273
-        consensus.nMinCountDynodesPaymentStart = 500; // Dynode Payments begin once 500 Dynodes exist or more.
+        consensus.nRewardsStart = 5;               // PoW Rewards begin on block 5
+        consensus.nServiceNodePaymentsStartBlock = 43200;  // ServiceNode Payments begin on block 10273
+        consensus.nMinCountServiceNodesPaymentStart = 15;  // ServiceNode Payments begin once 15 ServiceNodes exist or more.
 
         consensus.nInstantSendConfirmationsRequired = 11;
         consensus.nInstantSendKeepLock = 24;
 
-        consensus.nBudgetPaymentsStartBlock = 2055;   // actual historical value
-        consensus.nBudgetPaymentsCycleBlocks = 20545; //Blocks per month
+        consensus.nBudgetPaymentsStartBlock = 10800;   // actual historical value
+        consensus.nBudgetPaymentsCycleBlocks = 87660; //Blocks per month
         consensus.nBudgetPaymentsWindowBlocks = 100;
         consensus.nBudgetProposalEstablishingTime = 24 * 60 * 60;
 
-        consensus.nSuperblockStartBlock = 2055;
-        consensus.nSuperblockStartHash = uint256S("0000008d283128ffecb10803a3317348908fd23bc9dceaba26f6d520a387de28");
-        consensus.nSuperblockCycle = 20545; // 675 (Blocks per day) x 365.25 (Days per Year) / 12 = 20545
+        consensus.nSuperblockStartBlock = 10800;
+        consensus.nSuperblockStartHash = uint256S("");
+        consensus.nSuperblockCycle = 87660; // 2880 (Blocks per day) x 365.25 (Days per Year) / 12 = 87660
 
         consensus.nGovernanceMinQuorum = 10;
         consensus.nGovernanceFilterElements = 20000;
 
-        consensus.nDynodeMinimumConfirmations = 15;
+        consensus.nServiceNodeMinimumConfirmations = 15;
 
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 1000;
 
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 30 * 64; // Dynamic: 1920 seconds
+        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds
         consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME;
-        consensus.nUpdateDiffAlgoHeight = 10; // Dynamic: Algorithm fork block
+        consensus.nUpdateDiffAlgoHeight = 10; // Credit: Algorithm fork block
         consensus.nPowAveragingWindow = 5;
         consensus.nPowMaxAdjustUp = 32;
         consensus.nPowMaxAdjustDown = 48;
@@ -175,26 +176,26 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_ISAUTOLOCKS].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = 215493;
+        consensus.nMinimumChainWork = 0;
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00000000261e02ae2148505c0265b5f57c34a26b0958a21c1b2bb5a3d8c746ea"); // 215493
+        consensus.defaultAssumeValid = uint256S("0x00000864ccd2d6521902e633164afb3c10151648b7b107f63bb11c76abbfed0c"); // 500
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0x5e;
-        pchMessageStart[1] = 0x61;
-        pchMessageStart[2] = 0x74;
-        pchMessageStart[3] = 0x80;
-        vAlertPubKey = ParseHex("04bf1391ff0c61a5d9a02cd2e997b707ced89bb48514e26d89f2464c98295ffef3f587263c94e6024d4e455802ad73e1e9694f3e482ff6e074736cb2327f9cd3e7");
+        pchMessageStart[0] = 0x63;
+        pchMessageStart[1] = 0x65;
+        pchMessageStart[2] = 0x78;
+        pchMessageStart[3] = 0x83;
+        vAlertPubKey = ParseHex("0460f2c89c27c21504bbe2abe4e4719f13a200fd6e887779c783010a388c2c3cf2965b5b61e77e5319074e81cc3ca6126f20a17b39763cbcb681861e4891704bac");
         nDefaultPort = DEFAULT_P2P_PORT;
-        nPruneAfterHeight = 20545;
+        nPruneAfterHeight = 87660;
         startNewChain = false;
 
-        genesis = CreateGenesisBlock(1513619300, 626614, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
+        genesis = CreateGenesisBlock(1568397983, 716476, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
         if (startNewChain == true) {
             MineGenesis(genesis, consensus.powLimit, true);
         }
@@ -202,27 +203,25 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
 
         if (!startNewChain) {
-            assert(consensus.hashGenesisBlock == uint256S("0x00000e140b0c3028f898431890e9dea79ae6ca537ac9362c65b45325db712de2"));
-            assert(genesis.hashMerkleRoot == uint256S("0xfa0e753db5a853ebbc52594eb62fa8219155547b426fba8789fa96dbf07e6ed5"));
+            assert(consensus.hashGenesisBlock == uint256S("0x00000cd870baeadf7b4c39a930a7f9fb8d7dc0348351ece15277a4053c241a4d"));
+            assert(genesis.hashMerkleRoot == uint256S("0x986526382e16ade3266f5cae52998022f8eeb3a6d71d664f7a5681afa922eb85"));
         }
 
-        vSeeds.push_back(CDNSSeedData("dnsseeder.network", "dyn-mainnet01.dnsseeder.network"));
-        vSeeds.push_back(CDNSSeedData("dnsseeder.network", "dyn-mainnet02.dnsseeder.network"));
-        vSeeds.push_back(CDNSSeedData("dnsseeder.network", "dyn-mainnet03.dnsseeder.network"));
+        // vSeeds.push_back(CDNSSeedData("", ""));
 
-        // Dynamic addresses start with 'D'
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
-        // Dynamic script addresses start with '5'
+        // Credit addresses start with 'C'
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 28);
+        // Credit script addresses start with '5'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 10);
-        // Dynamic private keys start with 'y'
+        // Credit private keys start with 'y'
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 140);
-        // Dynamic BIP32 pubkeys start with 'xpub' (Bitcoin defaults)
+        // Credit BIP32 pubkeys start with 'xpub' (Bitcoin defaults)
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
-        // Dynamic BIP32 prvkeys start with 'xprv' (Bitcoin defaults)
+        // Credit BIP32 prvkeys start with 'xprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
-        // Dynamic Stealth Address start with 'L'
+        // Credit Stealth Address start with 'L'
         base58Prefixes[STEALTH_ADDRESS] = {0x0F};
-        // Dynamic BIP44 coin type is '5'
+        // Credit BIP44 coin type is '5'
         nExtCoinType = 5;
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
@@ -238,17 +237,26 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 60 * 60; // fulfilled requests expire in 1 hour
 
-        vSporkAddresses = {"DDDax6fjzoCqHj9nwTgNdAQsucFBJUJ3Jk"};
+        vSporkAddresses = {"Cbz7mL3cQBcmBdhHoCTVYmbLjaVoJvRRHV"};
         nMinSporkKeys = 1;
 
         checkpointData = (CCheckpointData){
-            boost::assign::map_list_of(0, uint256S("0x00000e140b0c3028f898431890e9dea79ae6ca537ac9362c65b45325db712de2"))(200, uint256S("0x000000f7f9132cefc7af54b131bb25bf33686af87987f60ed68ee00841d3f12b"))(1000, uint256S("0x0000009fc6bc247441a334333a5b24c81d0d606df8c0d8c2fd373c1241bc2036"))(4000, uint256S("0x00000013fceb3082d6c812b372baa18682cfb4ffbbc6a55073e602c8a2679de5"))(10000, uint256S("0x000000043989ffa9fc3fb37663e32b81f8da490d9d38808cd8455ca5996415f4"))(40000, uint256S("0x0000000385a212537b0048c47d5cbce3fc6a12f16d8b9afcd13c129c9abc768f"))(80000, uint256S("0x0000000094c0ca21a4a4b8ad76ab76a3751759627d3be47d885389672818d5a8"))(100000, uint256S("0x000000006403817b5efdb846e0dacf5959dbb65439531bf8ab0aa0c7c41837f1"))};
+            boost::assign::map_list_of
+	    (0, uint256S("0x00000cd870baeadf7b4c39a930a7f9fb8d7dc0348351ece15277a4053c241a4d"))
+	    (250, uint256S("0x00000c0629fe8fd9f13afff39a8d98594b71064fb8da57857b5d99f6cc984bf3"))
+	    (500, uint256S("0x00000864ccd2d6521902e633164afb3c10151648b7b107f63bb11c76abbfed0c"))
+	    (1000, uint256S("0x00000ad8fc098dcf303d29c7f5b85630877122a9c9ee8835ba0f4f329731e05a"))
+      (2500, uint256S("0x0000005d6f5e2096b533ec2d446023660a0b967f84079fbbcc6da426ae1f7178"))
+      (5000, uint256S("0x00000d20749e14facec18e58fe561e6f8407dc04c43a0f6f9be4094a1553b60f"))
+      (10000, uint256S("0x00000bd00a47a1c5410146082d8e0b67d2a51fe7ae154f45f256b81652dd9352"))
+      (25000, uint256S("0x0000075c38c0d3db2cd85a796e8a4e43462a824b4e449885fbb62628eb215bbc"))
+	};
 
         chainTxData = ChainTxData{
-            0,  // * UNIX timestamp of last known number of transactions
-            0,  // * total number of transactions between genesis and that timestamp
-                //   (the tx=... number in the SetBestChain debug.log lines)
-            0.1 // * estimated number of transactions per second after that timestamp
+            0,		// * UNIX timestamp of last known number of transactions
+            0,  	// * total number of transactions between genesis and that timestamp
+                	//   (the tx=... number in the SetBestChain debug.log lines)
+            0.1 	// * estimated number of transactions per second after that timestamp
         };
     }
 };
@@ -265,8 +273,8 @@ public:
         strNetworkID = "test";
 
         consensus.nRewardsStart = 0; // Rewards starts on block 0
-        consensus.nDynodePaymentsStartBlock = 0;
-        consensus.nMinCountDynodesPaymentStart = 1; // Dynode Payments begin once 1 Dynode exists or more.
+        consensus.nServiceNodePaymentsStartBlock = 0;
+        consensus.nMinCountServiceNodesPaymentStart = 1; // ServiceNode Payments begin once 1 ServiceNode exists or more.
 
         consensus.nInstantSendConfirmationsRequired = 11;
         consensus.nInstantSendKeepLock = 24;
@@ -283,7 +291,7 @@ public:
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 500;
 
-        consensus.nDynodeMinimumConfirmations = 1;
+        consensus.nServiceNodeMinimumConfirmations = 1;
 
         consensus.nMajorityEnforceBlockUpgrade = 510;
         consensus.nMajorityRejectBlockOutdated = 750;
@@ -293,9 +301,9 @@ public:
         consensus.nPowAveragingWindow = 5;
         consensus.nPowMaxAdjustUp = 32;
         consensus.nPowMaxAdjustDown = 48;
-        consensus.nPowTargetTimespan = 30 * 64; // Dynamic: 1920 seconds
+        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds
         consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME;
-        consensus.nUpdateDiffAlgoHeight = 10; // Dynamic: Algorithm fork block
+        consensus.nUpdateDiffAlgoHeight = 10; // Credit: Algorithm fork block
         assert(maxUint / UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
@@ -326,21 +334,21 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_ISAUTOLOCKS].nThreshold = 50; // 50% of 100
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = 210; // 210
+        consensus.nMinimumChainWork = 0; // 0
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00001a32bc1d6887d29d3847e21fcfb1026e14369df048a7f0666acdd9ccdf0d"); // 210
+        consensus.defaultAssumeValid = uint256S("0x0013527412422032ebfbb8ae1334b392f19e58547936538d5e2df886e7446f97"); // 50
 
-        pchMessageStart[0] = 0x2f;
-        pchMessageStart[1] = 0x32;
-        pchMessageStart[2] = 0x15;
-        pchMessageStart[3] = 0x40;
-        vAlertPubKey = ParseHex("04b375643a0b5fe3a9882b412be4046272528ad24576c72a933b44935a8491d52e243e905b1dd6947094984fc8e9f42d17cc1058033036d7940d9078851641a445");
+        pchMessageStart[0] = 0x33;
+        pchMessageStart[1] = 0x36;
+        pchMessageStart[2] = 0x19;
+        pchMessageStart[3] = 0x43;
+        vAlertPubKey = ParseHex("043ebea3223e70f2c8205ecf2c32f567fbca8bf8e74e1138f6090c4cd442589c69f719199b4a12a42bd8022eed0541e43744e387bff564dd28dba51da146170626");
         nDefaultPort = DEFAULT_P2P_PORT + 100;
         nPruneAfterHeight = 100;
         startNewChain = false;
 
-        genesis = CreateGenesisBlock(1515641597, 747, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
+        genesis = CreateGenesisBlock(1568565078, 75, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
         if (startNewChain == true) {
             MineGenesis(genesis, consensus.powLimit, true);
         }
@@ -348,27 +356,27 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
 
         if (!startNewChain) {
-            assert(consensus.hashGenesisBlock == uint256S("0x00ff3a06390940bc3fffb7948cc6d0ede8fde544a5fa9eeeafbc4ac65d21f087"));
-            assert(genesis.hashMerkleRoot == uint256S("0xfa0e753db5a853ebbc52594eb62fa8219155547b426fba8789fa96dbf07e6ed5"));
+            assert(consensus.hashGenesisBlock == uint256S("0x00ae30d90e90878b24a32fb54dcd73f7e3a012d068b6da6b209ff10b15a61a9c"));
+            assert(genesis.hashMerkleRoot == uint256S("0x986526382e16ade3266f5cae52998022f8eeb3a6d71d664f7a5681afa922eb85"));
         }
         vFixedSeeds.clear();
         vSeeds.clear();
         //vSeeds.push_back(CDNSSeedData("",  ""));
         //vSeeds.push_back(CDNSSeedData("", ""));
 
-        // Testnet Dynamic addresses start with 'y'
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
-        // Testnet Dynamic script addresses start with '8' or '9'
+        // Testnet Credit addresses start with 'c'
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 87);
+        // Testnet Credit script addresses start with '8' or '9'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 10);
         // Testnet private keys start with '9' or 'c' (Bitcoin defaults)
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 158);
-        // Testnet Dynamic BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
+        // Testnet Credit BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
-        // Testnet Dynamic BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
+        // Testnet Credit BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
-        // Dynamic Stealth Address start with 'T'
+        // Credit Stealth Address start with 'T'
         base58Prefixes[STEALTH_ADDRESS] = {0x15};
-        // Testnet Dynamic BIP44 coin type is '1' (All coin's testnet default)
+        // Testnet Credit BIP44 coin type is '1' (All coin's testnet default)
         nExtCoinType = 1;
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_test, pnSeed6_test + ARRAYLEN(pnSeed6_test));
@@ -383,21 +391,21 @@ public:
 
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 5 * 60; // fulfilled requests expire in 5 minutes
-        vSporkAddresses = {"DBUPr7TYK8auydiK22QYXP1mHDJ71h2G7N"};
+        vSporkAddresses = {"cNDvBW88KSRu1r9GFAB1yikFERjicX36fL"};
         nMinSporkKeys = 1;
 
         checkpointData = (CCheckpointData){
             boost::assign::map_list_of
-            (0, uint256S("0x00ff3a06390940bc3fffb7948cc6d0ede8fde544a5fa9eeeafbc4ac65d21f087"))
-            (101, uint256S("0x00000ad8c5b094f7d6e63c658f8b29dfb2fbe49bb395bd41751d70e73e1f765b"))
-            (702, uint256S("0x000004ca904b66049dbb93c7f129dec1c9e42213d42a5983a4b6ff7f4f88a912"))
-        };
+            (0, uint256S("0x00ae30d90e90878b24a32fb54dcd73f7e3a012d068b6da6b209ff10b15a61a9c"))
+            (25, uint256S("008fe407f7a568ce51c36b1d2c664c3019d610ba4ef6a2895a1042c844f867ee"))
+            (50, uint256S("0x0013527412422032ebfbb8ae1334b392f19e58547936538d5e2df886e7446f97"))
+	};
 
         chainTxData = ChainTxData{
-            0,  // * UNIX timestamp of last known number of transactions
-            0,  // * total number of transactions between genesis and that timestamp
-                //   (the tx=... number in the SetBestChain debug.log lines)
-            0.1 // * estimated number of transactions per second after that timestamp
+            0,		// * UNIX timestamp of last known number of transactions
+            0,  	// * total number of transactions between genesis and that timestamp
+                	//   (the tx=... number in the SetBestChain debug.log lines)
+            0.1 	// * estimated number of transactions per second after that timestamp
         };
     }
 };
@@ -413,8 +421,8 @@ public:
     {
         strNetworkID = "regtest";
         consensus.nRewardsStart = 0; // Rewards starts on block 0
-        consensus.nDynodePaymentsStartBlock = 0;
-        consensus.nMinCountDynodesPaymentStart = 1; // Dynode Payments begin once 1 Dynode exists or more.
+        consensus.nServiceNodePaymentsStartBlock = 0;
+        consensus.nMinCountServiceNodesPaymentStart = 1; // ServiceNode Payments begin once 1 ServiceNode exists or more.
 
         consensus.nInstantSendConfirmationsRequired = 11;
         consensus.nInstantSendKeepLock = 24;
@@ -431,7 +439,7 @@ public:
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 100;
 
-        consensus.nDynodeMinimumConfirmations = 1;
+        consensus.nServiceNodeMinimumConfirmations = 1;
 
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
@@ -441,9 +449,9 @@ public:
         consensus.nPowAveragingWindow = 5;
         consensus.nPowMaxAdjustUp = 32;
         consensus.nPowMaxAdjustDown = 48;
-        consensus.nPowTargetTimespan = 30 * 64; // Dynamic: 1920 seconds
+        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds
         consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME;
-        consensus.nUpdateDiffAlgoHeight = 10; // Dynamic: Algorithm fork block
+        consensus.nUpdateDiffAlgoHeight = 10; // Credit: Algorithm fork block
         assert(maxUint / UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
@@ -472,16 +480,16 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x");
 
-        pchMessageStart[0] = 0x2f;
-        pchMessageStart[1] = 0x32;
-        pchMessageStart[2] = 0x15;
-        pchMessageStart[3] = 0x3f;
-        vAlertPubKey = ParseHex("04e8118b469667861157f3b2b28056ae92581ce61ce2db80d04a701f5ec5391b751e6136bafdcca7b8d0b564a5afce213e8069bdd1d17131f61d116b73dbf7e2d6");
+        pchMessageStart[0] = 0x33;
+        pchMessageStart[1] = 0x36;
+        pchMessageStart[2] = 0x19;
+        pchMessageStart[3] = 0x43;
+        vAlertPubKey = ParseHex("04d62401026b035db2d25a2128f46c8ced5ef9843c1efd1873b7eeb7e272b22d124e2fbe88b8dfbc1036ee868b0337dfe9b911da9fa667e9e22fa7467d74cc2482");
         nDefaultPort = DEFAULT_P2P_PORT + 200;
         nPruneAfterHeight = 100;
         startNewChain = false;
 
-        genesis = CreateGenesisBlock(1513619951, 1754, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
+        genesis = CreateGenesisBlock(1568566686, 4138, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
         if (startNewChain == true) {
             MineGenesis(genesis, consensus.powLimit, true);
         }
@@ -489,8 +497,8 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
 
         if (!startNewChain) {
-            assert(consensus.hashGenesisBlock == uint256S("0x000ab751d858e116043e741d097311f2382e600c219483cfda8f25c7f369cc2c"));
-            assert(genesis.hashMerkleRoot == uint256S("0xfa0e753db5a853ebbc52594eb62fa8219155547b426fba8789fa96dbf07e6ed5"));
+            assert(consensus.hashGenesisBlock == uint256S("0x0006115f9888a8625e4f59e2d381a0a10c2950b5a9c00d6d8105669eb30ec1b7"));
+            assert(genesis.hashMerkleRoot == uint256S("0x986526382e16ade3266f5cae52998022f8eeb3a6d71d664f7a5681afa922eb85"));
         }
 
         vFixedSeeds.clear(); //! Regtest mode doesn't have any fixed seeds.
@@ -506,32 +514,32 @@ public:
 
         nFulfilledRequestExpireTime = 5 * 60; // fulfilled requests expire in 5 minutes
 
-        vSporkAddresses = {"ygUqnUfyRnRfBUks3EBc937tgmYBwQYE2S"}; //private key: cT21Wm3oozS7HpP9K9g1SDxdgr2vw9TBPSTxjxeArLjYxGastsf9
+        vSporkAddresses = {"yZGHUrpjL4C28ove4hw7cD6EGEvWpoYi5R"}; //private key: cUJ3aeHjikcaixh8k6gjwNESazyMqXfjKXeXzpgUVXe3UBMd2A2A
         nMinSporkKeys = 1;
 
         checkpointData = (CCheckpointData){
-            boost::assign::map_list_of(0, uint256S("0x000ab751d858e116043e741d097311f2382e600c219483cfda8f25c7f369cc2c"))};
+            boost::assign::map_list_of(0, uint256S("0x0006115f9888a8625e4f59e2d381a0a10c2950b5a9c00d6d8105669eb30ec1b7"))};
 
         chainTxData = ChainTxData{
-            0,  // * UNIX timestamp of last known number of transactions
-            0,  // * total number of transactions between genesis and that timestamp
-                //   (the tx=... number in the SetBestChain debug.log lines)
-            0.1 // * estimated number of transactions per second after that timestamp
+            0, 		// * UNIX timestamp of last known number of transactions
+            0,  	// * total number of transactions between genesis and that timestamp
+                	//   (the tx=... number in the SetBestChain debug.log lines)
+            0.1 	// * estimated number of transactions per second after that timestamp
         };
 
-        // Regtest Dynamic addresses start with 'y'
+        // Regtest Credit addresses start with 'y'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 140);
-        // Regtest Dynamic script addresses start with '8' or '9'
+        // Regtest Credit script addresses start with '8' or '9'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 19);
         // Regtest private keys start with '9' or 'c' (Bitcoin defaults)
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 239);
-        // Regtest Dynamic BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
+        // Regtest Credit BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
-        // Regtest Dynamic BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
+        // Regtest Credit BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
-        // Dynamic Stealth Address start with 'R'
+        // Credit Stealth Address start with 'R'
         base58Prefixes[STEALTH_ADDRESS] = {0x13};
-        // Regtest Dynamic BIP44 coin type is '1' (All coin's testnet default)
+        // Regtest Credit BIP44 coin type is '1' (All coin's testnet default)
         nExtCoinType = 1;
     }
     void UpdateBIP9Parameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout)
@@ -554,8 +562,8 @@ public:
         strNetworkID = "privatenet";
 
         consensus.nRewardsStart = 0; // Rewards starts on block 0
-        consensus.nDynodePaymentsStartBlock = 0;
-        consensus.nMinCountDynodesPaymentStart = 1; // Dynode Payments begin once 1 Dynode exists or more.
+        consensus.nServiceNodePaymentsStartBlock = 0;
+        consensus.nMinCountServiceNodesPaymentStart = 1; // ServiceNode Payments begin once 1 ServiceNode exists or more.
 
         consensus.nInstantSendConfirmationsRequired = 11;
         consensus.nInstantSendKeepLock = 24;
@@ -572,7 +580,7 @@ public:
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 500;
 
-        consensus.nDynodeMinimumConfirmations = 1;
+        consensus.nServiceNodeMinimumConfirmations = 1;
 
         consensus.nMajorityEnforceBlockUpgrade = 510;
         consensus.nMajorityRejectBlockOutdated = 750;
@@ -582,9 +590,9 @@ public:
         consensus.nPowAveragingWindow = 5;
         consensus.nPowMaxAdjustUp = 32;
         consensus.nPowMaxAdjustDown = 48;
-        consensus.nPowTargetTimespan = 30 * 64; // Dynamic: 1920 seconds
+        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds
         consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME;
-        consensus.nUpdateDiffAlgoHeight = 10; // Dynamic: Algorithm fork block
+        consensus.nUpdateDiffAlgoHeight = 10; // Credit: Algorithm fork block
         assert(maxUint / UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
@@ -601,22 +609,22 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1545134400;   // Dec 18th 2018 12:00:00
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = 210; // 210
+        consensus.nMinimumChainWork = 0; // 0
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00001a32bc1d6887d29d3847e21fcfb1026e14369df048a7f0666acdd9ccdf0d"); // 210
+        consensus.defaultAssumeValid = uint256S("0x0000e533b41b39a92a939d56e3aea121c3cd99ad1ebcaade8d786a9d869a39d8"); //15
 
-        pchMessageStart[0] = 0x2f;
-        pchMessageStart[1] = 0x32;
-        pchMessageStart[2] = 0x15;
-        pchMessageStart[3] = 0x40;
-        // To import alert key:  importprivkey 6Jjb9DG1cr71VWiwxg97zVEyZUBhFzzGhqE7GY9DrbYYM6gVgxS
-        vAlertPubKey = ParseHex("043d9e8440ea8fe66b0c2639f0a0931c9d7c41132ec9ee04cdf5d9e88ada2c2df52d93a0c1983958d3aea56df9fb3d1a61ca4eb6f72c27456fc313be80cdc70032");
-        nDefaultPort = DEFAULT_P2P_PORT + 300; // 33600 
+        pchMessageStart[0] = 0x33;
+        pchMessageStart[1] = 0x36;
+        pchMessageStart[2] = 0x19;
+        pchMessageStart[3] = 0x43;
+        // Alert key
+        vAlertPubKey = ParseHex("0479fb17e7585dd085ad0937cd8ffe970a868b47a276d6ed07092ea5dbb592179cecdd2b4689f0ec16e49b00da72694b4c60328405b78439151b94d166aed89c4f");
+        nDefaultPort = DEFAULT_P2P_PORT + 300; // 33900
         nPruneAfterHeight = 100;
         startNewChain = false;
 
-        genesis = CreateGenesisBlock(1559867972, 60883, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
+        genesis = CreateGenesisBlock(1568568306, 224839, UintToArith256(consensus.powLimit).GetCompact(), 1, (1 * COIN));
         if (startNewChain == true) {
             MineGenesis(genesis, consensus.powLimit, true);
         }
@@ -624,27 +632,27 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
 
         if (!startNewChain) {
-            assert(consensus.hashGenesisBlock == uint256S("0x000055a9348d53bed51996102ad11d129207e85dc197d01a5a69d5fd10af0e8a"));
-            assert(genesis.hashMerkleRoot == uint256S("0xfa0e753db5a853ebbc52594eb62fa8219155547b426fba8789fa96dbf07e6ed5"));
+            assert(consensus.hashGenesisBlock == uint256S("0x0000f43d3725f549e85ab68da8dd9ac9ab9828597a125afe9fa987b69eb8ec30"));
+            assert(genesis.hashMerkleRoot == uint256S("0x986526382e16ade3266f5cae52998022f8eeb3a6d71d664f7a5681afa922eb85"));
         }
         vFixedSeeds.clear();
         vSeeds.clear();
         //vSeeds.push_back(CDNSSeedData("",  ""));
         //vSeeds.push_back(CDNSSeedData("", ""));
 
-        // Privatenet Dynamic addresses start with 'y'
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
-        // Privatenet Dynamic script addresses start with '8' or '9'
+        // Privatenet Credit addresses start with 'z'
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 142);
+        // Privatenet Credit script addresses start with '8' or '9'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 10);
         // Privatenet private keys start with '9' or 'c' (Bitcoin defaults)
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 158);
-        // Privatenet Dynamic BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
+        // Privatenet Credit BIP32 pubkeys start with 'tpub' (Bitcoin defaults)
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
-        // Privatenet Dynamic BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
+        // Privatenet Credit BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
         // Privatenet Stealth Address start with 'P'
         base58Prefixes[STEALTH_ADDRESS] = {0x12};
-        // Privatenet Dynamic BIP44 coin type is '1' (All coin's testnet default)
+        // Privatenet Credit BIP44 coin type is '1' (All coin's testnet default)
         nExtCoinType = 1;
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_privatenet, pnSeed6_privatenet + ARRAYLEN(pnSeed6_privatenet));
@@ -659,18 +667,18 @@ public:
 
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 5 * 60; // fulfilled requests expire in 5 minutes
-        // To import spork key (D777Y4eMXrf1NgDSY1Q7kjoZuVso1ed7HL): importprivkey QWUVh41RrhjhnF813U5XLU4S8qYjvDQ5L1n53jC7Qawr8bBCQfFh
-        vSporkAddresses = {"D777Y4eMXrf1NgDSY1Q7kjoZuVso1ed7HL"};
+        // To import spork key (D777Y4eMXrf1NgDSY1Q7kjoZuVso1ed7HL): importprivkey QWtd8MQx5kRgwmu4LGzSR5KRprf7RTCJc24yZ9BingoUMF1sBmcs
+        vSporkAddresses = {"zYBJ2G93DEdFeKhGMhTEDhaobLprufbZYn"};
         nMinSporkKeys = 1;
 
         checkpointData = (CCheckpointData){
-            boost::assign::map_list_of(0, uint256S("0x00ff3a06390940bc3fffb7948cc6d0ede8fde544a5fa9eeeafbc4ac65d21f087"))};
+            boost::assign::map_list_of(0, uint256S("0x0000f43d3725f549e85ab68da8dd9ac9ab9828597a125afe9fa987b69eb8ec30"))};
 
         chainTxData = ChainTxData{
-            0,  // * UNIX timestamp of last known number of transactions
-            0,  // * total number of transactions between genesis and that timestamp
-                //   (the tx=... number in the SetBestChain debug.log lines)
-            0.1 // * estimated number of transactions per second after that timestamp
+            0, 		// * UNIX timestamp of last known number of transactions
+            0,  	// * total number of transactions between genesis and that timestamp
+                	//   (the tx=... number in the SetBestChain debug.log lines)
+            0.1 	// * estimated number of transactions per second after that timestamp
         };
     }
 };

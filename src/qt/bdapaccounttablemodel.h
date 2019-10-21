@@ -1,9 +1,10 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_BDAPACCOUNTTABLEMODEL_H
-#define DYNAMIC_QT_BDAPACCOUNTTABLEMODEL_H
+#ifndef CREDIT_QT_BDAPACCOUNTTABLEMODEL_H
+#define CREDIT_QT_BDAPACCOUNTTABLEMODEL_H
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -75,7 +76,7 @@ private:
     std::string searchUserPath;
     std::string searchGroupCommon;
     std::string searchGroupPath;
-    
+
 };
 
-#endif // DYNAMIC_QT_BDAPACCOUNTTABLEMODEL_H
+#endif // CREDIT_QT_BDAPACCOUNTTABLEMODEL_H

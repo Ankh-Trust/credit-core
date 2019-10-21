@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -14,7 +15,7 @@
 #include "bdapupdateaccountdialog.h"
 #include "bdapuserdetaildialog.h"
 #include "clientmodel.h"
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include "rpcclient.h"
@@ -36,7 +37,7 @@ BdapPage::BdapPage(const PlatformStyle* platformStyle, QWidget* parent) : QWidge
                                                                             bdapAccountTableModel(0)
 {
     ui->setupUi(this);
-    
+
     evaluateTransactionButtons();
 
     bdapAccountTableModel = new BdapAccountTableModel(this);
@@ -77,7 +78,7 @@ BdapPage::BdapPage(const PlatformStyle* platformStyle, QWidget* parent) : QWidge
 
     connect(ui->lineEditCompleteRequestorSearch, SIGNAL(textChanged(const QString &)), this, SLOT(listLinksComplete()));
     connect(ui->lineEditCompleteRecipientSearch, SIGNAL(textChanged(const QString &)), this, SLOT(listLinksComplete()));
-    
+
     connect(ui->lineEditPARequestorSearch, SIGNAL(textChanged(const QString &)), this, SLOT(listPendingAccept()));
     connect(ui->lineEditPARecipientSearch, SIGNAL(textChanged(const QString &)), this, SLOT(listPendingAccept()));
 
@@ -116,13 +117,13 @@ void BdapPage::setClientModel(ClientModel* _clientModel)
 void BdapPage::evaluateTransactionButtons()
 {
     int currentIndex = ui->tabWidget->currentIndex();
-    bool myUsersChecked = ui->checkBoxMyUsers->isChecked(); 
+    bool myUsersChecked = ui->checkBoxMyUsers->isChecked();
     bool myGroupsChecked = ui->checkBoxMyGroups->isChecked();
 
     switch (currentIndex) {
         case 0: //Users
             ui->pushButtonUpdateUser->setVisible(myUsersChecked);
-            ui->deleteUser->setVisible(myUsersChecked);   
+            ui->deleteUser->setVisible(myUsersChecked);
             break;
         case 1: //Groups
             ui->pushButtonUpdateGroup->setVisible(myGroupsChecked);
@@ -163,7 +164,7 @@ void BdapPage::listAllGroups()
 
 void BdapPage::addGroup()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create BDAP objects while wallet is not synced."));
         return;
     }
@@ -178,7 +179,7 @@ void BdapPage::addGroup()
 
 void BdapPage::deleteGroup()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create/modify BDAP objects while wallet is not synced."));
         return;
     }
@@ -206,7 +207,7 @@ void BdapPage::deleteGroup()
 
 void BdapPage::updateGroup()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create/modify BDAP objects while wallet is not synced."));
         return;
     }
@@ -214,7 +215,7 @@ void BdapPage::updateGroup()
     std::string account = "";
     std::string commonName = "";
     std::string expirationDate = "";
-    
+
     QItemSelectionModel* selectionModel = ui->tableWidget_Groups->selectionModel();
     QModelIndexList selected = selectionModel->selectedRows();
     int nSelectedRow = selected.count() ? selected.at(0).row() : -1;
@@ -227,7 +228,7 @@ void BdapPage::updateGroup()
 
     BdapUpdateAccountDialog dlg(this,BDAP::ObjectType::BDAP_GROUP,account,commonName,expirationDate,model->getOptionsModel()->getDisplayUnit());
     dlg.setWindowTitle(QObject::tr("Update BDAP Group"));
-    
+
     dlg.exec();
     if (dlg.result() == 1) {
         bdapAccountTableModel->refreshGroups();
@@ -244,7 +245,7 @@ void BdapPage::getGroupDetails(int row, int column)
 
 void BdapPage::updateBDAPLists()
 {
-    if (dynodeSync.IsBlockchainSynced())  {
+    if (servicenodeSync.IsBlockchainSynced())  {
         evaluateTransactionButtons();
 
         bdapAccountTableModel->refreshUsers();
@@ -266,7 +267,7 @@ void BdapPage::listAllUsers()
 
 void BdapPage::addUser()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create BDAP objects while wallet is not synced."));
         return;
     }
@@ -287,7 +288,7 @@ void BdapPage::getUserDetails(int row, int column)
 
 void BdapPage::addLink()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create BDAP objects while wallet is not synced."));
         return;
     }
@@ -298,12 +299,12 @@ void BdapPage::addLink()
     if (dlg.result() == 1) {
         bdapLinkTableModel->refreshAll();
     }
-    
+
 } //addLink
 
 void BdapPage::acceptLink()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create BDAP objects while wallet is not synced."));
         return;
     }
@@ -358,7 +359,7 @@ void BdapPage::getLinkDetails(int row, int column)
 
 void BdapPage::deleteUser()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create/modify BDAP objects while wallet is not synced."));
         return;
     }
@@ -386,7 +387,7 @@ void BdapPage::deleteUser()
 
 void BdapPage::updateUser()
 {
-    if (!dynodeSync.IsBlockchainSynced())  {
+    if (!servicenodeSync.IsBlockchainSynced())  {
         QMessageBox::information(this, QObject::tr("Wallet not synced"), QObject::tr("Cannot create/modify BDAP objects while wallet is not synced."));
         return;
     }
@@ -394,7 +395,7 @@ void BdapPage::updateUser()
     std::string account = "";
     std::string commonName = "";
     std::string expirationDate = "";
-    
+
     QItemSelectionModel* selectionModel = ui->tableWidget_Users->selectionModel();
     QModelIndexList selected = selectionModel->selectedRows();
     int nSelectedRow = selected.count() ? selected.at(0).row() : -1;
@@ -407,7 +408,7 @@ void BdapPage::updateUser()
 
     BdapUpdateAccountDialog dlg(this,BDAP::ObjectType::BDAP_USER,account,commonName,expirationDate,model->getOptionsModel()->getDisplayUnit());
     dlg.setWindowTitle(QObject::tr("Update BDAP User"));
-    
+
     dlg.exec();
     if (dlg.result() == 1) {
         bdapAccountTableModel->refreshUsers();
@@ -484,8 +485,8 @@ void BdapPage::executeLinkTransaction(LinkActions actionType, std::string reques
     switch (actionType) {
         case (LinkActions::LINK_ACCEPT):
             params.push_back("accept");
-            params.push_back(recipient);            
-            params.push_back(requestor);            
+            params.push_back(recipient);
+            params.push_back(requestor);
             jreq.params = RPCConvertValues("link", params);
             jreq.strMethod = "link";
             displayMessage = true;
@@ -493,23 +494,23 @@ void BdapPage::executeLinkTransaction(LinkActions actionType, std::string reques
         case (LinkActions::LINK_PENDING_ACCEPT_DETAIL):
             params.push_back("pending");
             params.push_back("accept");
-            params.push_back(requestor);            
-            params.push_back(recipient);            
+            params.push_back(requestor);
+            params.push_back(recipient);
             jreq.params = RPCConvertValues("link", params);
             jreq.strMethod = "link";
             break;
         case (LinkActions::LINK_PENDING_REQUEST_DETAIL):
             params.push_back("pending");
             params.push_back("request");
-            params.push_back(requestor);            
-            params.push_back(recipient);            
+            params.push_back(requestor);
+            params.push_back(recipient);
             jreq.params = RPCConvertValues("link", params);
             jreq.strMethod = "link";
             break;
         case (LinkActions::LINK_COMPLETE_DETAIL):
             params.push_back("complete");
-            params.push_back(requestor);            
-            params.push_back(recipient);            
+            params.push_back(requestor);
+            params.push_back(recipient);
             jreq.params = RPCConvertValues("link", params);
             jreq.strMethod = "link";
             break;
@@ -522,7 +523,7 @@ void BdapPage::executeLinkTransaction(LinkActions actionType, std::string reques
 
     try {
         UniValue resultToPass = UniValue(UniValue::VOBJ);
-        
+
         UniValue result = tableRPC.execute(jreq);
 
         //NOTE: this payload is a list of details that contains one item for everything (so far) EXCEPT for LINK_ACCEPT
@@ -536,7 +537,7 @@ void BdapPage::executeLinkTransaction(LinkActions actionType, std::string reques
 
         if (actionType == LinkActions::LINK_ACCEPT) {
             dlg.setWindowTitle(QObject::tr("Successfully accepted link"));
-        } else if (actionType == LinkActions::LINK_PENDING_ACCEPT_DETAIL) { 
+        } else if (actionType == LinkActions::LINK_PENDING_ACCEPT_DETAIL) {
             dlg.setWindowTitle(QObject::tr("BDAP Pending Accept Link Detail"));
         } else if (actionType == LinkActions::LINK_PENDING_REQUEST_DETAIL) {
             dlg.setWindowTitle(QObject::tr("BDAP Pending Request Link Detail"));
@@ -570,31 +571,31 @@ BdapLinkTableModel* BdapPage::getBdapLinkTableModel()
     return bdapLinkTableModel;
 }
 
-QTableWidget* BdapPage::getCompleteTable() 
-{ 
-    return ui->tableWidgetComplete; 
+QTableWidget* BdapPage::getCompleteTable()
+{
+    return ui->tableWidgetComplete;
 }
 
-QTableWidget* BdapPage::getPendingAcceptTable() 
-{ 
-    return ui->tableWidgetPendingAccept; 
-    
+QTableWidget* BdapPage::getPendingAcceptTable()
+{
+    return ui->tableWidgetPendingAccept;
+
 }
 
-QTableWidget* BdapPage::getPendingRequestTable() 
-{ 
-    return ui->tableWidgetPendingRequest; 
-    
+QTableWidget* BdapPage::getPendingRequestTable()
+{
+    return ui->tableWidgetPendingRequest;
+
 }
 
-QTableWidget* BdapPage::getUserTable() 
-{ 
-    return ui->tableWidget_Users; 
+QTableWidget* BdapPage::getUserTable()
+{
+    return ui->tableWidget_Users;
 }
 
-QTableWidget* BdapPage::getGroupTable() 
-{ 
-    return ui->tableWidget_Groups; 
+QTableWidget* BdapPage::getGroupTable()
+{
+    return ui->tableWidget_Groups;
 }
 
 QLabel* BdapPage::getUserStatus()
@@ -622,19 +623,19 @@ QLabel* BdapPage::getGroupStatus()
     return ui->labelGroupStatus;
 }
 
-int BdapPage::getCurrentIndex() 
-{ 
-    return ui->tabWidget->currentIndex(); 
+int BdapPage::getCurrentIndex()
+{
+    return ui->tabWidget->currentIndex();
 }
 
-bool BdapPage::getMyUserCheckBoxChecked() 
-{ 
-    return ui->checkBoxMyUsers->isChecked(); 
+bool BdapPage::getMyUserCheckBoxChecked()
+{
+    return ui->checkBoxMyUsers->isChecked();
 }
 
-bool BdapPage::getMyGroupCheckBoxChecked() 
-{ 
-    return ui->checkBoxMyGroups->isChecked(); 
+bool BdapPage::getMyGroupCheckBoxChecked()
+{
+    return ui->checkBoxMyGroups->isChecked();
 }
 
 std::string BdapPage::getCommonUserSearch()

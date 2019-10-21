@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_ENTRYCHECKPOINT_H
-#define DYNAMIC_BDAP_ENTRYCHECKPOINT_H
+#ifndef CREDIT_BDAP_ENTRYCHECKPOINT_H
+#define CREDIT_BDAP_ENTRYCHECKPOINT_H
 
 #include "bdap.h"
 #include "bdap/domainentry.h"
@@ -81,4 +81,4 @@ public:
     void AddCheckpoint(const uint32_t& height, const CharString& vchHash);
 };
 
-#endif // DYNAMIC_BDAP_ENTRYCHECKPOINT_H
+#endif // CREDIT_BDAP_ENTRYCHECKPOINT_H

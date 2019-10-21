@@ -5,8 +5,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BLOOM_H
-#define DYNAMIC_BLOOM_H
+#ifndef CREDIT_BLOOM_H
+#define CREDIT_BLOOM_H
 
 #include "serialize.h"
 
@@ -143,4 +143,4 @@ private:
     int nHashFuncs;
 };
 
-#endif // DYNAMIC_BLOOM_H
+#endif // CREDIT_BLOOM_H

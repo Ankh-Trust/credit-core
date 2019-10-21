@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -23,14 +24,14 @@ class BdapUpdateAccountDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BdapUpdateAccountDialog(QWidget *parent = 0, BDAP::ObjectType accountType = BDAP::ObjectType::BDAP_USER, std::string account = "", std::string commonName = "", std::string expirationDate = "", int DynamicUnits = 0);
+    explicit BdapUpdateAccountDialog(QWidget *parent = 0, BDAP::ObjectType accountType = BDAP::ObjectType::BDAP_USER, std::string account = "", std::string commonName = "", std::string expirationDate = "", int CreditUnits = 0);
     ~BdapUpdateAccountDialog();
 
 private:
     Ui::BdapUpdateAccountDialog* ui;
     std::string ignoreErrorCode(const std::string input);
     BDAP::ObjectType inputAccountType;
-    int nDynamicUnits;
+    int nCreditUnits;
 
 private Q_SLOTS:
 

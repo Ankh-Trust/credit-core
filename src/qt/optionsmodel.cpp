@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,17 +7,17 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "optionsmodel.h"
 
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 
 #include "amount.h"
 #ifdef ENABLE_WALLET
-#include "dynodeconfig.h"
+#include "servicenodeconfig.h"
 #endif
 #include "init.h"
 #include "net.h"
@@ -78,15 +79,12 @@ void OptionsModel::Init(bool resetSettings)
 
     // Display
     if (!settings.contains("nDisplayUnit"))
-        settings.setValue("nDisplayUnit", DynamicUnits::DYN);
+        settings.setValue("nDisplayUnit", CreditUnits::_AC);
     nDisplayUnit = settings.value("nDisplayUnit").toInt();
 
     if (!settings.contains("strThirdPartyTxUrls"))
         settings.setValue("strThirdPartyTxUrls", "");
     strThirdPartyTxUrls = settings.value("strThirdPartyTxUrls", "").toString();
-
-    if (!settings.contains("theme"))
-        settings.setValue("theme", "");
 
 #ifdef ENABLE_WALLET
     if (!settings.contains("fCoinControlFeatures"))
@@ -96,8 +94,8 @@ void OptionsModel::Init(bool resetSettings)
     if (!settings.contains("digits"))
         settings.setValue("digits", "2");
 
-    if (!settings.contains("fShowDynodesTab"))
-        settings.setValue("fShowDynodesTab", true);
+    if (!settings.contains("fShowServiceNodesTab"))
+        settings.setValue("fShowServiceNodesTab", true);
 
     if (!settings.contains("fShowAdvancedPSUI"))
         settings.setValue("fShowAdvancedPSUI", false);
@@ -145,10 +143,10 @@ void OptionsModel::Init(bool resetSettings)
 
     if (!settings.contains("nPrivateSendAmount")) {
         // for migration from old settings
-        if (!settings.contains("nAnonymizeDynamicAmount"))
+        if (!settings.contains("nAnonymizeCreditAmount"))
             settings.setValue("nPrivateSendAmount", DEFAULT_PRIVATESEND_AMOUNT);
         else
-            settings.setValue("nPrivateSendAmount", settings.value("nAnonymizeDynamicAmount").toInt());
+            settings.setValue("nPrivateSendAmount", settings.value("nAnonymizeCreditAmount").toInt());
     }
     if (!SoftSetArg("-privatesendamount", settings.value("nPrivateSendAmount").toString().toStdString()))
         addOverriddenOption("-privatesendamount");
@@ -207,7 +205,7 @@ void OptionsModel::Reset()
 
     // Remove all entries from our QSettings object
     settings.clear();
-    resetSettings = true; // Needed in dynamic.cpp during shotdown to also remove the window positions
+    resetSettings = true; // Needed in credit.cpp during shotdown to also remove the window positions
 
     // default setting for OptionsModel::StartAtStartup - disabled
     if (GUIUtil::GetStartOnSystemStartup())
@@ -271,8 +269,8 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
 #ifdef ENABLE_WALLET
         case SpendZeroConfChange:
             return settings.value("bSpendZeroConfChange");
-        case ShowDynodesTab:
-            return settings.value("fShowDynodesTab");
+        case ShowServiceNodesTab:
+            return settings.value("fShowServiceNodesTab");
         case ShowAdvancedPSUI:
             return fShowAdvancedPSUI;
         case ShowPrivateSendPopups:
@@ -410,9 +408,9 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 setRestartRequired(true);
             }
             break;
-        case ShowDynodesTab:
-            if (settings.value("fShowDynodesTab") != value) {
-                settings.setValue("fShowDynodesTab", value);
+        case ShowServiceNodesTab:
+            if (settings.value("fShowServiceNodesTab") != value) {
+                settings.setValue("fShowServiceNodesTab", value);
                 setRestartRequired(true);
             }
             break;

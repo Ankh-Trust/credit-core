@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_LINKMANAGER_H
-#define DYNAMIC_BDAP_LINKMANAGER_H
+#ifndef CREDIT_BDAP_LINKMANAGER_H
+#define CREDIT_BDAP_LINKMANAGER_H
 
 #include "bdap/linkstorage.h"
 #include "uint256.h"
@@ -186,4 +186,4 @@ uint256 GetMessageID(const CKeyEd25519& key, const int64_t& timestamp);
 
 extern CLinkManager* pLinkManager;
 
-#endif // DYNAMIC_BDAP_LINKMANAGER_H
+#endif // CREDIT_BDAP_LINKMANAGER_H

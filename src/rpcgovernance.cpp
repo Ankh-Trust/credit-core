@@ -1,16 +1,17 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-//#define ENABLE_DYNAMIC_DEBUG
+//#define ENABLE_CREDIT_DEBUG
 
-#include "activedynode.h"
+#include "activeservicenode.h"
 #include "consensus/validation.h"
-#include "dynode-sync.h"
-#include "dynode.h"
-#include "dynodeconfig.h"
-#include "dynodeman.h"
+#include "servicenode-sync.h"
+#include "servicenode.h"
+#include "servicenodeconfig.h"
+#include "servicenodeman.h"
 #include "governance-classes.h"
 #include "governance-validators.h"
 #include "governance-vote.h"
@@ -57,9 +58,9 @@ UniValue gobject(const JSONRPCRequest& request)
             "  getcurrentvotes    - Get only current (tallying) votes for a governance object hash (does not include old votes)\n"
             "  list               - List governance objects (can be filtered by signal and/or object type)\n"
             "  diff               - List differences since last diff\n"
-            "  vote-alias         - Vote on a governance object by dynode alias (using dynode.conf setup)\n"
-            "  vote-conf          - Vote on a governance object by dynode configured in dynamic.conf\n"
-            "  vote-many          - Vote on a governance object by all dynodes (using dynode.conf setup)\n");
+            "  vote-alias         - Vote on a governance object by servicenode alias (using servicenode.conf setup)\n"
+            "  vote-conf          - Vote on a governance object by servicenode configured in credit.conf\n"
+            "  vote-many          - Vote on a governance object by all servicenodes (using servicenode.conf setup)\n");
 
 
     if (strCommand == "count") {
@@ -170,7 +171,7 @@ UniValue gobject(const JSONRPCRequest& request)
         }
 
         if (govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) {
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Trigger objects need not be prepared (however only dynodes can create them)");
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Trigger objects need not be prepared (however only servicenodes can create them)");
         }
 
         if (govobj.GetObjectType() == GOVERNANCE_OBJECT_WATCHDOG) {
@@ -214,14 +215,14 @@ UniValue gobject(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'gobject submit <parent-hash> <revision> <time> <data-hex> <fee-txid>'");
         }
 
-        if (!dynodeSync.IsBlockchainSynced()) {
-            throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Must wait for client to sync with dynode network. Try again in a minute or so.");
+        if (!servicenodeSync.IsBlockchainSynced()) {
+            throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Must wait for client to sync with servicenode network. Try again in a minute or so.");
         }
 
-        bool fDnFound = dnodeman.Has(activeDynode.outpoint);
+        bool fDnFound = dnodeman.Has(activeServiceNode.outpoint);
 
-        DBG(std::cout << "gobject: submit activeDynode.pubKeyDynode = " << activeDynode.pubKeyDynode.GetHash().ToString()
-                      << ", outpoint = " << activeDynode.outpoint.ToStringShort()
+        DBG(std::cout << "gobject: submit activeServiceNode.pubKeyServiceNode = " << activeServiceNode.pubKeyServiceNode.GetHash().ToString()
+                      << ", outpoint = " << activeServiceNode.outpoint.ToStringShort()
                       << ", params.size() = " << request.params.size()
                       << ", fDnFound = " << fDnFound << std::endl;);
 
@@ -269,11 +270,11 @@ UniValue gobject(const JSONRPCRequest& request)
         // Attempt to sign triggers if we are a DN
         if (govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) {
             if (fDnFound) {
-                govobj.SetDynodeOutpoint(activeDynode.outpoint);
-                govobj.Sign(activeDynode.keyDynode, activeDynode.pubKeyDynode);
+                govobj.SetServiceNodeOutpoint(activeServiceNode.outpoint);
+                govobj.Sign(activeServiceNode.keyServiceNode, activeServiceNode.pubKeyServiceNode);
             } else {
-                LogPrintf("gobject(submit) -- Object submission rejected because node is not a dynode\n");
-                throw JSONRPCError(RPC_INVALID_PARAMETER, "Only valid dynodes can submit this type of object");
+                LogPrintf("gobject(submit) -- Object submission rejected because node is not a servicenode\n");
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "Only valid servicenodes can submit this type of object");
             }
         } else {
             if (request.params.size() != 6) {
@@ -285,11 +286,11 @@ UniValue gobject(const JSONRPCRequest& request)
         std::string strHash = govobj.GetHash().ToString();
 
         std::string strError = "";
-        bool fMissingDynode;
+        bool fMissingServiceNode;
         bool fMissingConfirmations;
         {
             LOCK(cs_main);
-            if (!govobj.IsValidLocally(strError, fMissingDynode, fMissingConfirmations, true) && !fMissingConfirmations) {
+            if (!govobj.IsValidLocally(strError, fMissingServiceNode, fMissingConfirmations, true) && !fMissingConfirmations) {
                 LogPrintf("gobject(submit) -- Object submission rejected because object is not valid - hash = %s, strError = %s\n", strHash, strError);
                 throw JSONRPCError(RPC_INTERNAL_ERROR, "Governance object is not valid - " + strHash + " - " + strError);
             }
@@ -297,7 +298,7 @@ UniValue gobject(const JSONRPCRequest& request)
 
         // RELAY THIS OBJECT
         // Reject if rate check fails but don't update buffer
-        if (!governance.DynodeRateCheck(govobj)) {
+        if (!governance.ServiceNodeRateCheck(govobj)) {
             LogPrintf("gobject(submit) -- Object submission rejected because of rate check failure - hash = %s\n", strHash);
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Object creation rate limit exceeded");
         }
@@ -342,31 +343,31 @@ UniValue gobject(const JSONRPCRequest& request)
 
         UniValue resultsObj(UniValue::VOBJ);
 
-        std::vector<unsigned char> vchDyNodeSignature;
-        std::string strDyNodeSignMessage;
+        std::vector<unsigned char> vchServiceNodeModeSignature;
+        std::string strServiceNodeModeSignMessage;
 
         UniValue statusObj(UniValue::VOBJ);
         UniValue returnObj(UniValue::VOBJ);
 
-        CDynode dn;
-        bool fDnFound = dnodeman.Get(activeDynode.outpoint, dn);
+        CServiceNode dn;
+        bool fDnFound = dnodeman.Get(activeServiceNode.outpoint, dn);
 
         if (!fDnFound) {
             nFailed++;
             statusObj.push_back(Pair("result", "failed"));
-            statusObj.push_back(Pair("errorMessage", "Can't find dynode by collateral output"));
-            resultsObj.push_back(Pair("dynamic.conf", statusObj));
+            statusObj.push_back(Pair("errorMessage", "Can't find servicenode by collateral output"));
+            resultsObj.push_back(Pair("credit.conf", statusObj));
             returnObj.push_back(Pair("overall", strprintf("Voted successfully %d time(s) and failed %d time(s).", nSuccessful, nFailed)));
             returnObj.push_back(Pair("detail", resultsObj));
             return returnObj;
         }
 
         CGovernanceVote vote(dn.outpoint, hash, eVoteSignal, eVoteOutcome);
-        if (!vote.Sign(activeDynode.keyDynode, activeDynode.pubKeyDynode)) {
+        if (!vote.Sign(activeServiceNode.keyServiceNode, activeServiceNode.pubKeyServiceNode)) {
             nFailed++;
             statusObj.push_back(Pair("result", "failed"));
             statusObj.push_back(Pair("errorMessage", "Failure to sign."));
-            resultsObj.push_back(Pair("dynamic.conf", statusObj));
+            resultsObj.push_back(Pair("credit.conf", statusObj));
             returnObj.push_back(Pair("overall", strprintf("Voted successfully %d time(s) and failed %d time(s).", nSuccessful, nFailed)));
             returnObj.push_back(Pair("detail", resultsObj));
             return returnObj;
@@ -382,7 +383,7 @@ UniValue gobject(const JSONRPCRequest& request)
             statusObj.push_back(Pair("errorMessage", exception.GetMessage()));
         }
 
-        resultsObj.push_back(Pair("dynamic.conf", statusObj));
+        resultsObj.push_back(Pair("credit.conf", statusObj));
 
         returnObj.push_back(Pair("overall", strprintf("Voted successfully %d time(s) and failed %d time(s).", nSuccessful, nFailed)));
         returnObj.push_back(Pair("detail", resultsObj));
@@ -419,22 +420,22 @@ UniValue gobject(const JSONRPCRequest& request)
 
         UniValue resultsObj(UniValue::VOBJ);
 
-        for (const auto& dne : dynodeConfig.getEntries()) {
+        for (const auto& dne : servicenodeConfig.getEntries()) {
             std::string strError;
-            std::vector<unsigned char> vchDyNodeSignature;
-            std::string strDyNodeSignMessage;
+            std::vector<unsigned char> vchServiceNodeModeSignature;
+            std::string strServiceNodeModeSignMessage;
 
             CPubKey pubKeyCollateralAddress;
             CKey keyCollateralAddress;
-            CPubKey pubKeyDynode;
-            CKey keyDynode;
+            CPubKey pubKeyServiceNode;
+            CKey keyServiceNode;
 
             UniValue statusObj(UniValue::VOBJ);
 
-            if (!CMessageSigner::GetKeysFromSecret(dne.getPrivKey(), keyDynode, pubKeyDynode)) {
+            if (!CMessageSigner::GetKeysFromSecret(dne.getPrivKey(), keyServiceNode, pubKeyServiceNode)) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
-                statusObj.push_back(Pair("errorMessage", "Dynode signing error, could not set key correctly"));
+                statusObj.push_back(Pair("errorMessage", "ServiceNode signing error, could not set key correctly"));
                 resultsObj.push_back(Pair(dne.getAlias(), statusObj));
                 continue;
             }
@@ -449,19 +450,19 @@ UniValue gobject(const JSONRPCRequest& request)
 
             COutPoint outpoint(nTxHash, nOutputIndex);
 
-            CDynode dn;
+            CServiceNode dn;
             bool fDnFound = dnodeman.Get(outpoint, dn);
 
             if (!fDnFound) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
-                statusObj.push_back(Pair("errorMessage", "Can't find dynode by collateral output"));
+                statusObj.push_back(Pair("errorMessage", "Can't find servicenode by collateral output"));
                 resultsObj.push_back(Pair(dne.getAlias(), statusObj));
                 continue;
             }
 
             CGovernanceVote vote(dn.outpoint, hash, eVoteSignal, eVoteOutcome);
-            if (!vote.Sign(keyDynode, pubKeyDynode)) {
+            if (!vote.Sign(keyServiceNode, pubKeyServiceNode)) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
                 statusObj.push_back(Pair("errorMessage", "Failure to sign."));
@@ -490,7 +491,7 @@ UniValue gobject(const JSONRPCRequest& request)
     }
 
 
-    // DYNODES CAN VOTE ON GOVERNANCE OBJECTS ON THE NETWORK FOR VARIOUS SIGNALS AND OUTCOMES
+    // SERVICENODES CAN VOTE ON GOVERNANCE OBJECTS ON THE NETWORK FOR VARIOUS SIGNALS AND OUTCOMES
     if (strCommand == "vote-alias") {
         if (request.params.size() != 5)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'gobject vote-alias <governance-hash> [funding|valid|delete] [yes|no|abstain] <alias-name>'");
@@ -519,41 +520,41 @@ UniValue gobject(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid vote outcome. Please use one of the following: 'yes', 'no' or 'abstain'");
         }
 
-        // EXECUTE VOTE FOR EACH DYNODE, COUNT SUCCESSES VS FAILURES
+        // EXECUTE VOTE FOR EACH SERVICENODE, COUNT SUCCESSES VS FAILURES
 
         int nSuccessful = 0;
         int nFailed = 0;
 
         UniValue resultsObj(UniValue::VOBJ);
 
-        for (const auto& dne : dynodeConfig.getEntries()) {
+        for (const auto& dne : servicenodeConfig.getEntries()) {
             // IF WE HAVE A SPECIFIC NODE REQUESTED TO VOTE, DO THAT
             if (strAlias != dne.getAlias())
                 continue;
 
             // INIT OUR NEEDED VARIABLES TO EXECUTE THE VOTE
             std::string strError;
-            std::vector<unsigned char> vchDyNodeSignature;
-            std::string strDyNodeSignMessage;
+            std::vector<unsigned char> vchServiceNodeModeSignature;
+            std::string strServiceNodeModeSignMessage;
 
             CPubKey pubKeyCollateralAddress;
             CKey keyCollateralAddress;
-            CPubKey pubKeyDynode;
-            CKey keyDynode;
+            CPubKey pubKeyServiceNode;
+            CKey keyServiceNode;
 
-            // SETUP THE SIGNING KEY FROM DYNODE.CONF ENTRY
+            // SETUP THE SIGNING KEY FROM SERVICENODE.CONF ENTRY
 
             UniValue statusObj(UniValue::VOBJ);
 
-            if (!CMessageSigner::GetKeysFromSecret(dne.getPrivKey(), keyDynode, pubKeyDynode)) {
+            if (!CMessageSigner::GetKeysFromSecret(dne.getPrivKey(), keyServiceNode, pubKeyServiceNode)) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
-                statusObj.push_back(Pair("errorMessage", strprintf("Invalid dynode key %s.", dne.getPrivKey())));
+                statusObj.push_back(Pair("errorMessage", strprintf("Invalid servicenode key %s.", dne.getPrivKey())));
                 resultsObj.push_back(Pair(dne.getAlias(), statusObj));
                 continue;
             }
 
-            // SEARCH FOR THIS DYNODE ON THE NETWORK, THE NODE MUST BE ACTIVE TO VOTE
+            // SEARCH FOR THIS SERVICENODE ON THE NETWORK, THE NODE MUST BE ACTIVE TO VOTE
 
             uint256 nTxHash;
             nTxHash.SetHex(dne.getTxHash());
@@ -565,13 +566,13 @@ UniValue gobject(const JSONRPCRequest& request)
 
             COutPoint outpoint(nTxHash, nOutputIndex);
 
-            CDynode dn;
+            CServiceNode dn;
             bool fDnFound = dnodeman.Get(outpoint, dn);
 
             if (!fDnFound) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
-                statusObj.push_back(Pair("errorMessage", "Dynode must be publicly available on network to vote. Dynode not found."));
+                statusObj.push_back(Pair("errorMessage", "ServiceNode must be publicly available on network to vote. ServiceNode not found."));
                 resultsObj.push_back(Pair(dne.getAlias(), statusObj));
                 continue;
             }
@@ -579,7 +580,7 @@ UniValue gobject(const JSONRPCRequest& request)
             // CREATE NEW GOVERNANCE OBJECT VOTE WITH OUTCOME/SIGNAL
 
             CGovernanceVote vote(outpoint, hash, eVoteSignal, eVoteOutcome);
-            if (!vote.Sign(keyDynode, pubKeyDynode)) {
+            if (!vote.Sign(keyServiceNode, pubKeyServiceNode)) {
                 nFailed++;
                 statusObj.push_back(Pair("result", "failed"));
                 statusObj.push_back(Pair("errorMessage", "Failure to sign."));
@@ -671,9 +672,9 @@ UniValue gobject(const JSONRPCRequest& request)
             bObj.push_back(Pair("CollateralHash", pGovObj->GetCollateralHash().ToString()));
             bObj.push_back(Pair("ObjectType", pGovObj->GetObjectType()));
             bObj.push_back(Pair("CreationTime", pGovObj->GetCreationTime()));
-            const COutPoint& dynodeOutpoint = pGovObj->GetDynodeOutpoint();
-            if (dynodeOutpoint != COutPoint()) {
-                bObj.push_back(Pair("SigningDynode", dynodeOutpoint.ToStringShort()));
+            const COutPoint& servicenodeOutpoint = pGovObj->GetServiceNodeOutpoint();
+            if (servicenodeOutpoint != COutPoint()) {
+                bObj.push_back(Pair("SigningServiceNode", servicenodeOutpoint.ToStringShort()));
             }
 
             // REPORT STATUS FOR FUNDING VOTES SPECIFICALLY
@@ -722,9 +723,9 @@ UniValue gobject(const JSONRPCRequest& request)
         objResult.push_back(Pair("CollateralHash", pGovObj->GetCollateralHash().ToString()));
         objResult.push_back(Pair("ObjectType", pGovObj->GetObjectType()));
         objResult.push_back(Pair("CreationTime", pGovObj->GetCreationTime()));
-        const COutPoint& dynodeOutpoint = pGovObj->GetDynodeOutpoint();
-        if (dynodeOutpoint != COutPoint()) {
-            objResult.push_back(Pair("SigningDynode", dynodeOutpoint.ToStringShort()));
+        const COutPoint& servicenodeOutpoint = pGovObj->GetServiceNodeOutpoint();
+        if (servicenodeOutpoint != COutPoint()) {
+            objResult.push_back(Pair("SigningServiceNode", servicenodeOutpoint.ToStringShort()));
         }
 
         // SHOW (MUCH MORE) INFORMATION ABOUT VOTES FOR GOVERNANCE OBJECT (THAN LIST/DIFF ABOVE)
@@ -753,7 +754,7 @@ UniValue gobject(const JSONRPCRequest& request)
         objDelete.push_back(Pair("AbstainCount", pGovObj->GetAbstainCount(VOTE_SIGNAL_DELETE)));
         objResult.push_back(Pair("DeleteResult", objDelete));
 
-        // -- ENDORSED VIA DYNODE-ELECTED BOARD
+        // -- ENDORSED VIA SERVICENODE-ELECTED BOARD
         UniValue objEndorsed(UniValue::VOBJ);
         objEndorsed.push_back(Pair("AbsoluteYesCount", pGovObj->GetAbsoluteYesCount(VOTE_SIGNAL_ENDORSED)));
         objEndorsed.push_back(Pair("YesCount", pGovObj->GetYesCount(VOTE_SIGNAL_ENDORSED)));
@@ -818,7 +819,7 @@ UniValue gobject(const JSONRPCRequest& request)
 
         COutPoint dnCollateralOutpoint;
         if (request.params.size() == 4) {
-            uint256 txid = ParseHashV(request.params[2], "Dynode Collateral hash");
+            uint256 txid = ParseHashV(request.params[2], "ServiceNode Collateral hash");
             std::string strVout = request.params[3].get_str();
             dnCollateralOutpoint = COutPoint(txid, (uint32_t)atoi(strVout));
         }
@@ -854,7 +855,7 @@ UniValue voteraw(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 7)
         throw std::runtime_error(
-            "voteraw <dynode-tx-hash> <dynode-tx-index> <governance-hash> <vote-signal> [yes|no|abstain] <time> <vote-sig>\n"
+            "voteraw <servicenode-tx-hash> <servicenode-tx-index> <governance-hash> <vote-signal> [yes|no|abstain] <time> <vote-sig>\n"
             "Compile and relay a governance vote with provided external signature instead of signing vote internally\n");
 
     uint256 hashDnTx = ParseHashV(request.params[0], "dn tx hash");
@@ -886,11 +887,11 @@ UniValue voteraw(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Malformed base64 encoding");
     }
 
-    CDynode dn;
+    CServiceNode dn;
     bool fDnFound = dnodeman.Get(outpoint, dn);
 
     if (!fDnFound) {
-        throw JSONRPCError(RPC_INTERNAL_ERROR, "Failure to find dynode in list : " + outpoint.ToStringShort());
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Failure to find servicenode in list : " + outpoint.ToStringShort());
     }
 
     CGovernanceVote vote(outpoint, hashGovObj, eVoteSignal, eVoteOutcome);
@@ -918,7 +919,7 @@ UniValue getgovernanceinfo(const JSONRPCRequest& request)
             "\nResult:\n"
             "{\n"
             "  \"governanceminquorum\": xxxxx,           (numeric) the absolute minimum number of votes needed to trigger a governance action\n"
-            "  \"dynodewatchdogmaxseconds\": xxxxx,  (numeric) sentinel watchdog expiration time in seconds (DEPRECATED)\n"
+            "  \"servicenodewatchdogmaxseconds\": xxxxx,  (numeric) sentinel watchdog expiration time in seconds (DEPRECATED)\n"
             "  \"sentinelpingmaxseconds\": xxxxx,        (numeric) sentinel ping expiration time in seconds\n"
             "  \"proposalfee\": xxx.xx,                  (numeric) the collateral transaction fee which must be paid to create a proposal in " +
             CURRENCY_UNIT + "\n"
@@ -940,8 +941,8 @@ UniValue getgovernanceinfo(const JSONRPCRequest& request)
 
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("governanceminquorum", Params().GetConsensus().nGovernanceMinQuorum));
-    obj.push_back(Pair("dynodewatchdogmaxseconds", DYNODE_SENTINEL_PING_MAX_SECONDS));
-    obj.push_back(Pair("sentinelpingmaxseconds", DYNODE_SENTINEL_PING_MAX_SECONDS));
+    obj.push_back(Pair("servicenodewatchdogmaxseconds", SERVICENODE_SENTINEL_PING_MAX_SECONDS));
+    obj.push_back(Pair("sentinelpingmaxseconds", SERVICENODE_SENTINEL_PING_MAX_SECONDS));
     obj.push_back(Pair("proposalfee", ValueFromAmount(GOVERNANCE_PROPOSAL_FEE_TX)));
     obj.push_back(Pair("superblockcycle", Params().GetConsensus().nSuperblockCycle));
     obj.push_back(Pair("lastsuperblock", nLastSuperblock));
@@ -981,11 +982,11 @@ static const CRPCCommand commands[] =
     {
         //  category                 name                      actor (function)         okSafe argNames
         //  ---------------------    ------------------------  -----------------------  ------ ---
-        /* Dynamic features */
-        {"dynamic", "getgovernanceinfo", &getgovernanceinfo, true, {}},
-        {"dynamic", "getsuperblockbudget", &getsuperblockbudget, true, {"index"}},
-        {"dynamic", "gobject", &gobject, true, {}},
-        {"dynamic", "voteraw", &voteraw, true, {}},
+        /* Credit features */
+        {"credit", "getgovernanceinfo", &getgovernanceinfo, true, {}},
+        {"credit", "getsuperblockbudget", &getsuperblockbudget, true, {"index"}},
+        {"credit", "gobject", &gobject, true, {}},
+        {"credit", "voteraw", &voteraw, true, {}},
 
 };
 

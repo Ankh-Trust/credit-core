@@ -500,11 +500,11 @@ int GetBDAPOperationOutIndex(int nHeight, const uint256& txHash)
     return GetBDAPOperationOutIndex(tx);
 }
 
-CDynamicAddress GetScriptAddress(const CScript& pubScript)
+CCreditAddress GetScriptAddress(const CScript& pubScript)
 {
     CTxDestination txDestination;
     ExtractDestination(pubScript, txDestination);
-    CDynamicAddress entryAddress(txDestination);
+    CCreditAddress entryAddress(txDestination);
     return entryAddress;
 }
 

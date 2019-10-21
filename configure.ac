@@ -1,22 +1,22 @@
 dnl require autoconf 2.60 (AS_ECHO/AS_ECHO_N)
 AC_PREREQ([2.60])
-define(_CLIENT_VERSION_MAJOR, 2)
-define(_CLIENT_VERSION_MINOR, 4)
+define(_CLIENT_VERSION_MAJOR, 1)
+define(_CLIENT_VERSION_MINOR, 0)
 define(_CLIENT_VERSION_REVISION, 0)
 define(_CLIENT_VERSION_BUILD, 0)
 define(_CLIENT_VERSION_IS_RELEASE, true)
 define(_COPYRIGHT_YEAR, 2019)
-AC_INIT([Dynamic],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[https://github.com/duality-solutions/dynamic/issues],[dynamic])
+AC_INIT([Credit],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[https://github.com/duality-solutions/credit/issues],[credit])
 AC_CONFIG_SRCDIR([src/validation.cpp])
-AC_CONFIG_HEADERS([src/config/dynamic-config.h])
+AC_CONFIG_HEADERS([src/config/credit-config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
 
 AC_CANONICAL_HOST
 
-AH_TOP([#ifndef DYNAMIC_CONFIG_H])
-AH_TOP([#define DYNAMIC_CONFIG_H])
-AH_BOTTOM([#endif //DYNAMIC_CONFIG_H])
+AH_TOP([#ifndef CREDIT_CONFIG_H])
+AH_TOP([#define CREDIT_CONFIG_H])
+AH_BOTTOM([#endif //CREDIT_CONFIG_H])
 
 dnl faketime breaks configure and is only needed for make. Disable it here.
 unset FAKETIME
@@ -52,7 +52,7 @@ dnl Require C++14 compiler (no GNU extensions)
 AX_CXX_COMPILE_STDCXX([14], [ext], [mandatory], [nodefault])
 dnl Check if -latomic is required for <std::atomic>
 CHECK_ATOMIC
- 
+
 dnl Unless the user specified OBJCXX, force it to be the same as CXX. This ensures
 dnl that we get the same -std flags for both.
 m4_ifdef([AC_PROG_OBJCXX],[
@@ -253,21 +253,21 @@ CPPFLAGS="$CPPFLAGS -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS"
 
 AC_ARG_WITH([utils],
   [AS_HELP_STRING([--with-utils],
-  [build dynamic-cli dynamic-tx (default=yes)])],
-  [build_dynamic_utils=$withval],
-  [build_dynamic_utils=yes])
+  [build credit-cli credit-tx (default=yes)])],
+  [build_credit_utils=$withval],
+  [build_credit_utils=yes])
 
 AC_ARG_WITH([libs],
   [AS_HELP_STRING([--with-libs],
   [build libraries (default=no)])],
-  [build_dynamic_libs=$withval],
-  [build_dynamic_libs=no])
+  [build_credit_libs=$withval],
+  [build_credit_libs=no])
 
 AC_ARG_WITH([daemon],
   [AS_HELP_STRING([--with-daemon],
-  [build dynamicd daemon (default=yes)])],
-  [build_dynamicd=$withval],
-  [build_dynamicd=yes])
+  [build creditd daemon (default=yes)])],
+  [build_creditd=$withval],
+  [build_creditd=yes])
 
 use_pkgconfig=yes
 case $host in
@@ -452,7 +452,7 @@ AC_C_BIGENDIAN
 dnl Check for pthread compile/link requirements
 AX_PTHREAD
 
-# The following macro will add the necessary defines to dynamic-config.h, but
+# The following macro will add the necessary defines to credit-config.h, but
 # they also need to be passed down to any subprojects. Pull the results out of
 # the cache and add them to CPPFLAGS.
 AC_SYS_LARGEFILE
@@ -633,7 +633,7 @@ AC_SUBST(LIBTORRENT)
 
 if test x$enable_wallet != xno; then
     dnl Check for libdb_cxx only if wallet enabled
-    DYNAMIC_FIND_BDB48
+    CREDIT_FIND_BDB48
 fi
 
 dnl Check for libminiupnpc (optional)
@@ -645,12 +645,12 @@ if test x$use_upnp != xno; then
   )
 fi
 
-DYNAMIC_QT_INIT
+CREDIT_QT_INIT
 
-dnl sets $dynamic_enable_qt, $dynamic_enable_qt_test, $dynamic_enable_qt_dbus
-DYNAMIC_QT_CONFIGURE([$use_pkgconfig], [qt5])
+dnl sets $credit_enable_qt, $credit_enable_qt_test, $credit_enable_qt_dbus
+CREDIT_QT_CONFIGURE([$use_pkgconfig], [qt5])
 
-if test x$build_dynamic_utils$build_dynamicd$dynamic_enable_qt$use_tests = xnononono; then
+if test x$build_credit_utils$build_creditd$credit_enable_qt$use_tests = xnononono; then
     use_boost=no
 else
     use_boost=yes
@@ -829,11 +829,11 @@ if test x$use_pkgconfig = xyes; then
     [
       PKG_CHECK_MODULES([SSL], [libssl],, [AC_MSG_ERROR(openssl  not found.)])
       PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto  not found.)])
-      DYNAMIC_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [DYNAMIC_QT_FAIL(libprotobuf not found)])])
+      CREDIT_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [CREDIT_QT_FAIL(libprotobuf not found)])])
       if test x$use_qr != xno; then
-        DYNAMIC_QT_CHECK([PKG_CHECK_MODULES([QR], [libqrencode], [have_qrencode=yes], [have_qrencode=no])])
+        CREDIT_QT_CHECK([PKG_CHECK_MODULES([QR], [libqrencode], [have_qrencode=yes], [have_qrencode=no])])
       fi
-      if test x$build_dynamic_utils$build_dynamicd$dynamic_enable_qt$use_tests != xnononono; then
+      if test x$build_credit_utils$build_creditd$credit_enable_qt$use_tests != xnononono; then
         PKG_CHECK_MODULES([EVENT], [libevent],, [AC_MSG_ERROR(libevent not found.)])
         if test x$TARGET_OS != xwindows; then
           PKG_CHECK_MODULES([EVENT_PTHREADS], [libevent_pthreads],, [AC_MSG_ERROR(libevent_pthreads not found.)])
@@ -858,7 +858,7 @@ else
   AC_CHECK_HEADER([openssl/ssl.h],, AC_MSG_ERROR(libssl headers missing),)
   AC_CHECK_LIB([ssl],         [main],SSL_LIBS=-lssl, AC_MSG_ERROR(libssl missing))
 
-  if test x$build_dynamic_utils$build_dynamicd$dynamic_enable_qt$use_tests != xnononono; then
+  if test x$build_credit_utils$build_creditd$credit_enable_qt$use_tests != xnononono; then
     AC_CHECK_HEADER([event2/event.h],, AC_MSG_ERROR(libevent headers missing),)
     AC_CHECK_LIB([event],[main],EVENT_LIBS=-levent,AC_MSG_ERROR(libevent missing))
     if test x$TARGET_OS != xwindows; then
@@ -880,10 +880,10 @@ else
     AC_DEFINE_UNQUOTED([ENABLE_ZMQ],[0],[Define to 1 to enable ZMQ functions])
   fi
 
-  DYNAMIC_QT_CHECK(AC_CHECK_LIB([protobuf] ,[main],[PROTOBUF_LIBS=-lprotobuf], DYNAMIC_QT_FAIL(libprotobuf not found)))
+  CREDIT_QT_CHECK(AC_CHECK_LIB([protobuf] ,[main],[PROTOBUF_LIBS=-lprotobuf], CREDIT_QT_FAIL(libprotobuf not found)))
   if test x$use_qr != xno; then
-    DYNAMIC_QT_CHECK([AC_CHECK_LIB([qrencode], [main],[QR_LIBS=-lqrencode], [have_qrencode=no])])
-    DYNAMIC_QT_CHECK([AC_CHECK_HEADER([qrencode.h],, have_qrencode=no)])
+    CREDIT_QT_CHECK([AC_CHECK_LIB([qrencode], [main],[QR_LIBS=-lqrencode], [have_qrencode=no])])
+    CREDIT_QT_CHECK([AC_CHECK_HEADER([qrencode.h],, have_qrencode=no)])
   fi
 fi
 
@@ -895,23 +895,23 @@ AC_CHECK_HEADER([openssl/ec.h],, AC_MSG_ERROR(OpenSSL ec header missing),)
 CXXFLAGS="$CXXFLAGS_TEMP"
 LIBS="$LIBS_TEMP"
 
-DYNAMIC_QT_PATH_PROGS([PROTOC], [protoc],$protoc_bin_path)
+CREDIT_QT_PATH_PROGS([PROTOC], [protoc],$protoc_bin_path)
 
-AC_MSG_CHECKING([whether to build dynamicd])
-AM_CONDITIONAL([BUILD_DYNAMICD], [test x$build_dynamicd = xyes])
-AC_MSG_RESULT($build_dynamicd)
+AC_MSG_CHECKING([whether to build creditd])
+AM_CONDITIONAL([BUILD_CREDITD], [test x$build_creditd = xyes])
+AC_MSG_RESULT($build_creditd)
 
-AC_MSG_CHECKING([whether to build utils (dynamic-cli dynamic-tx)])
-AM_CONDITIONAL([BUILD_DYNAMIC_UTILS], [test x$build_dynamic_utils = xyes])
-AC_MSG_RESULT($build_dynamic_utils)
+AC_MSG_CHECKING([whether to build utils (credit-cli credit-tx)])
+AM_CONDITIONAL([BUILD_CREDIT_UTILS], [test x$build_credit_utils = xyes])
+AC_MSG_RESULT($build_credit_utils)
 
 AC_MSG_CHECKING([whether to build libraries])
-AM_CONDITIONAL([BUILD_DYNAMIC_LIBS], [test x$build_dynamic_libs = xyes])
-if test x$build_dynamic_libs = xyes; then
+AM_CONDITIONAL([BUILD_CREDIT_LIBS], [test x$build_credit_libs = xyes])
+if test x$build_credit_libs = xyes; then
   AC_DEFINE(HAVE_CONSENSUS_LIB, 1, [Define this symbol if the consensus lib has been built])
-  AC_CONFIG_FILES([libdynamicconsensus.pc:libdynamicconsensus.pc.in])
+  AC_CONFIG_FILES([libcreditconsensus.pc:libcreditconsensus.pc.in])
 fi
-AC_MSG_RESULT($build_dynamic_libs)
+AC_MSG_RESULT($build_credit_libs)
 
 AC_LANG_POP
 
@@ -985,13 +985,13 @@ fi
 
 dnl these are only used when qt is enabled
 BUILD_TEST_QT=""
-if test x$dynamic_enable_qt != xno; then
+if test x$credit_enable_qt != xno; then
   dnl enable dbus support
   AC_MSG_CHECKING([whether to build GUI with support for D-Bus])
-  if test x$dynamic_enable_qt_dbus != xno; then
+  if test x$credit_enable_qt_dbus != xno; then
     AC_DEFINE([USE_DBUS],[1],[Define if dbus support should be compiled in])
   fi
-  AC_MSG_RESULT($dynamic_enable_qt_dbus)
+  AC_MSG_RESULT($credit_enable_qt_dbus)
 
   dnl enable qr support
   AC_MSG_CHECKING([whether to build GUI with support for QR codes])
@@ -1014,8 +1014,8 @@ if test x$dynamic_enable_qt != xno; then
     AC_MSG_WARN("xgettext is required to update qt translations")
   fi
 
-  AC_MSG_CHECKING([whether to build test_dynamic-qt])
-  if test x$use_gui_tests$dynamic_enable_qt_test = xyesyes; then
+  AC_MSG_CHECKING([whether to build test_credit-qt])
+  if test x$use_gui_tests$credit_enable_qt_test = xyesyes; then
     AC_MSG_RESULT([yes])
     BUILD_TEST_QT="yes"
   else
@@ -1025,7 +1025,7 @@ fi
 
 AM_CONDITIONAL([ENABLE_ZMQ], [test "x$use_zmq" = "xyes"])
 
-AC_MSG_CHECKING([whether to build test_dynamic])
+AC_MSG_CHECKING([whether to build test_credit])
 if test x$use_tests = xyes; then
   AC_MSG_RESULT([yes])
   BUILD_TEST="yes"
@@ -1041,7 +1041,7 @@ else
   AC_MSG_RESULT([no])
 fi
 
-if test x$build_dynamic_utils$build_dynamic_libs$build_dynamicd$dynamic_enable_qt$use_tests = xnonononono; then
+if test x$build_credit_utils$build_credit_libs$build_creditd$credit_enable_qt$use_tests = xnonononono; then
   AC_MSG_ERROR([No targets! Please specify at least one of: --with-utils --with-libs --with-daemon --with-gui or --enable-tests])
 fi
 
@@ -1052,7 +1052,7 @@ AM_CONDITIONAL([ENABLE_GPU],[test x$enable_gpu = xyes])
 AM_CONDITIONAL([ENABLE_CUDA], [test x"$enable_cuda" = xyes])
 AM_CONDITIONAL([ENABLE_WALLET],[test x$enable_wallet = xyes])
 AM_CONDITIONAL([ENABLE_TESTS],[test x$BUILD_TEST = xyes])
-AM_CONDITIONAL([ENABLE_QT],[test x$dynamic_enable_qt = xyes])
+AM_CONDITIONAL([ENABLE_QT],[test x$credit_enable_qt = xyes])
 AM_CONDITIONAL([ENABLE_QT_TESTS],[test x$BUILD_TEST_QT = xyes])
 AM_CONDITIONAL([ENABLE_BENCH],[test x$use_bench = xyes])
 AM_CONDITIONAL([USE_QRCODE], [test x$use_qr = xyes])
@@ -1095,7 +1095,7 @@ AC_SUBST(MINIUPNPC_LIBS)
 AC_SUBST(LEVELDB_ATOMIC_CPPFLAGS)
 AC_SUBST(LEVELDB_ATOMIC_CXXFLAGS)
 AC_CONFIG_FILES([Makefile src/Makefile share/setup.nsi share/qt/Info.plist src/test/buildenv.py])
-AC_CONFIG_FILES([qa/pull-tester/run-dynamicd-for-test.sh],[chmod +x qa/pull-tester/run-dynamicd-for-test.sh])
+AC_CONFIG_FILES([qa/pull-tester/run-creditd-for-test.sh],[chmod +x qa/pull-tester/run-creditd-for-test.sh])
 AC_CONFIG_FILES([qa/pull-tester/tests_config.py],[chmod +x qa/pull-tester/tests_config.py])
 
 dnl boost's m4 checks do something really nasty: they export these vars. As a

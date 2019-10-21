@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -16,7 +17,7 @@
 - (NSString *)__bundleIdentifier
 {
     if (self == [NSBundle mainBundle]) {
-        return @"org.dynamic.Dynamic-Qt";
+        return @"org.credit.Credit-Qt";
     } else {
         return [self __bundleIdentifier];
     }
@@ -81,7 +82,7 @@ MacNotificationHandler *MacNotificationHandler::instance()
     static MacNotificationHandler *s_instance = NULL;
     if (!s_instance) {
         s_instance = new MacNotificationHandler();
-        
+
         Class aPossibleClass = objc_getClass("NSBundle");
         if (aPossibleClass) {
             // change NSBundle -bundleIdentifier method to return a correct bundle identifier

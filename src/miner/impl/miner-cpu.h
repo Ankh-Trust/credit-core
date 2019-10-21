@@ -2,14 +2,14 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_MINER_IMPL_CPU_H
-#define DYNAMIC_MINER_IMPL_CPU_H
+#ifndef CREDIT_MINER_IMPL_CPU_H
+#define CREDIT_MINER_IMPL_CPU_H
 
 #include "miner/internal/miner-base.h"
 
 
 /**
- * Dynamic CPU miner.
+ * Credit CPU miner.
  */
 class CPUMiner final : public MinerBase
 {
@@ -33,4 +33,4 @@ protected:
     virtual int64_t TryMineBlock(CBlock& block) override;
 };
 
-#endif // DYNAMIC_MINER_IMPL_CPU_H
+#endif // CREDIT_MINER_IMPL_CPU_H

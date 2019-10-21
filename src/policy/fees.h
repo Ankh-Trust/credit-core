@@ -2,8 +2,8 @@
 // Copyright (c) 2009-2015 The Bitcoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef DYNAMIC_POLICYESTIMATOR_H
-#define DYNAMIC_POLICYESTIMATOR_H
+#ifndef CREDIT_POLICYESTIMATOR_H
+#define CREDIT_POLICYESTIMATOR_H
 
 #include "amount.h"
 #include "random.h"
@@ -258,4 +258,4 @@ private:
     unsigned int trackedTxs;
     unsigned int untrackedTxs;
 };
-#endif /*DYNAMIC_POLICYESTIMATOR_H */
+#endif /*CREDIT_POLICYESTIMATOR_H */

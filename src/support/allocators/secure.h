@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_SUPPORT_ALLOCATORS_SECURE_H
-#define DYNAMIC_SUPPORT_ALLOCATORS_SECURE_H
+#ifndef CREDIT_SUPPORT_ALLOCATORS_SECURE_H
+#define CREDIT_SUPPORT_ALLOCATORS_SECURE_H
 
 #include "support/lockedpool.h"
 #include "support/cleanse.h"
@@ -30,10 +30,10 @@ struct secure_allocator : public std::allocator<T> {
     secure_allocator() throw() {}
     secure_allocator(const secure_allocator& a) throw() : base(a) {}
     template <typename U>
-    secure_allocator(const secure_allocator<U>& a) throw() : base(a)
+    secure_allocator(const secure_allocator<U>& a) noexcept : base(a)
     {
     }
-    ~secure_allocator() throw() {}
+    ~secure_allocator() noexcept {}
     template <typename _Other>
     struct rebind {
         typedef secure_allocator<_Other> other;
@@ -41,7 +41,11 @@ struct secure_allocator : public std::allocator<T> {
 
     T* allocate(std::size_t n, const void* hint = 0)
     {
-        return static_cast<T*>(LockedPoolManager::Instance().alloc(sizeof(T) * n));
+      T* allocation = static_cast<T*>(LockedPoolManager::Instance().alloc(sizeof(T) * n));
+      if (!allocation) {
+          throw std::bad_alloc();
+      }
+      return allocation;
     }
 
     void deallocate(T* p, std::size_t n)
@@ -58,4 +62,4 @@ typedef std::basic_string<char, std::char_traits<char>, secure_allocator<char> >
 
 typedef std::vector<unsigned char, secure_allocator<unsigned char> > SecureVector;
 
-#endif // DYNAMIC_SUPPORT_ALLOCATORS_SECURE_H
+#endif // CREDIT_SUPPORT_ALLOCATORS_SECURE_H

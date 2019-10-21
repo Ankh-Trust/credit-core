@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -5,11 +6,11 @@
 
 #include "privatesend.h"
 
-#include "activedynode.h"
+#include "activeservicenode.h"
 #include "consensus/validation.h"
-#include "dynode-payments.h"
-#include "dynode-sync.h"
-#include "dynodeman.h"
+#include "servicenode-payments.h"
+#include "servicenode-sync.h"
+#include "servicenodeman.h"
 #include "governance.h"
 #include "init.h"
 #include "instantsend.h"
@@ -46,7 +47,7 @@ uint256 CPrivateSendQueue::GetSignatureHash() const
 
 bool CPrivateSendQueue::Sign()
 {
-    if (!fDynodeMode)
+    if (!fServiceNodeMode)
         return false;
 
     std::string strError = "";
@@ -54,27 +55,27 @@ bool CPrivateSendQueue::Sign()
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::SignHash(hash, activeDynode.keyDynode, vchSig)) {
+        if (!CHashSigner::SignHash(hash, activeServiceNode.keyServiceNode, vchSig)) {
             LogPrintf("CPrivateSendQueue::Sign -- SignHash() failed\n");
             return false;
         }
 
-        if (!CHashSigner::VerifyHash(hash, activeDynode.pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, activeServiceNode.pubKeyServiceNode, vchSig, strError)) {
             LogPrintf("CPrivateSendQueue::Sign -- VerifyHash() failed, error: %s\n", strError);
             return false;
         }
     } else {
-        std::string strMessage = CTxIn(dynodeOutpoint).ToString() +
+        std::string strMessage = CTxIn(servicenodeOutpoint).ToString() +
                                  std::to_string(nDenom) +
                                  std::to_string(nTime) +
                                  std::to_string(fReady);
 
-        if (!CMessageSigner::SignMessage(strMessage, vchSig, activeDynode.keyDynode)) {
+        if (!CMessageSigner::SignMessage(strMessage, vchSig, activeServiceNode.keyServiceNode)) {
             LogPrintf("CPrivateSendQueue::Sign -- SignMessage() failed, %s\n", ToString());
             return false;
         }
 
-        if (!CMessageSigner::VerifyMessage(activeDynode.pubKeyDynode, vchSig, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(activeServiceNode.pubKeyServiceNode, vchSig, strMessage, strError)) {
             LogPrintf("CPrivateSendQueue::Sign -- VerifyMessage() failed, error: %s\n", strError);
             return false;
         }
@@ -83,26 +84,26 @@ bool CPrivateSendQueue::Sign()
     return true;
 }
 
-bool CPrivateSendQueue::CheckSignature(const CPubKey& pubKeyDynode) const
+bool CPrivateSendQueue::CheckSignature(const CPubKey& pubKeyServiceNode) const
 {
     std::string strError = "";
 
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::VerifyHash(hash, pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, pubKeyServiceNode, vchSig, strError)) {
             // we don't care about queues with old signature format
             LogPrintf("CPrivateSendQueue::CheckSignature -- VerifyHash() failed, error: %s\n", strError);
             return false;
         }
     } else {
-        std::string strMessage = CTxIn(dynodeOutpoint).ToString() +
+        std::string strMessage = CTxIn(servicenodeOutpoint).ToString() +
                                  std::to_string(nDenom) +
                                  std::to_string(nTime) +
                                  std::to_string(fReady);
 
-        if (!CMessageSigner::VerifyMessage(pubKeyDynode, vchSig, strMessage, strError)) {
-            LogPrintf("CPrivateSendQueue::CheckSignature -- Got bad Dynode queue signature: %s; error: %s\n", ToString(), strError);
+        if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
+            LogPrintf("CPrivateSendQueue::CheckSignature -- Got bad ServiceNode queue signature: %s; error: %s\n", ToString(), strError);
             return false;
         }
     }
@@ -127,7 +128,7 @@ uint256 CPrivateSendBroadcastTx::GetSignatureHash() const
 
 bool CPrivateSendBroadcastTx::Sign()
 {
-    if (!fDynodeMode)
+    if (!fServiceNodeMode)
         return false;
 
     std::string strError = "";
@@ -135,24 +136,24 @@ bool CPrivateSendBroadcastTx::Sign()
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::SignHash(hash, activeDynode.keyDynode, vchSig)) {
+        if (!CHashSigner::SignHash(hash, activeServiceNode.keyServiceNode, vchSig)) {
             LogPrintf("CPrivateSendBroadcastTx::Sign -- SignHash() failed\n");
             return false;
         }
 
-        if (!CHashSigner::VerifyHash(hash, activeDynode.pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, activeServiceNode.pubKeyServiceNode, vchSig, strError)) {
             LogPrintf("CPrivateSendBroadcastTx::Sign -- VerifyHash() failed, error: %s\n", strError);
             return false;
         }
     } else {
         std::string strMessage = tx->GetHash().ToString() + std::to_string(sigTime);
 
-        if (!CMessageSigner::SignMessage(strMessage, vchSig, activeDynode.keyDynode)) {
+        if (!CMessageSigner::SignMessage(strMessage, vchSig, activeServiceNode.keyServiceNode)) {
             LogPrintf("CPrivateSendBroadcastTx::Sign -- SignMessage() failed\n");
             return false;
         }
 
-        if (!CMessageSigner::VerifyMessage(activeDynode.pubKeyDynode, vchSig, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(activeServiceNode.pubKeyServiceNode, vchSig, strMessage, strError)) {
             LogPrintf("CPrivateSendBroadcastTx::Sign -- VerifyMessage() failed, error: %s\n", strError);
             return false;
         }
@@ -161,14 +162,14 @@ bool CPrivateSendBroadcastTx::Sign()
     return true;
 }
 
-bool CPrivateSendBroadcastTx::CheckSignature(const CPubKey& pubKeyDynode) const
+bool CPrivateSendBroadcastTx::CheckSignature(const CPubKey& pubKeyServiceNode) const
 {
     std::string strError = "";
 
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::VerifyHash(hash, pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, pubKeyServiceNode, vchSig, strError)) {
             // we don't care about pstxes with old signature format
             LogPrintf("CPrivateSendBroadcastTx::CheckSignature -- VerifyHash() failed, error: %s\n", strError);
             return false;
@@ -176,7 +177,7 @@ bool CPrivateSendBroadcastTx::CheckSignature(const CPubKey& pubKeyDynode) const
     } else {
         std::string strMessage = tx->GetHash().ToString() + std::to_string(sigTime);
 
-        if (!CMessageSigner::VerifyMessage(pubKeyDynode, vchSig, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
             LogPrintf("CPrivateSendBroadcastTx::CheckSignature -- Got bad pstx signature, error: %s\n", strError);
             return false;
         }
@@ -304,7 +305,7 @@ bool CPrivateSend::IsCollateralValid(const CTransaction& txCollateral)
     for (const auto& txout : txCollateral.vout) {
         nValueOut += txout.nValue;
 
-        bool fAllowData = dnpayments.GetMinDynodePaymentsProto() > 70900;
+        bool fAllowData = dnpayments.GetMinServiceNodePaymentsProto() > 70900;
         if (!txout.scriptPubKey.IsPayToPublicKeyHash() && !(fAllowData && txout.scriptPubKey.IsUnspendable())) {
             LogPrintf("CPrivateSend::IsCollateralValid -- Invalid Script, txCollateral=%s", txCollateral.ToString());
             return false;
@@ -342,7 +343,7 @@ bool CPrivateSend::IsCollateralValid(const CTransaction& txCollateral)
 
 bool CPrivateSend::IsCollateralAmount(CAmount nInputAmount)
 {
-    if (dnpayments.GetMinDynodePaymentsProto() > 70900) {
+    if (dnpayments.GetMinServiceNodePaymentsProto() > 70900) {
         // collateral input can be anything between 1x and "max" (including both)
         return (nInputAmount >= GetCollateralAmount() && nInputAmount <= GetMaxCollateralAmount());
     } else { // <= 70900
@@ -496,15 +497,15 @@ std::string CPrivateSend::GetMessageByID(PoolMessage nMessageID)
     case ERR_MAXIMUM:
         return _("Entry exceeds maximum size.");
     case ERR_DN_LIST:
-        return _("Not in the Dynode list.");
+        return _("Not in the ServiceNode list.");
     case ERR_MODE:
         return _("Incompatible mode.");
     case ERR_NON_STANDARD_PUBKEY:
         return _("Non-standard public key detected.");
     case ERR_NOT_A_DN:
-        return _("This is not a Dynode."); // not used
+        return _("This is not a ServiceNode."); // not used
     case ERR_QUEUE_FULL:
-        return _("Dynode queue is full.");
+        return _("ServiceNode queue is full.");
     case ERR_RECENT:
         return _("Last PrivateSend was too recent.");
     case ERR_SESSION:
@@ -553,7 +554,7 @@ void CPrivateSend::CheckPSTXes(int nHeight)
 
 void CPrivateSend::UpdatedBlockTip(const CBlockIndex* pindex)
 {
-    if (pindex && !fLiteMode && dynodeSync.IsDynodeListSynced()) {
+    if (pindex && !fLiteMode && servicenodeSync.IsServiceNodeListSynced()) {
         CheckPSTXes(pindex->nHeight);
     }
 }

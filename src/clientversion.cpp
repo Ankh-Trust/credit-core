@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -13,10 +14,10 @@
 
 /**
  * Name of client reported in the 'version' message. Report the same name
- * for both dynamicd and dynamic-qt, to make it harder for attackers to
+ * for both creditd and credit-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("Dynamic");
+const std::string CLIENT_NAME("Credit");
 
 /**
  * Client version number
@@ -47,8 +48,8 @@ const std::string CLIENT_NAME("Dynamic");
 
 //! git will put "#define GIT_ARCHIVE 1" on the next line inside archives.
 #ifdef GIT_ARCHIVE
-#define GIT_COMMIT_ID "7b42942"
-#define GIT_COMMIT_DATE "Tue, 14 Feb 2017 10:59:58 +0100"
+#define GIT_COMMIT_ID "ed09546"
+#define GIT_COMMIT_DATE "Sun, 29 Sep 2019 22:51:00 +0200"
 #endif
 
 #define BUILD_DESC_WITH_SUFFIX(maj, min, rev, build, suffix) \
@@ -85,8 +86,8 @@ std::string FormatFullVersion()
     return CLIENT_BUILD;
 }
 
-/** 
- * Format the subversion field according to BIP 14 spec (https://github.com/bitcoin/bips/blob/master/bip-0014.mediawiki) 
+/**
+ * Format the subversion field according to BIP 14 spec (https://github.com/bitcoin/bips/blob/master/bip-0014.mediawiki)
  */
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments)
 {

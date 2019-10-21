@@ -1,7 +1,7 @@
 #include "miningpage.h"
 #include "ui_miningpage.h"
 
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "guiutil.h"
 #include "miner/miner.h"
 #include "net.h"
@@ -25,19 +25,19 @@ MiningPage::MiningPage(const PlatformStyle* platformStyle, QWidget* parent) : QW
 #endif
     std::string PrivAddress = GetArg("-miningprivkey", "");
     if (!PrivAddress.empty()) {
-        CDynamicSecret Secret;
+        CCreditSecret Secret;
         Secret.SetString(PrivAddress);
         if (Secret.IsValid()) {
-            CDynamicAddress Address;
+            CCreditAddress Address;
             Address.Set(Secret.GetKey().GetPubKey().GetID());
             ui->labelAddress->setText(QString("All mined coins will go to %1").arg(Address.ToString().c_str()));
             hasMiningprivkey = true;
         }
     }
 
-    if (!dynodeSync.IsSynced() || !dynodeSync.IsBlockchainSynced()) {
+    if (!servicenodeSync.IsSynced() || !servicenodeSync.IsBlockchainSynced()) {
         ui->sliderCPUCores->setVisible(false);
-        ui->labelNCPUCores->setText(tr("Slider will show once Dynamic has finished syncing"));
+        ui->labelNCPUCores->setText(tr("Slider will show once Credit has finished syncing"));
     } else {
         ui->sliderCPUCores->setVisible(true);
         ui->labelNCPUCores->setText(QString("%1").arg(nCPUMaxUseThreads));
@@ -48,9 +48,9 @@ MiningPage::MiningPage(const PlatformStyle* platformStyle, QWidget* parent) : QW
     ui->sliderCPUCores->setValue(nCPUMaxUseThreads);
 
 #ifdef ENABLE_GPU
-    if (!dynodeSync.IsSynced() || !dynodeSync.IsBlockchainSynced()) {
+    if (!servicenodeSync.IsSynced() || !servicenodeSync.IsBlockchainSynced()) {
         ui->sliderGPUCores->setVisible(false);
-        ui->labelNGPUCores->setText(tr("Slider will show once Dynamic has finished syncing"));
+        ui->labelNGPUCores->setText(tr("Slider will show once Credit has finished syncing"));
     } else {
         ui->sliderGPUCores->setVisible(true);
         ui->labelNGPUCores->setText(QString("%1").arg(nGPUMaxUseThreads));
@@ -63,7 +63,7 @@ MiningPage::MiningPage(const PlatformStyle* platformStyle, QWidget* parent) : QW
     ui->checkBoxShowGPUGraph->setVisible(true);
 #else
     ui->sliderGPUCores->setVisible(false);
-    ui->labelNGPUCores->setText(tr("GPU mining is not supported in this version of Dynamic"));
+    ui->labelNGPUCores->setText(tr("GPU mining is not supported in this version of Credit"));
     ui->pushSwitchGPUMining->setVisible(false);
     ui->checkBoxShowGPUGraph->setVisible(false);
 #endif
@@ -92,8 +92,8 @@ MiningPage::MiningPage(const PlatformStyle* platformStyle, QWidget* parent) : QW
 #ifdef ENABLE_GPU
     ui->labelGPUMinerHashRate->setToolTip(tr("This shows the hashrate of your GPU whilst mining"));
 #endif
-    ui->labelNetHashRateCPU->setToolTip(tr("This shows the overall hashrate of the Dynamic network"));
-    ui->labelNetHashRateGPU->setToolTip(tr("This shows the overall hashrate of the Dynamic network"));
+    ui->labelNetHashRateCPU->setToolTip(tr("This shows the overall hashrate of the Credit network"));
+    ui->labelNetHashRateGPU->setToolTip(tr("This shows the overall hashrate of the Credit network"));
     ui->labelNextCPUBlock->setToolTip(tr("This shows the average time between the blocks you have mined"));
 #ifdef ENABLE_GPU
     ui->labelNextGPUBlock->setToolTip(tr("This shows the average time between the blocks you have mined"));
@@ -152,7 +152,7 @@ void MiningPage::setModel(WalletModel* model)
 
 void MiningPage::updateUI()
 {
-    if (dynodeSync.IsSynced() && dynodeSync.IsBlockchainSynced()) {
+    if (servicenodeSync.IsSynced() && servicenodeSync.IsBlockchainSynced()) {
 #ifdef ENABLE_GPU
         if (ui->sliderGPUCores->isHidden()) {
             int nThreads = ui->sliderGPUCores->value();
@@ -196,8 +196,8 @@ void MiningPage::updateUI()
 
 void MiningPage::updatePushSwitch(QPushButton* pushSwitch, bool minerOn)
 {
-    if (!dynodeSync.IsSynced() || !dynodeSync.IsBlockchainSynced()) {
-        pushSwitch->setToolTip(tr("Blockchain/Dynodes are not synced, please wait until fully synced before mining!"));
+    if (!servicenodeSync.IsSynced() || !servicenodeSync.IsBlockchainSynced()) {
+        pushSwitch->setToolTip(tr("Blockchain/ServiceNodes are not synced, please wait until fully synced before mining!"));
         pushSwitch->setText(tr("Disabled"));
         pushSwitch->setEnabled(false);
         return;

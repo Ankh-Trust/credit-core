@@ -1,6 +1,6 @@
-![DYN logo](https://github.com/duality-solutions/Logos/blob/master/Duality%20Logos/Dynamic/PNG/128x128.png)
+![_AC logo](https://github.com/duality-solutions/Logos/blob/master/Duality%20Logos/Credit/PNG/128x128.png)
 
-List of Dynamic RPC Commands
+List of Credit RPC Commands
 ============================
 ￼
 Address Index
@@ -36,7 +36,7 @@ Blockchain
 
 Control
 -------
-* debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|dynamic|privatesend|instantsend|dynode|spork|keepass|dnpayments|gobject )
+* debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|credit|privatesend|instantsend|servicenode|spork|keepass|dnpayments|gobject )
 * getinfo
 * getmemoryinfo
 * help ( "command" )
@@ -56,20 +56,20 @@ DDNS
 * name_update [name] [value] [days] [toaddress] [valuetype]
 
 
-Dynamic
+Credit
 -------
 * dnsync [status|next|reset]
-* dynode "command"...
-* dynodebroadcast "command"...
-* dynodelist ( "mode" "filter" )
-* getdynoderewardstart [nHeight]
+* servicenode "command"...
+* servicenodebroadcast "command"...
+* servicenodelist ( "mode" "filter" )
+* getservicenoderewardstart [nHeight]
 * getgovernanceinfo
 * getpoolinfo
 * getsuperblockbudget index
 * gobject "command"...
 * privatesend "command"
 * spork [name] ([value])
-* voteraw [dynode-tx-hash] [dynode-tx-index] [governance-hash] [vote-signal] (yes|no|abstain) [time] [vote-sig]
+* voteraw [servicenode-tx-hash] [servicenode-tx-index] [governance-hash] [vote-signal] (yes|no|abstain) [time] [vote-sig]
 
 
 Generating
@@ -133,8 +133,8 @@ Utility Function
 * estimatepriority nblocks
 * estimatesmartfee nblocks
 * estimatesmartpriority nblocks
-* validateaddress "dynamicaddress"
-* verifymessage "dynamicaddress" "signature" "message"
+* validateaddress "creditaddress"
+* verifymessage "creditaddress" "signature" "message"
 
 
 Wallet
@@ -143,24 +143,24 @@ Wallet
 * addmultisigaddress nrequired ["key",...] ( "account" )
 * backupwallet "destination"
 * dumphdinfo
-* dumpprivkey "dynamicaddress"
+* dumpprivkey "creditaddress"
 * dumpwallet "filename"
-* getaccount "dynamicaddress"
+* getaccount "creditaddress"
 * getaccountaddress "account"
 * getaddressesbyaccount "account"
 * getbalance ( "account" minconf includeWatchonly )
 * getnewaddress ( "account" )
 * getrawchangeaddress
 * getreceivedbyaccount "account" ( minconf )
-* getreceivedbyaddress "dynamicaddress" ( minconf )
+* getreceivedbyaddress "creditaddress" ( minconf )
 * gettransaction "txid" ( includeWatchonly )
 * getunconfirmedbalance
 * getwalletinfo
 * importaddress "address" ( "label" rescan p2sh )
-* importprivkey "dynamicprivkey" ( "label" rescan )
+* importprivkey "creditprivkey" ( "label" rescan )
 * importpubkey "pubkey" ( "label" rescan )
 * importwallet "filename"
-* instantsendtoaddress "dynamicaddress" amount ( "comment" "comment-to" subtractfeefromamount )
+* instantsendtoaddress "creditaddress" amount ( "comment" "comment-to" subtractfeefromamount )
 * keepass <genkey|init|setpassphrase>
 * keypoolrefill ( newsize )
 * listaccounts ( minconf includeWatchonly)
@@ -174,12 +174,12 @@ Wallet
 * lockunspent unlock [{"txid":"txid","vout":n},...]
 * makekeypair [prefix]
 * move "fromaccount" "toaccount" amount ( minconf "comment" )
-* sendfrom "fromaccount" "todynamicaddress" amount ( minconf "comment" "comment-to" )
+* sendfrom "fromaccount" "tocreditaddress" amount ( minconf "comment" "comment-to" )
 * sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] subtractfeefromamount use_is use_ps )
-* sendtoaddress "dynamicaddress" amount ( "comment" "comment-to" subtractfeefromamount use_is use_ps )
-* setaccount "dynamicaddress" "account"
+* sendtoaddress "creditaddress" amount ( "comment" "comment-to" subtractfeefromamount use_is use_ps )
+* setaccount "creditaddress" "account"
 * settxfee amount
-* signmessage "dynamicaddress" "message"
+* signmessage "creditaddress" "message"
 * walletlock
 * walletpassphrase "passphrase" timeout ( mixingonly )
 * walletpassphrasechange "oldpassphrase" "newpassphrase"

@@ -1,5 +1,5 @@
-bin_PROGRAMS += qt/test/test_dynamic-qt
-TESTS += qt/test/test_dynamic-qt
+bin_PROGRAMS += qt/test/test_credit-qt
+TESTS += qt/test/test_credit-qt
 
 TEST_QT_MOC_CPP = \
   qt/test/moc_compattests.cpp \
@@ -19,10 +19,10 @@ TEST_QT_H = \
   qt/test/paymentservertests.h \
   qt/test/trafficgraphdatatests.h
 
-qt_test_test_dynamic_qt_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(DYNAMIC_QT_INCLUDES) \
+qt_test_test_credit_qt_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES) $(CREDIT_QT_INCLUDES) \
   $(QT_INCLUDES) $(QT_TEST_INCLUDES) $(PROTOBUF_CFLAGS)
 
-qt_test_test_dynamic_qt_SOURCES = \
+qt_test_test_credit_qt_SOURCES = \
   qt/test/compattests.cpp \
   qt/test/rpcnestedtests.cpp \
   qt/test/test_main.cpp \
@@ -30,39 +30,39 @@ qt_test_test_dynamic_qt_SOURCES = \
   qt/test/trafficgraphdatatests.cpp \
   $(TEST_QT_H)
 if ENABLE_WALLET
-qt_test_test_dynamic_qt_SOURCES += \
+qt_test_test_credit_qt_SOURCES += \
   qt/test/paymentservertests.cpp
 endif
 
-nodist_qt_test_test_dynamic_qt_SOURCES = $(TEST_QT_MOC_CPP)
+nodist_qt_test_test_credit_qt_SOURCES = $(TEST_QT_MOC_CPP)
 
-qt_test_test_dynamic_qt_LDADD = $(LIBDYNAMICQT) $(LIBDYNAMIC_SERVER)
+qt_test_test_credit_qt_LDADD = $(LIBCREDITQT) $(LIBCREDIT_SERVER)
 if ENABLE_WALLET
-qt_test_test_dynamic_qt_LDADD += $(LIBDYNAMIC_WALLET)
+qt_test_test_credit_qt_LDADD += $(LIBCREDIT_WALLET)
 endif
 if ENABLE_ZMQ
-qt_test_test_dynamic_qt_LDADD += $(LIBDYNAMIC_ZMQ) $(ZMQ_LIBS)
+qt_test_test_credit_qt_LDADD += $(LIBCREDIT_ZMQ) $(ZMQ_LIBS)
 endif
-qt_test_test_dynamic_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_test_test_credit_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 if ENABLE_GPU
-qt_test_test_dynamic_qt_LDADD += $(LIBDYNAMIC_GPU_LDADD_EXTRA)
-qt_test_test_dynamic_qt_LDFLAGS += $(LIBDYNAMIC_GPU_LDFLAGS_EXTRA)
+qt_test_test_credit_qt_LDADD += $(LIBCREDIT_GPU_LDADD_EXTRA)
+qt_test_test_credit_qt_LDFLAGS += $(LIBCREDIT_GPU_LDFLAGS_EXTRA)
 endif
 
-qt_test_test_dynamic_qt_LDADD += $(LIBDYNAMIC_CLI) $(LIBDYNAMIC_COMMON) $(LIBDYNAMIC_UTIL) $(LIBDYNAMIC_CONSENSUS) $(LIBVGP) $(LIBDYNAMIC_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) \
+qt_test_test_credit_qt_LDADD += $(LIBCREDIT_CLI) $(LIBCREDIT_COMMON) $(LIBCREDIT_UTIL) $(LIBCREDIT_CONSENSUS) $(LIBVGP) $(LIBCREDIT_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) \
   $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(QT_DBUS_LIBS) $(QT_TEST_LIBS) $(QT_LIBS) \
   $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) $(LIBTORRENT) \
   $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-qt_test_test_dynamic_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_test_test_credit_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 
-CLEAN_DYNAMIC_QT_TEST = $(TEST_QT_MOC_CPP) qt/test/*.gcda qt/test/*.gcno
+CLEAN_CREDIT_QT_TEST = $(TEST_QT_MOC_CPP) qt/test/*.gcda qt/test/*.gcno
 
-CLEANFILES += $(CLEAN_DYNAMIC_QT_TEST)
+CLEANFILES += $(CLEAN_CREDIT_QT_TEST)
 
-test_dynamic_qt : qt/test/test_dynamic-qt$(EXEEXT)
+test_credit_qt : qt/test/test_credit-qt$(EXEEXT)
 
-test_dynamic_qt_check : qt/test/test_dynamic-qt$(EXEEXT) FORCE
+test_credit_qt_check : qt/test/test_credit-qt$(EXEEXT) FORCE
 	$(MAKE) check-TESTS TESTS=$^
 
-test_dynamic_qt_clean: FORCE
-	rm -f $(CLEAN_DYNAMIC_QT_TEST) $(qt_test_test_dynamic_qt_OBJECTS)
+test_credit_qt_clean: FORCE
+	rm -f $(CLEAN_CREDIT_QT_TEST) $(qt_test_test_credit_qt_OBJECTS)

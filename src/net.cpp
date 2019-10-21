@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,7 +7,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "net.h"
@@ -25,8 +26,8 @@
 #include "ui_interface.h"
 #include "utilstrencodings.h"
 
-#include "dynode-sync.h"
-#include "dynodeman.h"
+#include "servicenode-sync.h"
+#include "servicenodeman.h"
 #include "instantsend.h"
 #include "privatesend.h"
 
@@ -675,7 +676,7 @@ void CNode::copyStats(CNodeStats& stats)
         nPingUsecWait = GetTimeMicros() - nPingUsecStart;
     }
 
-    // Raw ping time is in microseconds, but show it to user as whole seconds (Dynamic users should be well used to small numbers with many decimal places by now :)
+    // Raw ping time is in microseconds, but show it to user as whole seconds (Credit users should be well used to small numbers with many decimal places by now :)
     stats.dPingTime = (((double)nPingUsecTime) / 1e6);
     stats.dMinPing = (((double)nMinPingUsecTime) / 1e6);
     stats.dPingWait = (((double)nPingUsecWait) / 1e6);
@@ -1091,8 +1092,8 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket)
     }
 
     // don't accept incoming connections until fully synced
-    if (fDynodeMode && !dynodeSync.IsSynced()) {
-        LogPrintf("AcceptConnection -- dynode is not synced yet, skipping inbound connection attempt\n");
+    if (fServiceNodeMode && !servicenodeSync.IsSynced()) {
+        LogPrintf("AcceptConnection -- servicenode is not synced yet, skipping inbound connection attempt\n");
         CloseSocket(hSocket);
         return;
     }
@@ -1127,15 +1128,15 @@ void CConnman::ThreadSocketHandler()
             std::vector<CNode*> vNodesCopy = vNodes;
             BOOST_FOREACH (CNode* pnode, vNodesCopy) {
                 if (pnode->fDisconnect) {
-                    LogPrint("net", "ThreadSocketHandler -- removing node: peer=%d addr=%s nRefCount=%d fInbound=%d fDynode=%d\n",
-                        pnode->id, pnode->addr.ToString(), pnode->GetRefCount(), pnode->fInbound, pnode->fDynode);
+                    LogPrint("net", "ThreadSocketHandler -- removing node: peer=%d addr=%s nRefCount=%d fInbound=%d fServiceNode=%d\n",
+                        pnode->id, pnode->addr.ToString(), pnode->GetRefCount(), pnode->fInbound, pnode->fServiceNode);
 
                     // remove from vNodes
                     vNodes.erase(remove(vNodes.begin(), vNodes.end(), pnode), vNodes.end());
 
                     // release outbound grant (if any)
                     pnode->grantOutbound.Release();
-                    pnode->grantDynodeOutbound.Release();
+                    pnode->grantServiceNodeOutbound.Release();
 
                     // close socket and cleanup
                     pnode->CloseSocketDisconnect();
@@ -1433,7 +1434,7 @@ void ThreadMapPort()
             }
         }
 
-        std::string strDesc = "Dynamic " + FormatFullVersion();
+        std::string strDesc = "Credit " + FormatFullVersion();
 
         try {
             while (true) {
@@ -1671,7 +1672,7 @@ void CConnman::ThreadOpenConnections()
         if (!Params().AllowMultipleAddressesFromGroup()) {
             LOCK(cs_vNodes);
             BOOST_FOREACH (CNode* pnode, vNodes) {
-                if (!pnode->fInbound && !pnode->fAddnode && !pnode->fDynode) {
+                if (!pnode->fInbound && !pnode->fAddnode && !pnode->fServiceNode) {
                     // Count the peers that have all relevant services
                     if (pnode->fSuccessfullyConnected && !pnode->fFeeler && ((pnode->nServices & nRelevantServices) == nRelevantServices)) {
                         nOutboundRelevant++;
@@ -1868,9 +1869,9 @@ void CConnman::ThreadOpenAddedConnections()
     }
 }
 
-void CConnman::ThreadOpenDynodeConnections()
+void CConnman::ThreadOpenServiceNodeConnections()
 {
-    // Connecting to specific addresses, no dynode connections available
+    // Connecting to specific addresses, no servicenode connections available
     if (IsArgSet("-connect") && mapMultiArgs.at("-connect").size() > 0)
         return;
 
@@ -1878,39 +1879,39 @@ void CConnman::ThreadOpenDynodeConnections()
         if (!interruptNet.sleep_for(std::chrono::milliseconds(1000)))
             return;
 
-        CSemaphoreGrant grant(*semDynodeOutbound);
+        CSemaphoreGrant grant(*semServiceNodeOutbound);
         if (interruptNet)
             return;
 
-        // NOTE: Process only one pending dynode at a time
+        // NOTE: Process only one pending servicenode at a time
 
-        LOCK(cs_vPendingDynodes);
-        if (vPendingDynodes.empty()) {
+        LOCK(cs_vPendingServiceNodes);
+        if (vPendingServiceNodes.empty()) {
             // nothing to do, keep waiting
             continue;
         }
 
-        const CService addr = vPendingDynodes.front();
-        vPendingDynodes.erase(vPendingDynodes.begin());
-        if (IsDynodeOrDisconnectRequested(addr)) {
+        const CService addr = vPendingServiceNodes.front();
+        vPendingServiceNodes.erase(vPendingServiceNodes.begin());
+        if (IsServiceNodeOrDisconnectRequested(addr)) {
             // nothing to do, try the next one
             continue;
         }
 
-        OpenDynodeConnection(CAddress(addr, NODE_NETWORK));
+        OpenServiceNodeConnection(CAddress(addr, NODE_NETWORK));
         // should be in the list now if connection was opened
         ForNode(addr, CConnman::AllNodes, [&](CNode* pnode) {
             if (pnode->fDisconnect) {
                 return false;
             }
-            grant.MoveTo(pnode->grantDynodeOutbound);
+            grant.MoveTo(pnode->grantServiceNodeOutbound);
             return true;
         });
     }
 }
 
 // if successful, this moves the passed grant to the constructed node
-bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFailure, CSemaphoreGrant* grantOutbound, const char* pszDest, bool fOneShot, bool fFeeler, bool fAddnode, bool fConnectToDynode)
+bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFailure, CSemaphoreGrant* grantOutbound, const char* pszDest, bool fOneShot, bool fFeeler, bool fAddnode, bool fConnectToServiceNode)
 {
     //
     // Initiate outbound network connection
@@ -1948,8 +1949,8 @@ bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
         pnode->fFeeler = true;
     if (fAddnode)
         pnode->fAddnode = true;
-    if (fConnectToDynode)
-        pnode->fDynode = true;
+    if (fConnectToServiceNode)
+        pnode->fServiceNode = true;
 
     GetNodeSignals().InitializeNode(pnode, *this);
     {
@@ -1961,7 +1962,7 @@ bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
     return true;
 }
 
-bool CConnman::OpenDynodeConnection(const CAddress& addrConnect)
+bool CConnman::OpenServiceNodeConnection(const CAddress& addrConnect)
 {
     return OpenNetworkConnection(addrConnect, false, NULL, NULL, false, false, false, true);
 }
@@ -2173,7 +2174,7 @@ CConnman::CConnman(uint64_t nSeed0In, uint64_t nSeed1In) : addrman(Params().Allo
     nReceiveFloodSize = 0;
     semOutbound = NULL;
     semAddnode = NULL;
-    semDynodeOutbound = NULL;
+    semServiceNodeOutbound = NULL;
     nMaxConnections = 0;
     nMaxOutbound = 0;
     nMaxAddnode = 0;
@@ -2256,9 +2257,9 @@ bool CConnman::Start(CScheduler& scheduler, std::string& strNodeError, Options c
         semAddnode = new CSemaphore(nMaxAddnode);
     }
 
-    if (semDynodeOutbound == NULL) {
+    if (semServiceNodeOutbound == NULL) {
         // initialize semaphore
-        semDynodeOutbound = new CSemaphore(MAX_OUTBOUND_DYNODE_CONNECTIONS);
+        semServiceNodeOutbound = new CSemaphore(MAX_OUTBOUND_SERVICENODE_CONNECTIONS);
     }
 
     //
@@ -2288,8 +2289,8 @@ bool CConnman::Start(CScheduler& scheduler, std::string& strNodeError, Options c
     if (!mapMultiArgs.count("-connect") || mapMultiArgs.at("-connect").size() != 1 || mapMultiArgs.at("-connect")[0] != "0")
         threadOpenConnections = std::thread(&TraceThread<std::function<void()> >, "opencon", std::function<void()>(std::bind(&CConnman::ThreadOpenConnections, this)));
 
-    // Initiate dynode connections
-    threadOpenDynodeConnections = std::thread(&TraceThread<std::function<void()> >, "dncon", std::function<void()>(std::bind(&CConnman::ThreadOpenDynodeConnections, this)));
+    // Initiate servicenode connections
+    threadOpenServiceNodeConnections = std::thread(&TraceThread<std::function<void()> >, "dncon", std::function<void()>(std::bind(&CConnman::ThreadOpenServiceNodeConnections, this)));
 
     // Process messages
     threadMessageHandler = std::thread(&TraceThread<std::function<void()> >, "msghand", std::function<void()>(std::bind(&CConnman::ThreadMessageHandler, this)));
@@ -2345,9 +2346,9 @@ void CConnman::Interrupt()
         }
     }
 
-    if (semDynodeOutbound) {
-        for (int i = 0; i < MAX_OUTBOUND_DYNODE_CONNECTIONS; i++) {
-            semDynodeOutbound->post();
+    if (semServiceNodeOutbound) {
+        for (int i = 0; i < MAX_OUTBOUND_SERVICENODE_CONNECTIONS; i++) {
+            semServiceNodeOutbound->post();
         }
     }
 }
@@ -2356,8 +2357,8 @@ void CConnman::Stop()
 {
     if (threadMessageHandler.joinable())
         threadMessageHandler.join();
-    if (threadOpenDynodeConnections.joinable())
-        threadOpenDynodeConnections.join();
+    if (threadOpenServiceNodeConnections.joinable())
+        threadOpenServiceNodeConnections.join();
     if (threadOpenConnections.joinable())
         threadOpenConnections.join();
     if (threadOpenAddedConnections.joinable())
@@ -2394,8 +2395,8 @@ void CConnman::Stop()
     semOutbound = NULL;
     delete semAddnode;
     semAddnode = NULL;
-    delete semDynodeOutbound;
-    semDynodeOutbound = NULL;
+    delete semServiceNodeOutbound;
+    semServiceNodeOutbound = NULL;
 }
 
 void CConnman::DeleteNode(CNode* pnode)
@@ -2468,15 +2469,15 @@ bool CConnman::RemoveAddedNode(const std::string& strNode)
     return false;
 }
 
-bool CConnman::AddPendingDynode(const CService& service)
+bool CConnman::AddPendingServiceNode(const CService& service)
 {
-    LOCK(cs_vPendingDynodes);
-    for (std::vector<CService>::const_iterator it = vPendingDynodes.begin(); it != vPendingDynodes.end(); ++it) {
+    LOCK(cs_vPendingServiceNodes);
+    for (std::vector<CService>::const_iterator it = vPendingServiceNodes.begin(); it != vPendingServiceNodes.end(); ++it) {
         if (service == *it)
             return false;
     }
 
-    vPendingDynodes.push_back(service);
+    vPendingServiceNodes.push_back(service);
     return true;
 }
 
@@ -2737,7 +2738,7 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     nPingUsecStart = 0;
     nPingUsecTime = 0;
     fPingQueued = false;
-    fDynode = false;
+    fServiceNode = false;
     nMinPingUsecTime = std::numeric_limits<int64_t>::max();
     fPauseRecv = false;
     fPauseSend = false;
@@ -2874,10 +2875,10 @@ bool CConnman::ForNode(NodeId id, std::function<bool(const CNode* pnode)> cond, 
     return found != nullptr && cond(found) && func(found);
 }
 
-bool CConnman::IsDynodeOrDisconnectRequested(const CService& addr)
+bool CConnman::IsServiceNodeOrDisconnectRequested(const CService& addr)
 {
     return ForNode(addr, AllNodes, [](CNode* pnode) {
-        return pnode->fDynode || pnode->fDisconnect;
+        return pnode->fServiceNode || pnode->fDisconnect;
     });
 }
 

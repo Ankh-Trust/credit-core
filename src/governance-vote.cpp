@@ -1,11 +1,12 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "governance-vote.h"
-#include "dynode-sync.h"
-#include "dynodeman.h"
+#include "servicenode-sync.h"
+#include "servicenodeman.h"
 #include "governance-object.h"
 #include "messagesigner.h"
 #include "util.h"
@@ -87,7 +88,7 @@ CGovernanceVote::CGovernanceVote()
     : fValid(true),
       fSynced(false),
       nVoteSignal(int(VOTE_SIGNAL_NONE)),
-      dynodeOutpoint(),
+      servicenodeOutpoint(),
       nParentHash(),
       nVoteOutcome(int(VOTE_OUTCOME_NONE)),
       nTime(0),
@@ -95,11 +96,11 @@ CGovernanceVote::CGovernanceVote()
 {
 }
 
-CGovernanceVote::CGovernanceVote(const COutPoint& outpointDynodeIn, const uint256& nParentHashIn, vote_signal_enum_t eVoteSignalIn, vote_outcome_enum_t eVoteOutcomeIn)
+CGovernanceVote::CGovernanceVote(const COutPoint& outpointServiceNodeIn, const uint256& nParentHashIn, vote_signal_enum_t eVoteSignalIn, vote_outcome_enum_t eVoteOutcomeIn)
     : fValid(true),
       fSynced(false),
       nVoteSignal(eVoteSignalIn),
-      dynodeOutpoint(outpointDynodeIn),
+      servicenodeOutpoint(outpointServiceNodeIn),
       nParentHash(nParentHashIn),
       nVoteOutcome(eVoteOutcomeIn),
       nTime(GetAdjustedTime()),
@@ -111,7 +112,7 @@ CGovernanceVote::CGovernanceVote(const COutPoint& outpointDynodeIn, const uint25
 std::string CGovernanceVote::ToString() const
 {
     std::ostringstream ostr;
-    ostr << dynodeOutpoint.ToStringShort() << ":"
+    ostr << servicenodeOutpoint.ToStringShort() << ":"
          << nTime << ":"
          << CGovernanceVoting::ConvertOutcomeToString(GetOutcome()) << ":"
          << CGovernanceVoting::ConvertSignalToString(GetSignal());
@@ -121,7 +122,7 @@ std::string CGovernanceVote::ToString() const
 void CGovernanceVote::Relay(CConnman& connman) const
 {
     // Do not relay until fully synced
-    if (!dynodeSync.IsSynced()) {
+    if (!servicenodeSync.IsSynced()) {
         LogPrint("gobject", "CGovernanceVote::Relay -- won't relay until fully synced\n");
         return;
     }
@@ -135,7 +136,7 @@ void CGovernanceVote::UpdateHash() const
     // Note: doesn't match serialization
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-    ss << dynodeOutpoint << uint8_t{} << 0xffffffff; // adding dummy values here to match old hashing format
+    ss << servicenodeOutpoint << uint8_t{} << 0xffffffff; // adding dummy values here to match old hashing format
     ss << nParentHash;
     ss << nVoteSignal;
     ss << nVoteOutcome;
@@ -153,32 +154,32 @@ uint256 CGovernanceVote::GetSignatureHash() const
     return SerializeHash(*this);
 }
 
-bool CGovernanceVote::Sign(const CKey& keyDynode, const CPubKey& pubKeyDynode)
+bool CGovernanceVote::Sign(const CKey& keyServiceNode, const CPubKey& pubKeyServiceNode)
 {
     std::string strError;
 
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::SignHash(hash, keyDynode, vchSig)) {
+        if (!CHashSigner::SignHash(hash, keyServiceNode, vchSig)) {
             LogPrintf("CGovernanceVote::Sign -- SignHash() failed\n");
             return false;
         }
 
-        if (!CHashSigner::VerifyHash(hash, pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, pubKeyServiceNode, vchSig, strError)) {
             LogPrintf("CGovernanceVote::Sign -- VerifyHash() failed, error: %s\n", strError);
             return false;
         }
     } else {
-        std::string strMessage = dynodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
+        std::string strMessage = servicenodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
                                  std::to_string(nVoteSignal) + "|" + std::to_string(nVoteOutcome) + "|" + std::to_string(nTime);
 
-        if (!CMessageSigner::SignMessage(strMessage, vchSig, keyDynode)) {
+        if (!CMessageSigner::SignMessage(strMessage, vchSig, keyServiceNode)) {
             LogPrintf("CGovernanceVote::Sign -- SignMessage() failed\n");
             return false;
         }
 
-        if (!CMessageSigner::VerifyMessage(pubKeyDynode, vchSig, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
             LogPrintf("CGovernanceVote::Sign -- VerifyMessage() failed, error: %s\n", strError);
             return false;
         }
@@ -187,33 +188,33 @@ bool CGovernanceVote::Sign(const CKey& keyDynode, const CPubKey& pubKeyDynode)
     return true;
 }
 
-bool CGovernanceVote::CheckSignature(const CPubKey& pubKeyDynode) const
+bool CGovernanceVote::CheckSignature(const CPubKey& pubKeyServiceNode) const
 {
     std::string strError;
 
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::VerifyHash(hash, pubKeyDynode, vchSig, strError)) {
+        if (!CHashSigner::VerifyHash(hash, pubKeyServiceNode, vchSig, strError)) {
             // could be a signature in old format
-            std::string strMessage = dynodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
+            std::string strMessage = servicenodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
                                      std::to_string(nVoteSignal) + "|" +
                                      std::to_string(nVoteOutcome) + "|" +
                                      std::to_string(nTime);
 
-            if (!CMessageSigner::VerifyMessage(pubKeyDynode, vchSig, strMessage, strError)) {
+            if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
                 // nope, not in old format either
                 LogPrint("gobject", "CGovernanceVote::IsValid -- VerifyMessage() failed, error: %s\n", strError);
                 return false;
             }
         }
     } else {
-        std::string strMessage = dynodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
+        std::string strMessage = servicenodeOutpoint.ToStringShort() + "|" + nParentHash.ToString() + "|" +
                                  std::to_string(nVoteSignal) + "|" +
                                  std::to_string(nVoteOutcome) + "|" +
                                  std::to_string(nTime);
 
-        if (!CMessageSigner::VerifyMessage(pubKeyDynode, vchSig, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
             LogPrint("gobject", "CGovernanceVote::IsValid -- VerifyMessage() failed, error: %s\n", strError);
             return false;
         }
@@ -241,21 +242,21 @@ bool CGovernanceVote::IsValid(bool fSignatureCheck) const
         return false;
     }
 
-    dynode_info_t infoDn;
-    if (!dnodeman.GetDynodeInfo(dynodeOutpoint, infoDn)) {
-        LogPrint("gobject", "CGovernanceVote::IsValid -- Unknown Dynode - %s\n", dynodeOutpoint.ToStringShort());
+    servicenode_info_t infoDn;
+    if (!dnodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
+        LogPrint("gobject", "CGovernanceVote::IsValid -- Unknown ServiceNode - %s\n", servicenodeOutpoint.ToStringShort());
         return false;
     }
 
     if (!fSignatureCheck)
         return true;
 
-    return CheckSignature(infoDn.pubKeyDynode);
+    return CheckSignature(infoDn.pubKeyServiceNode);
 }
 
 bool operator==(const CGovernanceVote& vote1, const CGovernanceVote& vote2)
 {
-    bool fResult = ((vote1.dynodeOutpoint == vote2.dynodeOutpoint) &&
+    bool fResult = ((vote1.servicenodeOutpoint == vote2.servicenodeOutpoint) &&
                     (vote1.nParentHash == vote2.nParentHash) &&
                     (vote1.nVoteOutcome == vote2.nVoteOutcome) &&
                     (vote1.nVoteSignal == vote2.nVoteSignal) &&
@@ -265,11 +266,11 @@ bool operator==(const CGovernanceVote& vote1, const CGovernanceVote& vote2)
 
 bool operator<(const CGovernanceVote& vote1, const CGovernanceVote& vote2)
 {
-    bool fResult = (vote1.dynodeOutpoint < vote2.dynodeOutpoint);
+    bool fResult = (vote1.servicenodeOutpoint < vote2.servicenodeOutpoint);
     if (!fResult) {
         return false;
     }
-    fResult = (vote1.dynodeOutpoint == vote2.dynodeOutpoint);
+    fResult = (vote1.servicenodeOutpoint == vote2.servicenodeOutpoint);
 
     fResult = fResult && (vote1.nParentHash < vote2.nParentHash);
     if (!fResult) {

@@ -14,7 +14,7 @@
 #include "primitives/transaction.h"
 #include "utilmoneystr.h"
 #include "utilstrencodings.h"
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "spork.h"
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
@@ -46,7 +46,7 @@ UniValue createrawbdapaccount(const JSONRPCRequest& request)
 
     EnsureWalletIsUnlocked();
 
-    if (!dynodeSync.IsBlockchainSynced()) {
+    if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");
     }
 
@@ -105,7 +105,7 @@ UniValue createrawbdapaccount(const JSONRPCRequest& request)
     if (!pwalletMain->GetKeysFromPool(pubWalletKey, vchDHTPubKey, sxAddr, true))
         throw std::runtime_error("Error: Keypool ran out, please call keypoolrefill first");
     CKeyID keyWalletID = pubWalletKey.GetID();
-    CDynamicAddress walletAddress = CDynamicAddress(keyWalletID);
+    CCreditAddress walletAddress = CCreditAddress(keyWalletID);
 
     pwalletMain->SetAddressBook(keyWalletID, strObjectID, "bdap-wallet");
     
@@ -161,7 +161,7 @@ UniValue createrawbdapaccount(const JSONRPCRequest& request)
     if (!ExtractDestination(scriptStealth, newStealthDest))
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("Unable to get destination address using stealth address %s", sxAddr.ToString()));
 
-    CDynamicAddress addressStealth(newStealthDest);
+    CCreditAddress addressStealth(newStealthDest);
     CScript stealtDestination = GetScriptForDestination(addressStealth.Get());
 
     // Add the Stealth OP return data
@@ -191,7 +191,7 @@ UniValue createrawbdapaccount(const JSONRPCRequest& request)
         FormatMoney(nLinkRequestAmount), FormatMoney(nLinkAcceptAmount), FormatMoney(nTotalLinkAmount));
 
     // Create BDAP credits operation script
-    std::vector<unsigned char> vchMoveSource = vchFromString(std::string("DYN"));
+    std::vector<unsigned char> vchMoveSource = vchFromString(std::string("_AC"));
     std::vector<unsigned char> vchMoveDestination = vchFromString(std::string("BDAP"));
     CScript scriptBdapCredits;
     scriptBdapCredits << CScript::EncodeOP_N(OP_BDAP_MOVE) << CScript::EncodeOP_N(OP_BDAP_ASSET) 
@@ -236,7 +236,7 @@ UniValue sendandpayrawbdapaccount(const JSONRPCRequest& request)
            "\nAs a JSON-RPC call\n" + 
            HelpExampleRpc("sendandpayrawbdapaccount", "<hexstring>"));
 
-    if (!dynodeSync.IsBlockchainSynced()) {
+    if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");
     }
 

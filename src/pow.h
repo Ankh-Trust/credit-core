@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_POW_H
-#define DYNAMIC_POW_H
+#ifndef CREDIT_POW_H
+#define CREDIT_POW_H
 
 #include <arith_uint256.h>
 #include <chain.h>
@@ -47,4 +48,4 @@ unsigned int GetNextWorkRequired(const INDEX_TYPE pindexLast, const BLOCK_TYPE b
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
 bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params&);
 
-#endif // DYNAMIC_POW_H
+#endif // CREDIT_POW_H

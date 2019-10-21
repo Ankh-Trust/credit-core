@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="styleSheet">
-      <string notr="true">QTabWidget:tab-bar { alignment: left }    
+      <string notr="true">QTabWidget:tab-bar { alignment: left }
 QTabBar { alignment: left; }</string>
      </property>
      <property name="currentIndex">
@@ -205,14 +205,14 @@ QTabBar { alignment: left; }</string>
         </widget>
        </item>
        <item row="12" column="0">
-        <widget class="QLabel" name="dynodeCountLabel">
+        <widget class="QLabel" name="servicenodeCountLabel">
          <property name="text">
-          <string>Number of Dynodes</string>
+          <string>Number of ServiceNodes</string>
          </property>
         </widget>
        </item>
        <item row="12" column="1">
-        <widget class="QLabel" name="dynodeCount">
+        <widget class="QLabel" name="servicenodeCount">
          <property name="text">
           <string>N/A</string>
          </property>
@@ -364,7 +364,7 @@ QTabBar { alignment: left; }</string>
          <item>
           <widget class="QPushButton" name="openDebugLogfileButton">
            <property name="toolTip">
-            <string>Open the Dynamic debug log file from the current data directory. This can take a few seconds for large log files.</string>
+            <string>Open the Credit debug log file from the current data directory. This can take a few seconds for large log files.</string>
            </property>
            <property name="text">
             <string>&amp;Open</string>
@@ -594,8 +594,8 @@ QTabBar { alignment: left; }</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../dynamic.qrc">
-             <normaloff>:/icons/drk/remove</normaloff>:/icons/drk/remove</iconset>
+            <iconset resource="../credit.qrc">
+             <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
            </property>
            <property name="shortcut">
             <string notr="true">Ctrl+L</string>
@@ -649,9 +649,9 @@ QTabBar { alignment: left; }</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../dynamic.qrc">
-             <normaloff>:/icons/drk/prompticon</normaloff>
-             <disabledoff>:/icons/drk/prompticon</disabledoff>:/icons/drk/prompticon</iconset>
+            <iconset resource="../credit.qrc">
+             <normaloff>:/icons/prompticon</normaloff>
+             <disabledoff>:/icons/prompticon</disabledoff>:/icons/prompticon</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -699,64 +699,6 @@ QTabBar { alignment: left; }</string>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QSlider" name="sldGraphRange">
-             <property name="styleSheet">
-              <string notr="true">QSlider::groove:horizontal {
-border: 1px solid #bbb;
-background: white;
-height: 10px;
-border-radius: 4px;
-}
-
-QSlider::sub-page:horizontal {
-background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1,
-    stop: 0 #66e, stop: 1 #bbf);
-background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,
-    stop: 0 #bbf, stop: 1 #520072);
-border: 1px solid #777;
-height: 10px;
-border-radius: 4px;
-}
-
-QSlider::add-page:horizontal {
-background: #fff;
-border: 1px solid #777;
-height: 10px;
-border-radius: 4px;
-}
-
-QSlider::handle:horizontal {
-background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-    stop:0 #eee, stop:1 #520072);
-border: 1px solid #777;
-width: 13px;
-margin-top: -2px;
-margin-bottom: -2px;
-border-radius: 4px;
-}
-
-QSlider::handle:horizontal:hover {
-background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-    stop:0 #fff, stop:1 #ddd);
-border: 1px solid #444;
-border-radius: 4px;
-}
-
-QSlider::sub-page:horizontal:disabled {
-background: #bbb;
-border-color: #999;
-}
-
-QSlider::add-page:horizontal:disabled {
-background: #eee;
-border-color: #999;
-}
-
-QSlider::handle:horizontal:disabled {
-background: #eee;
-border: 1px solid #aaa;
-border-radius: 4px;
-}</string>
-             </property>
              <property name="minimum">
               <number>0</number>
              </property>
@@ -831,9 +773,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>0</red>
-                      <green>255</green>
-                      <blue>0</blue>
+                      <red>19</red>
+                      <green>98</green>
+                      <blue>7</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -842,9 +784,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>0</red>
-                      <green>255</green>
-                      <blue>0</blue>
+                      <red>19</red>
+                      <green>98</green>
+                      <blue>7</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -853,9 +795,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>0</red>
-                      <green>255</green>
-                      <blue>0</blue>
+                      <red>19</red>
+                      <green>98</green>
+                      <blue>7</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -911,9 +853,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>255</red>
-                      <green>0</green>
-                      <blue>0</blue>
+                      <red>192</red>
+                      <green>192</green>
+                      <blue>192</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -922,9 +864,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>255</red>
-                      <green>0</green>
-                      <blue>0</blue>
+                      <red>192</red>
+                      <green>192</green>
+                      <blue>192</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -933,9 +875,9 @@ border-radius: 4px;
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
-                      <red>255</red>
-                      <green>0</green>
-                      <blue>0</blue>
+                      <red>192</red>
+                      <green>192</green>
+                      <blue>192</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -1846,7 +1788,7 @@ border-radius: 4px;
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../dynamic.qrc"/>
+  <include location="../credit.qrc"/>
  </resources>
  <connections/>
 </ui>

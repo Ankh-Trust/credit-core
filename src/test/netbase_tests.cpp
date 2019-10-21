@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "netbase.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 
 #include <string>
 
@@ -78,15 +78,15 @@ BOOST_AUTO_TEST_CASE(netbase_splithost)
     BOOST_CHECK(TestSplitHost("www.bitcoin.org:80", "www.bitcoin.org", 80));
     BOOST_CHECK(TestSplitHost("[www.bitcoin.org]:80", "www.bitcoin.org", 80));
     BOOST_CHECK(TestSplitHost("127.0.0.1", "127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("127.0.0.1:33300", "127.0.0.1", 33300));
+    BOOST_CHECK(TestSplitHost("127.0.0.1:33600", "127.0.0.1", 33600));
     BOOST_CHECK(TestSplitHost("[127.0.0.1]", "127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("[127.0.0.1]:33300", "127.0.0.1", 33300));
+    BOOST_CHECK(TestSplitHost("[127.0.0.1]:33600", "127.0.0.1", 33600));
     BOOST_CHECK(TestSplitHost("::ffff:127.0.0.1", "::ffff:127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("[::ffff:127.0.0.1]:33300", "::ffff:127.0.0.1", 33300));
-    BOOST_CHECK(TestSplitHost("[::]:33300", "::", 33300));
-    BOOST_CHECK(TestSplitHost("::33300", "::33300", -1));
-    BOOST_CHECK(TestSplitHost(":33300", "", 33300));
-    BOOST_CHECK(TestSplitHost("[]:33300", "", 33300));
+    BOOST_CHECK(TestSplitHost("[::ffff:127.0.0.1]:33600", "::ffff:127.0.0.1", 33600));
+    BOOST_CHECK(TestSplitHost("[::]:33600", "::", 33600));
+    BOOST_CHECK(TestSplitHost("::33600", "::33600", -1));
+    BOOST_CHECK(TestSplitHost(":33600", "", 33600));
+    BOOST_CHECK(TestSplitHost("[]:33600", "", 33600));
     BOOST_CHECK(TestSplitHost("", "", -1));
 }
 
@@ -99,10 +99,10 @@ bool static TestParse(std::string src, std::string canon)
 BOOST_AUTO_TEST_CASE(netbase_lookupnumeric)
 {
     BOOST_CHECK(TestParse("127.0.0.1", "127.0.0.1:65535"));
-    BOOST_CHECK(TestParse("127.0.0.1:33300", "127.0.0.1:33300"));
+    BOOST_CHECK(TestParse("127.0.0.1:33600", "127.0.0.1:33600"));
     BOOST_CHECK(TestParse("::ffff:127.0.0.1", "127.0.0.1:65535"));
     BOOST_CHECK(TestParse("::", "[::]:65535"));
-    BOOST_CHECK(TestParse("[::]:33300", "[::]:33300"));
+    BOOST_CHECK(TestParse("[::]:33600", "[::]:33600"));
     BOOST_CHECK(TestParse("[127.0.0.1]", "127.0.0.1:65535"));
     BOOST_CHECK(TestParse(":::", "[::]:0"));
 }
@@ -277,11 +277,11 @@ BOOST_AUTO_TEST_CASE(netbase_getgroup)
     BOOST_CHECK(ResolveIP("1.2.3.4").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // IPv4
     BOOST_CHECK(ResolveIP("::FFFF:0:102:304").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC6145
     BOOST_CHECK(ResolveIP("64:FF9B::102:304").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC6052
-    BOOST_CHECK(ResolveIP("2002:102:304:33300:33300:33300:33300:33300").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC3964
-    BOOST_CHECK(ResolveIP("2001:0:33300:33300:33300:33300:FEFD:FCFB").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC4380
+    BOOST_CHECK(ResolveIP("2002:102:304:33600:33600:33600:33600:33600").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC3964
+    BOOST_CHECK(ResolveIP("2001:0:33600:33600:33600:33600:FEFD:FCFB").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV4)(1)(2)); // RFC4380
     BOOST_CHECK(ResolveIP("FD87:D87E:EB43:edb1:8e4:3588:e546:35ca").GetGroup() == boost::assign::list_of((unsigned char)NET_TOR)(239)); // Tor
-    BOOST_CHECK(ResolveIP("2001:470:abcd:33300:33300:33300:33300:33300").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV6)(32)(1)(4)(112)(175)); //he.net
-    BOOST_CHECK(ResolveIP("2001:2001:33300:33300:33300:33300:33300:33300").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV6)(32)(1)(32)(1)); //IPv6
+    BOOST_CHECK(ResolveIP("2001:470:abcd:33600:33600:33600:33600:33600").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV6)(32)(1)(4)(112)(175)); //he.net
+    BOOST_CHECK(ResolveIP("2001:2001:33600:33600:33600:33600:33600:33600").GetGroup() == boost::assign::list_of((unsigned char)NET_IPV6)(32)(1)(32)(1)); //IPv6
 
 }
 

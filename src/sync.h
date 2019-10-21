@@ -1,11 +1,12 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Distributed under the MIT/X11 software license, see the accompanying
 
-#ifndef DYNAMIC_SYNC_H
-#define DYNAMIC_SYNC_H
+#ifndef CREDIT_SYNC_H
+#define CREDIT_SYNC_H
 
 #include <threadsafety.h>
 
@@ -294,4 +295,4 @@ public:
     }
 };
 
-#endif // DYNAMIC_SYNC_H
+#endif // CREDIT_SYNC_H

@@ -1,0 +1,6 @@
+usr/local/bin/credit-qt usr/bin
+share/pixmaps/credit32.xpm usr/share/pixmaps
+share/pixmaps/credit16.xpm usr/share/pixmaps
+share/pixmaps/credit128.png usr/share/pixmaps
+debian/credit-qt.desktop usr/share/applications
+debian/credit-qt.protocol usr/share/kde4/services/

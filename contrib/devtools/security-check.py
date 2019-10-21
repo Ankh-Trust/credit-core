@@ -25,7 +25,7 @@ def check_ELF_PIE(executable):
     ok = False
     for line in stdout.split('\n'):
         line = line.split()
-        if len(line)>=2 and line[0] == 'Type:' and line[1] == 'DYN':
+        if len(line)>=2 and line[0] == 'Type:' and line[1] == '0AC':
             ok = True
     return ok
 
@@ -75,13 +75,13 @@ def check_ELF_RELRO(executable):
     '''
     Check for read-only relocations.
     GNU_RELRO program header must exist
-    Dynamic section must have BIND_NOW flag
+    Credit section must have BIND_NOW flag
     '''
     have_gnu_relro = False
     for (typ, flags) in get_ELF_program_headers(executable):
         # Note: not checking flags == 'R': here as linkers set the permission differently
         # This does not affect security: the permission flags of the GNU_RELRO program header are ignored, the PT_LOAD header determines the effective permissions.
-        # However, the dynamic linker need to write to this area so these are RW.
+        # However, the credit linker need to write to this area so these are RW.
         # Glibc itself takes care of mprotecting this area R after relocations are finished.
         # See also http://permalink.gmane.org/gmane.comp.gnu.binutils/71347
         if typ == 'GNU_RELRO':
@@ -102,7 +102,7 @@ def check_ELF_Canary(executable):
     '''
     Check for use of stack canary
     '''
-    p = subprocess.Popen([READELF_CMD, '--dyn-syms', '-W', executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    p = subprocess.Popen([READELF_CMD, '--_ac-syms', '-W', executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     (stdout, stderr) = p.communicate()
     if p.returncode:
         raise IOError('Error opening file')
@@ -128,7 +128,7 @@ def get_PE_dll_characteristics(executable):
 
 
 def check_PE_PIE(executable):
-    '''PIE: DllCharacteristics bit 0x40 signifies dynamicbase (ASLR)'''
+    '''PIE: DllCharacteristics bit 0x40 signifies creditbase (ASLR)'''
     return bool(get_PE_dll_characteristics(executable) & 0x40)
 
 def check_PE_NX(executable):
@@ -178,4 +178,3 @@ if __name__ == '__main__':
             print('%s: cannot open' % filename)
             retval = 1
     exit(retval)
-

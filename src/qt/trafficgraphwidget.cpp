@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -78,12 +79,12 @@ float chooseOut(const TrafficSample& sample)
 void TrafficGraphWidget::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
-    painter.fillRect(rect(), Qt::black);
+    //painter.fillRect(rect(), Qt::black);
 
     if (fMax <= 0.0f)
         return;
 
-    QColor axisCol(Qt::gray);
+    QColor axisCol(Qt::black);
     int h = height() - YMARGIN * 2;
     painter.setPen(axisCol);
     painter.drawLine(XMARGIN, YMARGIN + h, width() - XMARGIN, YMARGIN + h);
@@ -123,14 +124,14 @@ void TrafficGraphWidget::paintEvent(QPaintEvent*)
     if (!queue.empty()) {
         QPainterPath pIn;
         paintPath(pIn, queue, boost::bind(chooseIn, _1));
-        painter.fillPath(pIn, QColor(0, 255, 0, 128));
-        painter.setPen(Qt::green);
+        painter.fillPath(pIn, QColor(19, 98, 7, 128));
+        painter.setPen(QColor(229, 228, 226, 128));
         painter.drawPath(pIn);
 
         QPainterPath pOut;
         paintPath(pOut, queue, boost::bind(chooseOut, _1));
-        painter.fillPath(pOut, QColor(255, 0, 0, 128));
-        painter.setPen(Qt::red);
+        painter.fillPath(pOut, QColor(229, 228, 226, 128));
+        painter.setPen(QColor(19, 98, 7, 128));
         painter.drawPath(pOut);
     }
 }

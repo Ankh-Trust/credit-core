@@ -1,4 +1,4 @@
-dynamic               ICON    "pixmaps/dynamic.ico"
+credit               ICON    "pixmaps/credit.ico"
 
 #include "wx/msw/wx.rc"
 

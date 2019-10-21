@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_DHT_DATAENTRY_H
-#define DYNAMIC_DHT_DATAENTRY_H
+#ifndef CREDIT_DHT_DATAENTRY_H
+#define CREDIT_DHT_DATAENTRY_H
 
 #include "serialize.h"
 
@@ -78,4 +78,4 @@ private:
     size_t record;
 };
 
-#endif // DYNAMIC_DHT_DATAENTRY_H
+#endif // CREDIT_DHT_DATAENTRY_H

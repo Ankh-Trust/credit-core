@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,7 +10,7 @@
 #include "consensus/consensus.h"
 #include "consensus/merkle.h"
 #include "consensus/validation.h"
-#include "dynode-payments.h"
+#include "servicenode-payments.h"
 #include "fluid/fluiddb.h"
 #include "fluid/fluidmining.h"
 #include "fluid/fluidmint.h"
@@ -273,7 +274,7 @@ std::unique_ptr<CBlockTemplate> CreateNewBlock(const CChainParams& chainparams, 
         }
 
         CAmount blockReward = GetFluidMiningReward(nHeight);
-        CDynamicAddress mintAddress;
+        CCreditAddress mintAddress;
         CAmount fluidIssuance = 0;
         CFluidMint fluidMint;
         bool areWeMinting = GetMintingInstructions(nHeight, fluidMint);
@@ -309,18 +310,18 @@ std::unique_ptr<CBlockTemplate> CreateNewBlock(const CChainParams& chainparams, 
             LogPrintf("CreateNewBlock(): Generated Fluid Issuance Transaction:\n%s\n", txNew.ToString());
         }
 
-        // Update coinbase transaction with additional info about dynode and governance payments,
+        // Update coinbase transaction with additional info about servicenode and governance payments,
         // get some info back to pass to getblocktemplate
-        FillBlockPayments(txNew, nHeight, blockReward, pblocktemplate->txoutDynode, pblocktemplate->voutSuperblock);
-        // LogPrintf("CreateNewBlock -- nBlockHeight %d blockReward %lld txoutDynode %s txNew %s",
-        //             nHeight, blockReward, block.txoutDynode.ToString(), txNew.ToString());
+        FillBlockPayments(txNew, nHeight, blockReward, pblocktemplate->txoutServiceNode, pblocktemplate->voutSuperblock);
+        // LogPrintf("CreateNewBlock -- nBlockHeight %d blockReward %lld txoutServiceNode %s txNew %s",
+        //             nHeight, blockReward, block.txoutServiceNode.ToString(), txNew.ToString());
 
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
         LogPrintf("CreateNewBlock(): total size %u txs: %u fees: %ld sigops %d\n", nBlockSize, nBlockTx, nFees, nBlockSigOps);
 
         CAmount blockAmount = blockReward + fluidIssuance;
-        LogPrintf("CreateNewBlock(): Computed Miner Block Reward is %ld DYN\n", FormatMoney(blockAmount));
+        LogPrintf("CreateNewBlock(): Computed Miner Block Reward is %ld 0AC\n", FormatMoney(blockAmount));
 
         // Update block coinbase
         block.vtx[0] = MakeTransactionRef(std::move(txNew));

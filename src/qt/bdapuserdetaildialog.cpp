@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -52,7 +53,7 @@ void BdapUserDetailDialog::populateValues(BDAP::ObjectType accountType, const st
     std::string oid = "";
 
     UniValue result = UniValue(UniValue::VOBJ);
- 
+
     if (resultinput.size() == 0) {
         JSONRPCRequest jreq;
         std::vector<std::string> params;
@@ -93,7 +94,7 @@ void BdapUserDetailDialog::populateValues(BDAP::ObjectType accountType, const st
             outputmessage = e.what();
             QMessageBox::critical(0, QObject::tr("BDAP Error"), QObject::tr(outputmessage.c_str()));
             return;
-        }        
+        }
 
     } //if resultinput.size() = 0
     else {

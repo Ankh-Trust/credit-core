@@ -17,7 +17,7 @@ bool bdapFeesPopup(QWidget *parentDialog, const opcodetype& opCodeAction, const 
     CAmount oneTimeFee;
     CAmount depositFee;
     CAmount totalAmount;
-    //DynamicUnits::Unit u;
+    //CreditUnits::Unit u;
     bool displayMonths = false;
     CAmount currBalance = pwalletMain->GetBalance();
 
@@ -39,16 +39,16 @@ bool bdapFeesPopup(QWidget *parentDialog, const opcodetype& opCodeAction, const 
         return false;
     }
 
-    questionString.append(QObject::tr("<b>%1</b> will be withdrawn from any available funds (not anonymous).<br />") .arg(DynamicUnits::formatHtmlWithUnit(unit, totalAmount)));
+    questionString.append(QObject::tr("<b>%1</b> will be withdrawn from any available funds (not anonymous).<br />") .arg(CreditUnits::formatHtmlWithUnit(unit, totalAmount)));
     questionString.append(QObject::tr("<hr>"));
-    //questionString.append(QObject::tr("Current balance = <b>%1</b><br />") .arg(DynamicUnits::formatHtmlWithUnit(u, currBalance)));
-    questionString.append(QObject::tr("Total amount = <b>%1</b><br />") .arg(DynamicUnits::formatHtmlWithUnit(unit, totalAmount)));
-    questionString.append(QObject::tr("Monthly fee = %1" ) .arg(DynamicUnits::formatHtmlWithUnit(unit, monthlyFee)));
+    //questionString.append(QObject::tr("Current balance = <b>%1</b><br />") .arg(CreditUnits::formatHtmlWithUnit(u, currBalance)));
+    questionString.append(QObject::tr("Total amount = <b>%1</b><br />") .arg(CreditUnits::formatHtmlWithUnit(unit, totalAmount)));
+    questionString.append(QObject::tr("Monthly fee = %1" ) .arg(CreditUnits::formatHtmlWithUnit(unit, monthlyFee)));
     if (displayMonths)
         questionString.append(QObject::tr("&nbsp;(for %1 months)") .arg(regMonths));
     questionString.append(QObject::tr("<br />"));
-    questionString.append(QObject::tr("One Time Fee = %1<br />") .arg(DynamicUnits::formatHtmlWithUnit(unit, oneTimeFee)));
-    questionString.append(QObject::tr("Deposit Fee = %1") .arg(DynamicUnits::formatHtmlWithUnit(unit, depositFee)));
+    questionString.append(QObject::tr("One Time Fee = %1<br />") .arg(CreditUnits::formatHtmlWithUnit(unit, oneTimeFee)));
+    questionString.append(QObject::tr("Deposit Fee = %1") .arg(CreditUnits::formatHtmlWithUnit(unit, depositFee)));
     questionString.append(QObject::tr("<hr>"));
 
     reply = QMessageBox::question(parentDialog, QObject::tr("Confirm BDAP Transaction Amount"), questionString, QMessageBox::Yes|QMessageBox::No);

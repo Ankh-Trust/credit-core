@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_H
-#define DYNAMIC_BDAP_H
+#ifndef CREDIT_BDAP_H
+#define CREDIT_BDAP_H
 
 #include <string>
 #include <vector>
@@ -59,10 +59,10 @@ static constexpr bool ENFORCE_BDAP_CREDIT_USE             = false; // TODO: Chan
 static const std::string DEFAULT_PUBLIC_DOMAIN            = "bdap.io";
 static const std::string DEFAULT_PUBLIC_OU                = "public";
 static const std::string DEFAULT_ADMIN_OU                 = "admin";
-static const std::string DEFAULT_ORGANIZATION_NAME        = "Duality Blockchain Solutions";
+static const std::string DEFAULT_ORGANIZATION_NAME        = "Ankh";
 /*
 BDAP Root OID: 2.16.840.1.114564
-{joint-iso-ccitt(2) country(16) US(840) organization(1) BDAP(114564)} 
+{joint-iso-ccitt(2) country(16) US(840) organization(1) BDAP(114564)}
 */
 static const std::string DEFAULT_OID_PREFIX               = "2.16.840.1.114564";
 
@@ -78,4 +78,4 @@ static const CharString vchDefaultAdminOU = ConvertConstantToCharString(DEFAULT_
 static const CharString vchDefaultOrganizationName = ConvertConstantToCharString(DEFAULT_ORGANIZATION_NAME);
 static const CharString vchDefaultOIDPrefix = ConvertConstantToCharString(DEFAULT_OID_PREFIX);
 
-#endif // DYNAMIC_BDAP_H
+#endif // CREDIT_BDAP_H

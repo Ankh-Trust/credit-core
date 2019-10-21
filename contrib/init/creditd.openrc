@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/credit/.credit" ]; then
+	CREDITD_DEFAULT_DATADIR="/var/lib/credit/.credit"
+else
+	CREDITD_DEFAULT_DATADIR="/var/lib/creditd"
+fi
+
+CREDITD_CONFIGFILE=${CREDITD_CONFIGFILE:-/etc/credit/credit.conf}
+CREDITD_PIDDIR=${CREDITD_PIDDIR:-/var/run/creditd}
+CREDITD_PIDFILE=${CREDITD_PIDFILE:-${CREDITD_PIDDIR}/creditd.pid}
+CREDITD_DATADIR=${CREDITD_DATADIR:-${CREDITD_DEFAULT_DATADIR}}
+CREDITD_USER=${CREDITD_USER:-${CREDIT_USER:-credit}}
+CREDITD_GROUP=${CREDITD_GROUP:-credit}
+CREDITD_BIN=${CREDITD_BIN:-/usr/bin/creditd}
+CREDITD_NICE=${CREDITD_NICE:-${NICELEVEL:-0}}
+CREDITD_OPTS="${CREDITD_OPTS:-${CREDIT_OPTS}}"
+
+name="Credit Daemon"
+description="Credit cryptocurrency P2P network daemon"
+
+command="/usr/bin/creditd"
+command_args="-pid=\"${CREDITD_PIDFILE}\" \
+		-conf=\"${CREDITD_CONFIGFILE}\" \
+		-datadir=\"${CREDITD_DATADIR}\" \
+		-daemon \
+		${CREDITD_OPTS}"
+
+required_files="${CREDITD_CONFIGFILE}"
+start_stop_daemon_args="-u ${CREDITD_USER} \
+			-N ${CREDITD_NICE} -w 2000"
+pidfile="${CREDITD_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${CREDITD_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${CREDITD_USER}:${CREDITD_GROUP}" \
+	"${CREDITD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${CREDITD_USER}:${CREDITD_GROUP}" \
+	"${CREDITD_PIDDIR}"
+
+	checkpath -f \
+	-o ${CREDITD_USER}:${CREDITD_GROUP} \
+	-m 0660 \
+	${CREDITD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${CREDITD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run creditd."
+		eerror "The setting must appear in ${CREDITD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Credit Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

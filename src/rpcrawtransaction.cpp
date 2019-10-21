@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -56,7 +57,7 @@ void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fInclud
 
     UniValue a(UniValue::VARR);
     BOOST_FOREACH (const CTxDestination& addr, addresses)
-        a.push_back(CDynamicAddress(addr).ToString());
+        a.push_back(CCreditAddress(addr).ToString());
     out.push_back(Pair("addresses", a));
 }
 
@@ -87,9 +88,9 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry)
                 in.push_back(Pair("value", ValueFromAmount(spentInfo.satoshis)));
                 in.push_back(Pair("valueSat", spentInfo.satoshis));
                 if (spentInfo.addressType == 1) {
-                    in.push_back(Pair("address", CDynamicAddress(CKeyID(spentInfo.addressHash)).ToString()));
+                    in.push_back(Pair("address", CCreditAddress(CKeyID(spentInfo.addressHash)).ToString()));
                 } else if (spentInfo.addressType == 2) {
-                    in.push_back(Pair("address", CDynamicAddress(CScriptID(spentInfo.addressHash)).ToString()));
+                    in.push_back(Pair("address", CCreditAddress(CScriptID(spentInfo.addressHash)).ToString()));
                 }
             }
         }
@@ -190,7 +191,7 @@ UniValue getrawtransaction(const JSONRPCRequest& request)
                             "         \"reqSigs\" : n,            (numeric) The required sigs\n"
                             "         \"type\" : \"pubkeyhash\",  (string) The type, eg 'pubkeyhash'\n"
                             "         \"addresses\" : [           (json array of string)\n"
-                            "           \"dynamicaddress\"        (string) dynamic address\n"
+                            "           \"creditaddress\"        (string) credit address\n"
                             "           ,...\n"
                             "         ]\n"
                             "       }\n"
@@ -381,7 +382,7 @@ UniValue createrawtransaction(const JSONRPCRequest& request)
             "     ]\n"
             "2. \"outputs\"             (string, required) a json object with outputs\n"
             "    {\n"
-            "      \"address\": x.xxx   (numeric or string, required) The key is the dynamic address, the numeric value (can be string) is the " +
+            "      \"address\": x.xxx   (numeric or string, required) The key is the credit address, the numeric value (can be string) is the " +
             CURRENCY_UNIT + " amount\n"
                             "      \"data\": \"hex\",     (string, required) The key is \"data\", the value is hex encoded data\n"
                             "      ...\n"
@@ -452,7 +453,7 @@ UniValue createrawtransaction(const JSONRPCRequest& request)
         } else {
             CTxDestination dest = DecodeDestination(name_);
             if (!IsValidDestination(dest))
-                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("Invalid Dynamic address:  %s", name_ ));
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("Invalid Credit address:  %s", name_ ));
 
             if (setDestAddress.count(dest))
                 throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("Invalid parameter, duplicated address:  %s", name_));
@@ -468,7 +469,7 @@ UniValue createrawtransaction(const JSONRPCRequest& request)
                 fStealthAddress = true;
                 CTxDestination newDest;
                 if (ExtractDestination(scriptPubKey, newDest))
-                    LogPrint("stealth", "%s -- Stealth send to address: %s\n", __func__, CDynamicAddress(newDest).ToString());
+                    LogPrint("stealth", "%s -- Stealth send to address: %s\n", __func__, CCreditAddress(newDest).ToString());
 
             } else
             {
@@ -529,7 +530,7 @@ UniValue decoderawtransaction(const JSONRPCRequest& request)
                             "         \"reqSigs\" : n,            (numeric) The required sigs\n"
                             "         \"type\" : \"pubkeyhash\",  (string) The type, eg 'pubkeyhash'\n"
                             "         \"addresses\" : [           (json array of string)\n"
-                            "           \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\"   (string) Dynamic address\n"
+                            "           \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\"   (string) Credit address\n"
                             "           ,...\n"
                             "         ]\n"
                             "       }\n"
@@ -570,7 +571,7 @@ UniValue decodescript(const JSONRPCRequest& request)
             "  \"type\":\"type\", (string) The output type\n"
             "  \"reqSigs\": n,    (numeric) The required signatures\n"
             "  \"addresses\": [   (json array of string)\n"
-            "     \"address\"     (string) dynamic address\n"
+            "     \"address\"     (string) credit address\n"
             "     ,...\n"
             "  ],\n"
             "  \"p2sh\",\"address\" (string) address of P2SH script wrapping this redeem script (not returned if the script is already a P2SH).\n"
@@ -597,7 +598,7 @@ UniValue decodescript(const JSONRPCRequest& request)
     if (type.isStr() && type.get_str() != "scripthash") {
         // P2SH cannot be wrapped in a P2SH. If this script is already a P2SH,
         // don't return the address for a P2SH of the P2SH.
-        r.push_back(Pair("p2sh", CDynamicAddress(CScriptID(script)).ToString()));
+        r.push_back(Pair("p2sh", CCreditAddress(CScriptID(script)).ToString()));
     }
 
     return r;
@@ -723,7 +724,7 @@ UniValue signrawtransaction(const JSONRPCRequest& request)
         UniValue keys = request.params[2].get_array();
         for (unsigned int idx = 0; idx < keys.size(); idx++) {
             UniValue k = keys[idx];
-            CDynamicSecret vchSecret;
+            CCreditSecret vchSecret;
             bool fGood = vchSecret.SetString(k.get_str());
             if (!fGood)
                 throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key");

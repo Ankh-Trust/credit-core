@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -8,8 +9,8 @@
 /**
  * Money parsing/formatting utilities.
  */
-#ifndef DYNAMIC_UTILMONEYSTR_H
-#define DYNAMIC_UTILMONEYSTR_H
+#ifndef CREDIT_UTILMONEYSTR_H
+#define CREDIT_UTILMONEYSTR_H
 
 #include "amount.h"
 
@@ -20,4 +21,4 @@ std::string FormatMoney(const CAmount& n);
 bool ParseMoney(const std::string& str, CAmount& nRet);
 bool ParseMoney(const char* pszIn, CAmount& nRet);
 
-#endif // DYNAMIC_UTILMONEYSTR_H
+#endif // CREDIT_UTILMONEYSTR_H

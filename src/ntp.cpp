@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2013-2016 The NovaCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -466,7 +467,7 @@ void ThreadNtpSamples()
     vnThreadsRunning[THREAD_NTP]++;
 
     // Make this thread recognisable as time synchronization thread
-    RenameThread("dynamic-ntp-samples");
+    RenameThread("credit-ntp-samples");
 
     CMedianFilter<int64_t> vTimeOffsets(200, 0);
 
@@ -518,10 +519,10 @@ void ThreadNtpSamples()
 
         if (GetNodesOffset() == std::numeric_limits<int64_t>::max() && std::llabs(nNtpOffset) > 40 * 60) {
             // If there is not enough node offsets data and NTP time offset is greater than 40 minutes then give a warning.
-            std::string strMessage("Warning: Please check that your computer's date and time are correct! If your clock is wrong Dynamic will not work properly.");
+            std::string strMessage("Warning: Please check that your computer's date and time are correct! If your clock is wrong Credit will not work properly.");
             SetMiscWarning(strMessage);
             LogPrintf("*** %s\n", strMessage.c_str());
-            uiInterface.ThreadSafeMessageBox(strMessage + " ", std::string("Dynamic"), CClientUIInterface::BTN_OK | CClientUIInterface::ICON_WARNING);
+            uiInterface.ThreadSafeMessageBox(strMessage + " ", std::string("Credit"), CClientUIInterface::BTN_OK | CClientUIInterface::ICON_WARNING);
         }
 
         LogPrintf("nNtpOffset = %u (+%u minutes)\n", nNtpOffset, nNtpOffset / 60);

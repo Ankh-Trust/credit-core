@@ -1,0 +1,22 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/translations">
+        <file alias="bg">locale/credit_bg.qm</file>
+        <file alias="de">locale/credit_de.qm</file>
+        <file alias="en">locale/credit_en.qm</file>
+        <file alias="es">locale/credit_es.qm</file>
+        <file alias="fi">locale/credit_fi.qm</file>
+        <file alias="fr">locale/credit_fr.qm</file>
+        <file alias="it">locale/credit_it.qm</file>
+        <file alias="ja">locale/credit_ja.qm</file>
+        <file alias="ko">locale/credit_ko.qm</file>
+        <file alias="nl">locale/credit_nl.qm</file>
+        <file alias="pl">locale/credit_pl.qm</file>
+        <file alias="pt">locale/credit_pt.qm</file>
+        <file alias="ru">locale/credit_ru.qm</file>
+        <file alias="sk">locale/credit_sk.qm</file>
+        <file alias="sv">locale/credit_sv.qm</file>
+        <file alias="vi">locale/credit_vi.qm</file>
+        <file alias="zh_CN">locale/credit_zh_CN.qm</file>
+        <file alias="zh_TW">locale/credit_zh_TW.qm</file>
+    </qresource>
+</RCC>

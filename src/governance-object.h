@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -6,7 +7,7 @@
 #ifndef GOVERNANCE_OBJECT_H
 #define GOVERNANCE_OBJECT_H
 
-//#define ENABLE_DYNAMIC_DEBUG
+//#define ENABLE_CREDIT_DEBUG
 
 #include "cachemultimap.h"
 #include "governance-exceptions.h"
@@ -148,15 +149,15 @@ private:
     /// Data field - can be used for anything
     std::vector<unsigned char> vchData;
 
-    /// Dynode info for signed objects
-    COutPoint dynodeOutpoint;
+    /// ServiceNode info for signed objects
+    COutPoint servicenodeOutpoint;
     std::vector<unsigned char> vchSig;
 
     /// is valid by blockchain
     bool fCachedLocalValidity;
     std::string strLocalValidityError;
 
-    // VARIOUS FLAGS FOR OBJECT / SET VIA DYNODE VOTING
+    // VARIOUS FLAGS FOR OBJECT / SET VIA SERVICENODE VOTING
 
     /// true == minimum network support has been reached for this object to be funded (doesn't mean it will for sure though)
     bool fCachedFunding;
@@ -217,9 +218,9 @@ public:
         return nCollateralHash;
     }
 
-    const COutPoint& GetDynodeOutpoint() const
+    const COutPoint& GetServiceNodeOutpoint() const
     {
-        return dynodeOutpoint;
+        return servicenodeOutpoint;
     }
 
     bool IsSetCachedFunding() const
@@ -264,9 +265,9 @@ public:
 
     // Signature related functions
 
-    void SetDynodeOutpoint(const COutPoint& outpoint);
-    bool Sign(const CKey& keyDynode, const CPubKey& pubKeyDynode);
-    bool CheckSignature(const CPubKey& pubKeyDynode) const;
+    void SetServiceNodeOutpoint(const COutPoint& outpoint);
+    bool Sign(const CKey& keyServiceNode, const CPubKey& pubKeyServiceNode);
+    bool CheckSignature(const CPubKey& pubKeyServiceNode) const;
 
     std::string GetSignatureMessage() const;
     uint256 GetSignatureHash() const;
@@ -275,7 +276,7 @@ public:
 
     bool IsValidLocally(std::string& strError, bool fCheckCollateral) const;
 
-    bool IsValidLocally(std::string& strError, bool& fMissingDynode, bool& fMissingConfirmations, bool fCheckCollateral) const;
+    bool IsValidLocally(std::string& strError, bool& fMissingServiceNode, bool& fMissingConfirmations, bool fCheckCollateral) const;
 
     /// Check the collateral transaction for the budget proposal/finalized budget
     bool IsCollateralValid(std::string& strError, bool& fMissingConfirmations) const;
@@ -342,14 +343,14 @@ public:
             CTxIn txin;
             if (ser_action.ForRead()) {
                 READWRITE(txin);
-                dynodeOutpoint = txin.prevout;
+                servicenodeOutpoint = txin.prevout;
             } else {
-                txin = CTxIn(dynodeOutpoint);
+                txin = CTxIn(servicenodeOutpoint);
                 READWRITE(txin);
             }
         } else {
             // using new format directly
-            READWRITE(dynodeOutpoint);
+            READWRITE(servicenodeOutpoint);
         }
         if (!(s.GetType() & SER_GETHASH)) {
             READWRITE(vchSig);
@@ -378,7 +379,7 @@ private:
         CConnman& connman);
 
     /// Called when DN's which have voted on this object have been removed
-    void ClearDynodeVotes();
+    void ClearServiceNodeVotes();
 
     void CheckOrphanVotes(CConnman& connman);
 };

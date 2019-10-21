@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_OPTIONSMODEL_H
-#define DYNAMIC_QT_OPTIONSMODEL_H
+#ifndef CREDIT_QT_OPTIONSMODEL_H
+#define CREDIT_QT_OPTIONSMODEL_H
 
 #include "amount.h"
 
@@ -16,7 +17,7 @@ QT_BEGIN_NAMESPACE
 class QNetworkProxy;
 QT_END_NAMESPACE
 
-/** Interface from Qt to configuration data structure for Dynamic client.
+/** Interface from Qt to configuration data structure for Credit client.
    To Qt, the options are presented as a list with the different options
    laid out vertically.
    This can be changed to a tree once the settings become sufficiently
@@ -41,7 +42,7 @@ public:
         ProxyUseTor,             // bool
         ProxyIPTor,              // QString
         ProxyPortTor,            // int
-        DisplayUnit,             // DynamicUnits::Unit
+        DisplayUnit,             // CreditUnits::Unit
         ThirdPartyTxUrls,        // QString
         Digits,                  // QString
         Theme,                   // QString
@@ -50,7 +51,7 @@ public:
         ThreadsScriptVerif,      // int
         DatabaseCache,           // int
         SpendZeroConfChange,     // bool
-        ShowDynodesTab,          // bool
+        ShowServiceNodesTab,     // bool
         ShowAdvancedPSUI,        // bool
         ShowPrivateSendPopups,   // bool
         LowKeysWarning,          // bool
@@ -113,4 +114,4 @@ Q_SIGNALS:
     void hideTrayIconChanged(bool);
 };
 
-#endif // DYNAMIC_QT_OPTIONSMODEL_H
+#endif // CREDIT_QT_OPTIONSMODEL_H

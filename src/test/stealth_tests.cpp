@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
@@ -11,7 +12,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include "bdap/stealth.h"
 #include "wallet/wallet.h"
 
@@ -36,7 +37,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
 
     // Sender only knows the public keys embedded in the string below.
     std::string stealth_address_str = "L3D2cdHCVd2d4wS6rP1NRZWk6TpRxEqTwFxTWN9iNcuGNi9BMMLBwWh6hbRG9GGPqAqYiscYmFUXTvvE3YsgQ6iicXdbJ6apUb41Vz";
-    
+
     CTxDestination dest = DecodeDestination(stealth_address_str);
 
     BOOST_CHECK(IsValidDestination(dest));
@@ -44,7 +45,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
     CStealthAddress sxAddr_sender = boost::get<CStealthAddress>(dest); //deriving a stealth address, just public key portion [sender]
     CScript scriptDest;
     std::vector<uint8_t> vStealthData;
-    
+
     std::string sError;
     BOOST_CHECK(PrepareStealthOutput(sxAddr_sender, scriptDest, vStealthData, sError) == 0);
 
@@ -53,7 +54,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
 
     CTxDestination newDest;
     BOOST_CHECK(ExtractDestination(scriptDest, newDest));
-    CDynamicAddress newAddress;
+    CCreditAddress newAddress;
     newAddress.Set(newDest);
     BOOST_CHECK(newAddress.IsValid());
     //std::cout << "Derived " << newAddress.ToString() <<  " address from stealth\n";
@@ -61,8 +62,8 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
     // Receiver has the new address the sender derived from their public stealth address along with raw public key
     std::string scan_private_key_str = "MktpUfR5RiRrFCkLWYxUEQ9portxgHADvpvByv8dD5aLNH4ZjVM5";
     std::string spend_private_key_str = "MmVtgDTFTUMe6b5mk166QFPFLpem1J1HtS8EhSMZNo5aGsZxZS96";
-    
-    CDynamicSecret scanSecret, spendSecret;
+
+    CCreditSecret scanSecret, spendSecret;
 
     scanSecret.SetString(scan_private_key_str);
     spendSecret.SetString(spend_private_key_str);
@@ -79,7 +80,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
     pwalletMain2->AddKeyPubKey(scanKey, scanKey.GetPubKey()); //add to wallet
     pwalletMain2->AddKeyPubKey(spendKey, spendKey.GetPubKey()); //add to wallet
 
-    BOOST_CHECK(IsDataScript(stealthScript)); 
+    BOOST_CHECK(IsDataScript(stealthScript));
 
     std::vector<uint8_t> vData;
     CKey sShared;
@@ -112,7 +113,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
 
         BOOST_CHECK(ExtractDestination(scriptDest, address));
 
-        BOOST_CHECK(address.type() == typeid(CKeyID)); 
+        BOOST_CHECK(address.type() == typeid(CKeyID));
 
         BOOST_CHECK(pwalletMain2->ProcessStealthOutput(address, vchEphemPK, prefix, fHavePrefix, sShared));
 
@@ -121,7 +122,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
     CKey derivedKey; //shared output key
 
     BOOST_CHECK(StealthSecret(sxAddr_receiver.scan_secret, vchEphemPK, sxAddr_receiver.spend_pubkey, derivedKey, pkExtracted) == 0);
-    
+
     CPubKey pkE(pkExtracted);
 
     BOOST_CHECK(pkE.IsValid());
@@ -135,7 +136,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1)
 
     BOOST_CHECK(sSpendR == sSpendRCompare);
 
-    CDynamicAddress addressCompare(sSpendR.GetPubKey().GetID());
+    CCreditAddress addressCompare(sSpendR.GetPubKey().GetID());
 
     BOOST_CHECK(newAddress == addressCompare);
 
@@ -156,7 +157,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1_negative)
 
     // Sender only knows the public keys embedded in the string below.
     std::string stealth_address_str = "L3D2cdHCVd2d4wS6rP1NRZWk6TpRxEqTwFxTWN9iNcuGNi9BMMLBwWh6hbRG9GGPqAqYiscYmFUXTvvE3YsgQ6iicXdbJ6apUb41Vz";
-    
+
     CTxDestination dest = DecodeDestination(stealth_address_str);
 
     BOOST_CHECK(IsValidDestination(dest));
@@ -164,7 +165,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1_negative)
     CStealthAddress sxAddr_sender = boost::get<CStealthAddress>(dest); //deriving a stealth address, just public key portion [sender]
     CScript scriptDest;
     std::vector<uint8_t> vStealthData;
-    
+
     std::string sError;
     BOOST_CHECK(PrepareStealthOutput(sxAddr_sender, scriptDest, vStealthData, sError) == 0);
 
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1_negative)
 
     CTxDestination newDest;
     BOOST_CHECK(ExtractDestination(scriptDest, newDest));
-    CDynamicAddress newAddress;
+    CCreditAddress newAddress;
     newAddress.Set(newDest);
     BOOST_CHECK(newAddress.IsValid());
     //std::cout << "Derived " << newAddress.ToString() <<  " address from stealth\n";
@@ -192,7 +193,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1_negative)
     pwalletMain2->AddKeyPubKey(scanKey, scanKey.GetPubKey()); //add to wallet
     pwalletMain2->AddKeyPubKey(spendKey, spendKey.GetPubKey()); //add to wallet
 
-    BOOST_CHECK(IsDataScript(stealthScript)); 
+    BOOST_CHECK(IsDataScript(stealthScript));
 
     std::vector<uint8_t> vData;
     CKey sShared;
@@ -226,7 +227,7 @@ BOOST_AUTO_TEST_CASE(stealth_test1_negative)
 
         BOOST_CHECK(ExtractDestination(scriptDest, address));
 
-        BOOST_CHECK(address.type() == typeid(CKeyID)); 
+        BOOST_CHECK(address.type() == typeid(CKeyID));
 
         BOOST_CHECK(pwalletMain2->ProcessStealthOutput(address, vchEphemPK, prefix, fHavePrefix, sShared));
 
@@ -281,13 +282,13 @@ BOOST_AUTO_TEST_CASE(stealth_test2)
     std::vector<uint8_t> vStealthData;
     std::vector<uint8_t> vchEphemPK;
     std::string sError;
- 
+
     BOOST_CHECK(PrepareStealthOutput(sxAddr, scriptDest, vStealthData, sError) == 0);
 
     CScript stealthScript;
     stealthScript << OP_RETURN << vStealthData;
 
-    BOOST_CHECK(IsDataScript(stealthScript)); 
+    BOOST_CHECK(IsDataScript(stealthScript));
 
     std::vector<uint8_t> vData;
     CKey sShared; //doesn't need initialization
@@ -295,7 +296,7 @@ BOOST_AUTO_TEST_CASE(stealth_test2)
 
     CTxDestination address;
 
-    BOOST_CHECK(GetDataFromScript(stealthScript, vData)); 
+    BOOST_CHECK(GetDataFromScript(stealthScript, vData));
 
     if (vData[0] == DO_STEALTH) {
         if (vData.size() < 34 ) {
@@ -318,7 +319,7 @@ BOOST_AUTO_TEST_CASE(stealth_test2)
 
         BOOST_CHECK(ExtractDestination(scriptDest, address));
 
-        BOOST_CHECK(address.type() == typeid(CKeyID)); 
+        BOOST_CHECK(address.type() == typeid(CKeyID));
 
         BOOST_CHECK(pwalletMain2->ProcessStealthOutput(address, vchEphemPK, prefix, fHavePrefix, sShared));
     }
@@ -326,7 +327,7 @@ BOOST_AUTO_TEST_CASE(stealth_test2)
     CKey derivedKey; //shared output key
 
     BOOST_CHECK(StealthSecret(sxAddr.scan_secret, vchEphemPK, sxAddr.spend_pubkey, derivedKey, pkExtracted) == 0);
-    
+
     CPubKey pkE(pkExtracted);
 
     BOOST_CHECK(pkE.IsValid());
@@ -340,7 +341,7 @@ BOOST_AUTO_TEST_CASE(stealth_test2)
 
     BOOST_CHECK(sSpendR == sSpendRCompare);
 
-    CDynamicAddress addressCompare(sSpendR.GetPubKey().GetID());
+    CCreditAddress addressCompare(sSpendR.GetPubKey().GetID());
 
     BOOST_CHECK(address == addressCompare.Get());
 

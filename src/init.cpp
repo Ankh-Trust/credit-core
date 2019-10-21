@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,12 +7,12 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "init.h"
 
-#include "activedynode.h"
+#include "activeservicenode.h"
 #include "addrman.h"
 #include "amount.h"
 #include "base58.h"
@@ -25,13 +26,13 @@
 #include "dht/ed25519.h"
 #include "dht/session.h"
 #include "dht/mutabledb.h"
-#include "dynode-payments.h"
-#include "dynode-sync.h"
-#include "dynodeconfig.h"
-#include "dynodeman.h"
+#include "servicenode-payments.h"
+#include "servicenode-sync.h"
+#include "servicenodeconfig.h"
+#include "servicenodeman.h"
 #include "flat-database.h"
 #include "fluid/banaccount.h"
-#include "fluid/fluiddynode.h"
+#include "fluid/fluidservicenode.h"
 #include "fluid/fluidmining.h"
 #include "fluid/fluidmint.h"
 #include "fluid/fluidsovereign.h"
@@ -283,7 +284,7 @@ void PrepareShutdown()
     /// for example if the data directory was found to be locked.
     /// Be sure that anything that writes files or flushes caches only does this if the respective
     /// module was initialized.
-    RenameThread("dynamic-shutoff");
+    RenameThread("credit-shutoff");
     mempool.AddTransactionsUpdated(1);
     StopTorrentDHTNetwork();
     StopHTTPRPC();
@@ -313,9 +314,9 @@ void PrepareShutdown()
 
     if (!fLiteMode && !fRPCInWarmup) {
         // STORE DATA CACHES INTO SERIALIZED DAT FILES
-        CFlatDB<CDynodeMan> flatdb1("dncache.dat", "magicDynodeCache");
+        CFlatDB<CServiceNodeMan> flatdb1("dncache.dat", "magicServiceNodeCache");
         flatdb1.Dump(dnodeman);
-        CFlatDB<CDynodePayments> flatdb2("dnpayments.dat", "magicDynodePaymentsCache");
+        CFlatDB<CServiceNodePayments> flatdb2("dnpayments.dat", "magicServiceNodePaymentsCache");
         flatdb2.Dump(dnpayments);
         CFlatDB<CGovernanceManager> flatdb3("governance.dat", "magicGovernanceCache");
         flatdb3.Dump(governance);
@@ -357,8 +358,8 @@ void PrepareShutdown()
         delete pblocktree;
         pblocktree = NULL;
         // Fluid transaction DB's
-        delete pFluidDynodeDB;
-        pFluidDynodeDB = NULL;
+        delete pFluidServiceNodeDB;
+        pFluidServiceNodeDB = NULL;
         delete pFluidMiningDB;
         pFluidMiningDB = NULL;
         delete pFluidMintDB;
@@ -499,8 +500,8 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-blocksonly", strprintf(_("Whether to operate in a blocks only mode (default: %u)"), DEFAULT_BLOCKSONLY));
     strUsage += HelpMessageOpt("-checkblocks=<n>", strprintf(_("How many blocks to check at startup (default: %u, 0 = all)"), DEFAULT_CHECKBLOCKS));
     strUsage += HelpMessageOpt("-checklevel=<n>", strprintf(_("How thorough the block verification of -checkblocks is (0-4, default: %u)"), DEFAULT_CHECKLEVEL));
-    strUsage += HelpMessageOpt("-conf=<file>", strprintf(_("Specify configuration file (default: %s)"), DYNAMIC_CONF_FILENAME));
-    if (mode == HMM_DYNAMICD) {
+    strUsage += HelpMessageOpt("-conf=<file>", strprintf(_("Specify configuration file (default: %s)"), CREDIT_CONF_FILENAME));
+    if (mode == HMM_CREDITD) {
 #if HAVE_DECL_DAEMON
         strUsage += HelpMessageOpt("-daemon", _("Run in the background as a daemon and accept commands"));
 #endif
@@ -515,7 +516,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-par=<n>", strprintf(_("Set the number of script verification threads (%u to %d, 0 = auto, <0 = leave that many cores free, default: %d)"),
                                                -GetNumCores(), MAX_SCRIPTCHECK_THREADS, DEFAULT_SCRIPTCHECK_THREADS));
 #ifndef WIN32
-    strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), DYNAMIC_PID_FILENAME));
+    strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), CREDIT_PID_FILENAME));
 #endif
     strUsage += HelpMessageOpt("-prune=<n>", strprintf(_("Reduce storage requirements by enabling pruning (deleting) of old blocks. This allows the pruneblockchain RPC to be called to delete specific blocks, and enables automatic pruning of old blocks if a target size in MiB is provided. This mode is incompatible with -txindex and -rescan. "
                                                          "Warning: Reverting this setting requires re-downloading the entire blockchain. "
@@ -577,7 +578,7 @@ std::string HelpMessage(HelpMessageMode mode)
 
 #ifdef ENABLE_WALLET
     strUsage += CWallet::GetWalletHelpString(showDebug);
-    if (mode == HMM_DYNAMIC_QT)
+    if (mode == HMM_CREDIT_QT)
         strUsage += HelpMessageOpt("-windowtitle=<name>", _("Wallet window title"));
 #endif
 
@@ -614,8 +615,8 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-limitdescendantsize=<n>", strprintf("Do not accept transactions if any ancestor would have more than <n> kilobytes of in-mempool descendants (default: %u).", DEFAULT_DESCENDANT_SIZE_LIMIT));
     }
     std::string debugCategories = "addrman, alert, bench, cmpctblock, coindb, db, http, leveldb, libevent, lock, mempool, mempoolrej, net, proxy, prune, rand, reindex, rpc, selectcoins, tor, zmq, "
-                                  "dynamic (or specifically: gobject, instantsend, keepass, dynode, dnpayments, dnsync, privatesend, spork)"; // Don't translate these and qt below
-    if (mode == HMM_DYNAMIC_QT)
+                                  "credit (or specifically: gobject, instantsend, keepass, servicenode, dnpayments, dnsync, privatesend, spork)"; // Don't translate these and qt below
+    if (mode == HMM_CREDIT_QT)
         debugCategories += ", qt";
     strUsage += HelpMessageOpt("-debug=<category>", strprintf(_("Output debugging information (default: %u, supplying <category> is optional)"), 0) + ". " +
                                                         _("If <category> is not supplied or if <category> = 1, output all debugging information.") + _("<category> can be:") + " " + debugCategories + ".");
@@ -644,25 +645,26 @@ std::string HelpMessage(HelpMessageMode mode)
     }
     strUsage += HelpMessageOpt("-shrinkdebugfile", _("Shrink debug.log file on client startup (default: 1 when no -debug)"));
     AppendParamsHelpMessages(strUsage, showDebug);
-    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all Dynamic specific functionality (Dynodes, PrivateSend, InstantSend, Governance) (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all Credit specific functionality (ServiceNodes, PrivateSend, InstantSend, Governance) (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-sporkaddr=<hex>", strprintf(_("Override spork address. Only useful for regtest and devnet. Using this on mainnet or testnet will ban you.")));
     strUsage += HelpMessageOpt("-minsporkkeys=<n>", strprintf(_("Overrides minimum spork signers to change spork value. Only useful for regtest and devnet. Using this on mainnet or testnet will ban you.")));
 
-    strUsage += HelpMessageGroup(_("Dynode options:"));
-    strUsage += HelpMessageOpt("-dynode=<n>", strprintf(_("Enable the client to act as a Dynode (0-1, default: %u)"), 0));
-    strUsage += HelpMessageOpt("-dnconf=<file>", strprintf(_("Specify Dynode configuration file (default: %s)"), "dynode.conf"));
-    strUsage += HelpMessageOpt("-dnconflock=<n>", strprintf(_("Lock Dynodes from Dynode configuration file (default: %u)"), 1));
-    strUsage += HelpMessageOpt("-dynodepairingkey=<n>", _("Set the Dynode private key"));
+    strUsage += HelpMessageGroup(_("ServiceNode options:"));
+    strUsage += HelpMessageOpt("-servicenode=<n>", strprintf(_("Enable the client to act as a ServiceNode (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-dnconf=<file>", strprintf(_("Specify ServiceNode configuration file (default: %s)"), "servicenode.conf"));
+    strUsage += HelpMessageOpt("-dnconflock=<n>", strprintf(_("Lock ServiceNodes from ServiceNode configuration file (default: %u)"), 1));
+    strUsage += HelpMessageOpt("-servicenodepairingkey=<n>", _("Set the ServiceNode private key"));
 
 #ifdef ENABLE_WALLET
     strUsage += HelpMessageGroup(_("PrivateSend options:"));
     strUsage += HelpMessageOpt("-enableprivatesend=<n>", strprintf(_("Enable use of automated PrivateSend for funds stored in this wallet (0-1, default: %u)"), 0));
     strUsage += HelpMessageOpt("-privatesendmultisession=<n>", strprintf(_("Enable multiple PrivateSend mixing sessions per block, experimental (0-1, default: %u)"), DEFAULT_PRIVATESEND_MULTISESSION));
-    strUsage += HelpMessageOpt("-privatesendsessions=<n>", strprintf(_("Use N separate dynodes in parallel to mix funds (%u-%u, default: %u)"), MIN_PRIVATESEND_SESSIONS, MAX_PRIVATESEND_SESSIONS, DEFAULT_PRIVATESEND_SESSIONS));
-    strUsage += HelpMessageOpt("-privatesendrounds=<n>", strprintf(_("Use N separate Dynodes for each denominated input to mix funds (2-16, default: %u)"), DEFAULT_PRIVATESEND_ROUNDS));
-    strUsage += HelpMessageOpt("-privatesendamount=<n>", strprintf(_("Keep N DYN anonymized (default: %u)"), DEFAULT_PRIVATESEND_AMOUNT));
+    strUsage += HelpMessageOpt("-privatesendsessions=<n>", strprintf(_("Use N separate servicenodes in parallel to mix funds (%u-%u, default: %u)"), MIN_PRIVATESEND_SESSIONS, MAX_PRIVATESEND_SESSIONS, DEFAULT_PRIVATESEND_SESSIONS));
+    strUsage += HelpMessageOpt("-privatesendrounds=<n>", strprintf(_("Use N separate ServiceNodes for each denominated input to mix funds (%u-%u, default: %u)"), MIN_PRIVATESEND_ROUNDS, MAX_PRIVATESEND_ROUNDS, DEFAULT_PRIVATESEND_ROUNDS));
+    strUsage += HelpMessageOpt("-privatesendamount=<n>", strprintf(_("Keep N 0AC anonymized (%u-%u, default: %u)"), MIN_PRIVATESEND_AMOUNT, MAX_PRIVATESEND_AMOUNT, DEFAULT_PRIVATESEND_AMOUNT));
+    strUsage += HelpMessageOpt("-privatesenddenoms=<n>", strprintf(_("Create up to N inputs of each denominated amount (%u-%u, default: %u)"), MIN_PRIVATESEND_DENOMS, MAX_PRIVATESEND_DENOMS, DEFAULT_PRIVATESEND_DENOMS));
     strUsage += HelpMessageOpt("-liquidityprovider=<n>", strprintf(_("Provide liquidity to PrivateSend by infrequently mixing coins on a continual basis (%u-%u, default: %u, 1=very frequent, high fees, %u=very infrequent, low fees)"),
-                                                             MIN_PRIVATESEND_LIQUIDITY, MAX_PRIVATESEND_LIQUIDITY, DEFAULT_PRIVATESEND_LIQUIDITY, MAX_PRIVATESEND_LIQUIDITY));
+        MIN_PRIVATESEND_LIQUIDITY, MAX_PRIVATESEND_LIQUIDITY, DEFAULT_PRIVATESEND_LIQUIDITY, MAX_PRIVATESEND_LIQUIDITY));
 #endif // ENABLE_WALLET
 
     strUsage += HelpMessageGroup(_("InstantSend options:"));
@@ -709,11 +711,13 @@ std::string HelpMessage(HelpMessageMode mode)
 
 std::string LicenseInfo()
 {
-    return FormatParagraph(strprintf(_("Copyright (C) 2016-%i Duality Blockchain Solutions Developers"), COPYRIGHT_YEAR)) + "\n" +
+    return FormatParagraph(strprintf(_("Copyright (C) 2019-%i The Ankh Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
-           FormatParagraph(strprintf(_("Copyright (C) 2009-%i The Bitcoin Core Developers"), COPYRIGHT_YEAR)) + "\n" +
+           FormatParagraph(strprintf(_("Copyright (C) 2016-%i Duality Blockchain Solutions Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
            FormatParagraph(strprintf(_("Copyright (C) 2014-%i The Dash Developers"), COPYRIGHT_YEAR)) + "\n" +
+           "\n" +
+           FormatParagraph(strprintf(_("Copyright (C) 2009-%i The Bitcoin Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
            FormatParagraph(_("This is experimental software.")) + "\n" +
            "\n" +
@@ -807,7 +811,7 @@ void CleanupBlockRevFiles()
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 {
     const CChainParams& chainparams = Params();
-    RenameThread("dynamic-loadblk");
+    RenameThread("credit-loadblk");
 
     {
         CImportingNow imp;
@@ -881,7 +885,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 }
 
 /** Sanity checks
- *  Ensure that Dynamic is running in a usable environment with all
+ *  Ensure that Credit is running in a usable environment with all
  *  necessary library support.
  */
 bool InitSanityCheck(void)
@@ -928,14 +932,14 @@ void InitParameterInteraction()
             LogPrintf("%s: parameter interaction: -whitebind set -> setting -listen=1\n", __func__);
     }
 
-    if (GetBoolArg("-dynode", false)) {
-        // Dynodes MUST accept connections from outside
+    if (GetBoolArg("-servicenode", false)) {
+        // ServiceNodes MUST accept connections from outside
         ForceSetArg("-listen", "1");
-        LogPrintf("%s: parameter interaction: -dynode=1 -> setting -listen=1\n", __func__);
+        LogPrintf("%s: parameter interaction: -servicenode=1 -> setting -listen=1\n", __func__);
         if (GetArg("-maxconnections", DEFAULT_MAX_PEER_CONNECTIONS) < DEFAULT_MAX_PEER_CONNECTIONS) {
-            // Dynodes MUST be able to handle at least DEFAULT_MAX_PEER_CONNECTIONS connections
+            // ServiceNodes MUST be able to handle at least DEFAULT_MAX_PEER_CONNECTIONS connections
             ForceSetArg("-maxconnections", itostr(DEFAULT_MAX_PEER_CONNECTIONS));
-            LogPrintf("%s: parameter interaction: -dynode=1 -> setting -maxconnections=%d\n", __func__, DEFAULT_MAX_PEER_CONNECTIONS);
+            LogPrintf("%s: parameter interaction: -servicenode=1 -> setting -maxconnections=%d\n", __func__, DEFAULT_MAX_PEER_CONNECTIONS);
         }
     }
 
@@ -999,6 +1003,8 @@ void InitParameterInteraction()
         LogPrintf("%s: parameter interaction: -liquidityprovider=%d -> setting -privatesendrounds=%d\n", __func__, nLiqProvTmp, itostr(std::numeric_limits<int>::max()));
         ForceSetArg("-privatesendamount", itostr(MAX_PRIVATESEND_AMOUNT));
         LogPrintf("%s: parameter interaction: -liquidityprovider=%d -> setting -privatesendamount=%d\n", __func__, nLiqProvTmp, MAX_PRIVATESEND_AMOUNT);
+        ForceSetArg("-privatesenddenoms", itostr(MAX_PRIVATESEND_DENOMS));
+        LogPrintf("%s: parameter interaction: -liquidityprovider=%d -> setting -privatesenddenoms=%d\n", __func__, nLiqProvTmp, itostr(MAX_PRIVATESEND_DENOMS));
         ForceSetArg("-privatesendmultisession", "0");
         LogPrintf("%s: parameter interaction: -liquidityprovider=%d -> setting -privatesendmultisession=0\n", __func__, nLiqProvTmp);
     }
@@ -1038,7 +1044,7 @@ void InitLogging()
     fLogIPs = GetBoolArg("-logips", DEFAULT_LOGIPS);
 
     LogPrintf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-    LogPrintf("Dynamic version %s\n", FormatFullVersion());
+    LogPrintf("Credit version %s\n", FormatFullVersion());
 }
 
 namespace
@@ -1365,7 +1371,7 @@ static bool LockDataDirectory(bool probeOnly)
 {
     std::string strDataDir = GetDataDir().string();
 
-    // Make sure only a single Dynamic process is using the data directory.
+    // Make sure only a single Credit process is using the data directory.
     boost::filesystem::path pathLockFile = GetDataDir() / ".lock";
     FILE* file = fopen(pathLockFile.string().c_str(), "a"); // empty lock file; created if it doesn't exist.
     if (file)
@@ -1374,13 +1380,13 @@ static bool LockDataDirectory(bool probeOnly)
     try {
         static boost::interprocess::file_lock lock(pathLockFile.string().c_str());
         if (!lock.try_lock()) {
-            return InitError(strprintf(_("Cannot obtain a lock on data directory %s. Dynamic is probably already running."), strDataDir));
+            return InitError(strprintf(_("Cannot obtain a lock on data directory %s. Credit is probably already running."), strDataDir));
         }
         if (probeOnly) {
             lock.unlock();
         }
     } catch (const boost::interprocess::interprocess_exception& e) {
-        return InitError(strprintf(_("Cannot obtain a lock on data directory %s. Dynamic is probably already running.") + " %s.", strDataDir, e.what()));
+        return InitError(strprintf(_("Cannot obtain a lock on data directory %s. Credit is probably already running.") + " %s.", strDataDir, e.what()));
     }
     return true;
 }
@@ -1433,7 +1439,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         LogPrintf("Startup time: %s\n", DateTimeStrFormat("%Y-%m-%d %H:%M:%S", GetTime()));
     LogPrintf("Default data directory %s\n", GetDefaultDataDir().string());
     LogPrintf("Using data directory %s\n", GetDataDir().string());
-    LogPrintf("Using config file %s\n", GetConfigFile(GetArg("-conf", DYNAMIC_CONF_FILENAME)).string());
+    LogPrintf("Using config file %s\n", GetConfigFile(GetArg("-conf", CREDIT_CONF_FILENAME)).string());
     LogPrintf("Using at most %i connections (%i file descriptors available)\n", nMaxConnections, nFD);
     std::ostringstream strErrors;
 
@@ -1714,7 +1720,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
                 delete pcoinscatcher;
                 delete pblocktree;
                 // Fluid transaction DB's
-                delete pFluidDynodeDB;
+                delete pFluidServiceNodeDB;
                 delete pFluidMiningDB;
                 delete pFluidMintDB;
                 delete pFluidSovereignDB;
@@ -1733,12 +1739,12 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
 
                 bool obfuscate = false;
                 // Init Fluid transaction DB's
-                pFluidDynodeDB = new CFluidDynodeDB(nTotalCache * 35, false, fReindex, obfuscate);
+                pFluidServiceNodeDB = new CFluidServiceNodeDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pFluidMiningDB = new CFluidMiningDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pFluidMintDB = new CFluidMintDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pFluidSovereignDB = new CFluidSovereignDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pBanAccountDB = new CBanAccountDB(nTotalCache * 35, false, fReindex, obfuscate);
-                // Init BDAP Services DBs 
+                // Init BDAP Services DBs
                 pDomainEntryDB = new CDomainEntryDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pLinkDB = new CLinkDB(nTotalCache * 35, false, fReindex, obfuscate);
                 pLinkManager = new CLinkManager();
@@ -1914,47 +1920,47 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     }
 
     // ********************************************************* Step 11a: setup PrivateSend
-    fDynodeMode = GetBoolArg("-dynode", false);
-    // TODO: dynode should have no wallet
+    fServiceNodeMode = GetBoolArg("-servicenode", false);
+    // TODO: servicenode should have no wallet
 
-    //lite mode disables all Dynamic-specific functionality
+    //lite mode disables all Credit-specific functionality
     fLiteMode = GetBoolArg("-litemode", false);
 
     if (fLiteMode) {
-        InitWarning(_("You are starting in lite mode, all Dynamic-specific functionality is disabled."));
+        InitWarning(_("You are starting in lite mode, all Credit-specific functionality is disabled."));
     }
 
     if ((!fLiteMode && fTxIndex == false) && chainparams.NetworkIDString() != CBaseChainParams::REGTEST) {
         return InitError(_("Transaction index can't be disabled in full mode. Either start with -litemode command line switch or enable transaction index."));
     }
 
-    if (fLiteMode && fDynodeMode) {
-        return InitError(_("You can not start a dynode in lite mode."));
+    if (fLiteMode && fServiceNodeMode) {
+        return InitError(_("You can not start a servicenode in lite mode."));
     }
 
-    if (fDynodeMode) {
-        LogPrintf("DYNODE:\n");
+    if (fServiceNodeMode) {
+        LogPrintf("SERVICENODE:\n");
 
-        std::string strdynodepairingkey = GetArg("-dynodepairingkey", "");
-        if (!strdynodepairingkey.empty()) {
-            if (!CMessageSigner::GetKeysFromSecret(strdynodepairingkey, activeDynode.keyDynode, activeDynode.pubKeyDynode))
-                return InitError(_("Invalid dynodepairingkey. Please see documenation."));
+        std::string strservicenodepairingkey = GetArg("-servicenodepairingkey", "");
+        if (!strservicenodepairingkey.empty()) {
+            if (!CMessageSigner::GetKeysFromSecret(strservicenodepairingkey, activeServiceNode.keyServiceNode, activeServiceNode.pubKeyServiceNode))
+                return InitError(_("Invalid servicenodepairingkey. Please see documenation."));
 
-            LogPrintf("  pubKeyDynode: %s\n", CDynamicAddress(activeDynode.pubKeyDynode.GetID()).ToString());
+            LogPrintf("  pubKeyServiceNode: %s\n", CCreditAddress(activeServiceNode.pubKeyServiceNode.GetID()).ToString());
         } else {
-            return InitError(_("You must specify a dynodepairingkey in the configuration. Please see documentation for help."));
+            return InitError(_("You must specify a servicenodepairingkey in the configuration. Please see documentation for help."));
         }
     }
 
 #ifdef ENABLE_WALLET
-    LogPrintf("Using Dynode config file %s\n", GetDynodeConfigFile().string());
+    LogPrintf("Using ServiceNode config file %s\n", GetServiceNodeConfigFile().string());
 
-    if (GetBoolArg("-dnconflock", true) && pwalletMain && (dynodeConfig.getCount() > 0)) {
+    if (GetBoolArg("-dnconflock", true) && pwalletMain && (servicenodeConfig.getCount() > 0)) {
         LOCK(pwalletMain->cs_wallet);
-        LogPrintf("Locking Dynodes:\n");
+        LogPrintf("Locking ServiceNodes:\n");
         uint256 dnTxHash;
         uint32_t outputIndex;
-        for (const auto& dne : dynodeConfig.getEntries()) {
+        for (const auto& dne : servicenodeConfig.getEntries()) {
             dnTxHash.SetHex(dne.getTxHash());
             outputIndex = (uint32_t)atoi(dne.getOutputIndex());
             COutPoint outpoint = COutPoint(dnTxHash, outputIndex);
@@ -1982,6 +1988,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     privateSendClient.nPrivateSendSessions = std::min(std::max((int)GetArg("-privatesendsessions", DEFAULT_PRIVATESEND_SESSIONS), MIN_PRIVATESEND_SESSIONS), MAX_PRIVATESEND_SESSIONS);
     privateSendClient.nPrivateSendRounds = std::min(std::max((int)GetArg("-privatesendrounds", DEFAULT_PRIVATESEND_ROUNDS), MIN_PRIVATESEND_ROUNDS), nMaxRounds);
     privateSendClient.nPrivateSendAmount = std::min(std::max((int)GetArg("-privatesendamount", DEFAULT_PRIVATESEND_AMOUNT), MIN_PRIVATESEND_AMOUNT), MAX_PRIVATESEND_AMOUNT);
+    privateSendClient.nPrivateSendDenoms = std::min(std::max((int)GetArg("-privatesenddenoms", DEFAULT_PRIVATESEND_DENOMS), MIN_PRIVATESEND_DENOMS), MAX_PRIVATESEND_DENOMS);
 #endif // ENABLE_WALLET
 
     fEnableInstantSend = GetBoolArg("-enableinstantsend", 1);
@@ -1991,6 +1998,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     LogPrintf("PrivateSend liquidityprovider: %d\n", privateSendClient.nLiquidityProvider);
     LogPrintf("PrivateSend rounds: %d\n", privateSendClient.nPrivateSendRounds);
     LogPrintf("PrivateSend amount: %d\n", privateSendClient.nPrivateSendAmount);
+    LogPrintf("PrivateSend denoms: %d\n", privateSendClient.nPrivateSendDenoms);
 #endif // ENABLE_WALLET
 
     CPrivateSend::InitStandardDenominations();
@@ -2004,18 +2012,18 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         std::string strDBName;
 
         strDBName = "dncache.dat";
-        uiInterface.InitMessage(_("Loading Dynode cache..."));
-        CFlatDB<CDynodeMan> flatdb1(strDBName, "magicDynodeCache");
+        uiInterface.InitMessage(_("Loading ServiceNode cache..."));
+        CFlatDB<CServiceNodeMan> flatdb1(strDBName, "magicServiceNodeCache");
         if (!flatdb1.Load(dnodeman)) {
-            return InitError(_("Failed to load Dynode cache from") + "\n" + (pathDB / strDBName).string());
+            return InitError(_("Failed to load ServiceNode cache from") + "\n" + (pathDB / strDBName).string());
         }
 
         if (dnodeman.size()) {
             strDBName = "dnpayments.dat";
-            uiInterface.InitMessage(_("Loading Dynode payment cache..."));
-            CFlatDB<CDynodePayments> flatdb2(strDBName, "magicDynodePaymentsCache");
+            uiInterface.InitMessage(_("Loading ServiceNode payment cache..."));
+            CFlatDB<CServiceNodePayments> flatdb2(strDBName, "magicServiceNodePaymentsCache");
             if (!flatdb2.Load(dnpayments)) {
-                return InitError(_("Failed to load Dynode payments cache from") + "\n" + (pathDB / strDBName).string());
+                return InitError(_("Failed to load ServiceNode payments cache from") + "\n" + (pathDB / strDBName).string());
             }
 
             strDBName = "governance.dat";
@@ -2026,7 +2034,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
             }
             governance.InitOnLoad();
         } else {
-            uiInterface.InitMessage(_("Dynode cache is empty, skipping payments and governance cache..."));
+            uiInterface.InitMessage(_("ServiceNode cache is empty, skipping payments and governance cache..."));
         }
         governance.InitOnLoad();
 
@@ -2054,20 +2062,20 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         }
     }
 
-    // ********************************************************* Step 11d: start dynamic-ps-<smth> threads
+    // ********************************************************* Step 11d: start credit-ps-<smth> threads
 
     if (!fLiteMode) {
         scheduler.scheduleEvery(boost::bind(&CNetFulfilledRequestManager::DoMaintenance, boost::ref(netfulfilledman)), 60);
-        scheduler.scheduleEvery(boost::bind(&CDynodeSync::DoMaintenance, boost::ref(dynodeSync), boost::ref(*g_connman)), DYNODE_SYNC_TICK_SECONDS);
-        scheduler.scheduleEvery(boost::bind(&CDynodeMan::DoMaintenance, boost::ref(dnodeman), boost::ref(*g_connman)), 1);
-        scheduler.scheduleEvery(boost::bind(&CActiveDynode::DoMaintenance, boost::ref(activeDynode), boost::ref(*g_connman)), DYNODE_MIN_DNP_SECONDS);
+        scheduler.scheduleEvery(boost::bind(&CServiceNodeSync::DoMaintenance, boost::ref(servicenodeSync), boost::ref(*g_connman)), SERVICENODE_SYNC_TICK_SECONDS);
+        scheduler.scheduleEvery(boost::bind(&CServiceNodeMan::DoMaintenance, boost::ref(dnodeman), boost::ref(*g_connman)), 1);
+        scheduler.scheduleEvery(boost::bind(&CActiveServiceNode::DoMaintenance, boost::ref(activeServiceNode), boost::ref(*g_connman)), SERVICENODE_MIN_DNP_SECONDS);
 
-        scheduler.scheduleEvery(boost::bind(&CDynodePayments::DoMaintenance, boost::ref(dnpayments)), 60);
+        scheduler.scheduleEvery(boost::bind(&CServiceNodePayments::DoMaintenance, boost::ref(dnpayments)), 60);
         scheduler.scheduleEvery(boost::bind(&CGovernanceManager::DoMaintenance, boost::ref(governance), boost::ref(*g_connman)), 60 * 5);
 
         scheduler.scheduleEvery(boost::bind(&CInstantSend::DoMaintenance, boost::ref(instantsend)), 60);
 
-        if (fDynodeMode)
+        if (fServiceNodeMode)
             scheduler.scheduleEvery(boost::bind(&CPrivateSendServer::DoMaintenance, boost::ref(privateSendServer), boost::ref(*g_connman)), 1);
 #ifdef ENABLE_WALLET
         else

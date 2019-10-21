@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_DOMAINENTRY_H
-#define DYNAMIC_BDAP_DOMAINENTRY_H
+#ifndef CREDIT_BDAP_DOMAINENTRY_H
+#define CREDIT_BDAP_DOMAINENTRY_H
 
 #include "bdap.h"
 #include "bdap/utils.h"
@@ -16,7 +16,7 @@
 
 #include <univalue.h>
 
-class CDynamicAddress;
+class CCreditAddress;
 struct CRecipient;
 class CTxMemPool;
 
@@ -149,8 +149,8 @@ public:
     bool UnserializeFromData(const std::vector<unsigned char>& vchData, const std::vector<unsigned char>& vchHash);
     void Serialize(std::vector<unsigned char>& vchData);
 
-    CDynamicAddress GetWalletAddress() const;
-    CDynamicAddress GetLinkAddress() const;
+    CCreditAddress GetWalletAddress() const;
+    CCreditAddress GetLinkAddress() const;
     std::string DHTPubKeyString() const;
     std::string GetFullObjectPath() const;
     std::string GetObjectLocation() const;
@@ -167,4 +167,4 @@ public:
 
 bool BuildBDAPJson(const CDomainEntry& entry, UniValue& oName, bool fAbridged = false);
 
-#endif // DYNAMIC_BDAP_DOMAINENTRY_H
+#endif // CREDIT_BDAP_DOMAINENTRY_H

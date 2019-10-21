@@ -5,11 +5,11 @@
 /**
  * Utility functions shared by unit tests
  */
-#ifndef DYNAMIC_TEST_TESTUTIL_H
-#define DYNAMIC_TEST_TESTUTIL_H
+#ifndef CREDIT_TEST_TESTUTIL_H
+#define CREDIT_TEST_TESTUTIL_H
 
 #include <boost/filesystem/path.hpp>
 
 boost::filesystem::path GetTempPath();
 
-#endif // DYNAMIC_TEST_TESTUTIL_H
+#endif // CREDIT_TEST_TESTUTIL_H

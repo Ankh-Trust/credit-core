@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_THREADSAFETY_H
-#define DYNAMIC_THREADSAFETY_H
+#ifndef CREDIT_THREADSAFETY_H
+#define CREDIT_THREADSAFETY_H
 
 #ifdef __clang__
 // TL;DR Add GUARDED_BY(mutex) to member variables. The others are
@@ -67,4 +68,4 @@ struct SCOPED_LOCKABLE LockAnnotation
     ~LockAnnotation() UNLOCK_FUNCTION() {}
 };
 
-#endif // DYNAMIC_THREADSAFETY_H
+#endif // CREDIT_THREADSAFETY_H

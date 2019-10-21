@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_DHT_MUTABLE_DB_H
-#define DYNAMIC_DHT_MUTABLE_DB_H
+#ifndef CREDIT_DHT_MUTABLE_DB_H
+#define CREDIT_DHT_MUTABLE_DB_H
 
 #include "dbwrapper.h"
 #include "sync.h"
@@ -42,4 +42,4 @@ bool CheckMutableItemDB();
 
 extern CMutableDataDB* pMutableDataDB;
 
-#endif // DYNAMIC_DHT_MUTABLE_DB_H
+#endif // CREDIT_DHT_MUTABLE_DB_H

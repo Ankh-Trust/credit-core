@@ -7,10 +7,10 @@
 # Test InvalidateBlock code
 #
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
-class InvalidateTest(DynamicTestFramework):
+class InvalidateTest(CreditTestFramework):
     
         
     def setup_chain(self):

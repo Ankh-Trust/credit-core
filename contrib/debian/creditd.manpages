@@ -1,0 +1,3 @@
+debian/manpages/creditd.1
+debian/manpages/credit.conf.5
+debian/manpages/credit-cli.1

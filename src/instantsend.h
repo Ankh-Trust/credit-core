@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -19,7 +20,7 @@ class CInstantSend;
 extern CInstantSend instantsend;
 
 /*
-    At 15 signatures, 1/2 of the dynode network can be owned by
+    At 15 signatures, 1/2 of the servicenode network can be owned by
     one party without compromising the security of InstantSend
     (1000/2150.0)**10 = 0.00047382219560689856
     (1000/2900.0)**10 = 2.3769498616783657e-05
@@ -64,8 +65,8 @@ private:
     std::map<COutPoint, std::set<uint256> > mapVotedOutpoints; // utxo - tx hash set
     std::map<COutPoint, uint256> mapLockedOutpoints;           // utxo - tx hash
 
-    //track dynodes who voted with no txreq (for DOS protection)
-    std::map<COutPoint, int64_t> mapDynodeOrphanVotes; // dn outpoint - time
+    //track servicenodes who voted with no txreq (for DOS protection)
+    std::map<COutPoint, int64_t> mapServiceNodeOrphanVotes; // dn outpoint - time
 
     bool CreateTxLockCandidate(const CTxLockRequest& txLockRequest);
     void CreateEmptyTxLockCandidate(const uint256& txHash);
@@ -77,7 +78,7 @@ private:
     void UpdateVotedOutpoints(const CTxLockVote& vote, CTxLockCandidate& txLockCandidate);
     bool ProcessOrphanTxLockVote(const CTxLockVote& vote);
     void ProcessOrphanTxLockVotes();
-    int64_t GetAverageDynodeOrphanVoteTime();
+    int64_t GetAverageServiceNodeOrphanVoteTime();
 
     void TryToFinalizeLockCandidate(const CTxLockCandidate& txLockCandidate);
     void LockTransactionInputs(const CTxLockCandidate& txLockCandidate);
@@ -108,7 +109,7 @@ public:
         READWRITE(mapTxLockCandidates);
         READWRITE(mapVotedOutpoints);
         READWRITE(mapLockedOutpoints);
-        READWRITE(mapDynodeOrphanVotes);
+        READWRITE(mapServiceNodeOrphanVotes);
         READWRITE(nCachedBlockHeight);
 
         if (ser_action.ForRead() && (strVersion != SERIALIZATION_VERSION_STRING)) {
@@ -223,10 +224,10 @@ public:
 };
 
 /**
- * An InstantSend transaction lock vote. Sent by a dynode in response to a
+ * An InstantSend transaction lock vote. Sent by a servicenode in response to a
  * transaction lock request (ix message) to indicate the transaction input can
  * be locked. Contains the proposed transaction's hash and the outpoint being
- * locked along with the dynodes outpoint and signature.
+ * locked along with the servicenodes outpoint and signature.
  * @see CTxLockRequest
  */
 class CTxLockVote
@@ -234,8 +235,8 @@ class CTxLockVote
 private:
     uint256 txHash;
     COutPoint outpoint;
-    COutPoint outpointDynode;
-    std::vector<unsigned char> vchDynodeSignature;
+    COutPoint outpointServiceNode;
+    std::vector<unsigned char> vchServiceNodeSignature;
     // local memory only
     int nConfirmedHeight; ///< When corresponding tx is 0-confirmed or conflicted, nConfirmedHeight is -1
     int64_t nTimeCreated;
@@ -243,17 +244,17 @@ private:
 public:
     CTxLockVote() : txHash(),
                     outpoint(),
-                    outpointDynode(),
-                    vchDynodeSignature(),
+                    outpointServiceNode(),
+                    vchServiceNodeSignature(),
                     nConfirmedHeight(-1),
                     nTimeCreated(GetTime())
     {
     }
 
-    CTxLockVote(const uint256& txHashIn, const COutPoint& outpointIn, const COutPoint& outpointDynodeIn) : txHash(txHashIn),
+    CTxLockVote(const uint256& txHashIn, const COutPoint& outpointIn, const COutPoint& outpointServiceNodeIn) : txHash(txHashIn),
                                                                                                            outpoint(outpointIn),
-                                                                                                           outpointDynode(outpointDynodeIn),
-                                                                                                           vchDynodeSignature(),
+                                                                                                           outpointServiceNode(outpointServiceNodeIn),
+                                                                                                           vchServiceNodeSignature(),
                                                                                                            nConfirmedHeight(-1),
                                                                                                            nTimeCreated(GetTime())
     {
@@ -266,9 +267,9 @@ public:
     {
         READWRITE(txHash);
         READWRITE(outpoint);
-        READWRITE(outpointDynode);
+        READWRITE(outpointServiceNode);
         if (!(s.GetType() & SER_GETHASH)) {
-            READWRITE(vchDynodeSignature);
+            READWRITE(vchServiceNodeSignature);
         }
     }
 
@@ -277,7 +278,7 @@ public:
 
     uint256 GetTxHash() const { return txHash; }
     COutPoint GetOutpoint() const { return outpoint; }
-    COutPoint GetDynodeOutpoint() const { return outpointDynode; }
+    COutPoint GetServiceNodeOutpoint() const { return outpointServiceNode; }
 
     bool IsValid(CNode* pnode, CConnman& connman) const;
     void SetConfirmedHeight(int nConfirmedHeightIn) { nConfirmedHeight = nConfirmedHeightIn; }
@@ -298,7 +299,7 @@ class COutPointLock
 {
 private:
     COutPoint outpoint;                              ///< UTXO
-    std::map<COutPoint, CTxLockVote> mapDynodeVotes; ///< Dynode outpoint - vote
+    std::map<COutPoint, CTxLockVote> mapServiceNodeVotes; ///< ServiceNode outpoint - vote
     bool fAttacked = false;
 
 public:
@@ -308,7 +309,7 @@ public:
     COutPointLock() {}
 
     COutPointLock(const COutPoint& outpointIn) : outpoint(outpointIn),
-                                                 mapDynodeVotes()
+                                                 mapServiceNodeVotes()
     {
     }
 
@@ -320,14 +321,14 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         READWRITE(outpoint);
-        READWRITE(mapDynodeVotes);
+        READWRITE(mapServiceNodeVotes);
         READWRITE(fAttacked);
     }
 
     bool AddVote(const CTxLockVote& vote);
     std::vector<CTxLockVote> GetVotes() const;
-    bool HasDynodeVoted(const COutPoint& outpointDynodeIn) const;
-    int CountVotes() const { return fAttacked ? 0 : mapDynodeVotes.size(); }
+    bool HasServiceNodeVoted(const COutPoint& outpointServiceNodeIn) const;
+    int CountVotes() const { return fAttacked ? 0 : mapServiceNodeVotes.size(); }
     bool IsReady() const { return !fAttacked && CountVotes() >= SIGNATURES_REQUIRED; }
     void MarkAsAttacked() { fAttacked = true; }
 
@@ -377,7 +378,7 @@ public:
     bool AddVote(const CTxLockVote& vote);
     bool IsAllOutPointsReady() const;
 
-    bool HasDynodeVoted(const COutPoint& outpointIn, const COutPoint& outpointDynodeIn);
+    bool HasServiceNodeVoted(const COutPoint& outpointIn, const COutPoint& outpointServiceNodeIn);
     int CountVotes() const;
 
     void SetConfirmedHeight(int nConfirmedHeightIn) { nConfirmedHeight = nConfirmedHeightIn; }

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_RPCSERVER_H
-#define DYNAMIC_RPCSERVER_H
+#ifndef CREDIT_RPCSERVER_H
+#define CREDIT_RPCSERVER_H
 
 #include "amount.h"
 #include "rpcprotocol.h"
@@ -151,7 +152,7 @@ public:
 };
 
 /**
- * Dynamic RPC command dispatcher.
+ * Credit RPC command dispatcher.
  */
 class CRPCTable
 {
@@ -212,4 +213,4 @@ void StopRPC();
 std::string JSONRPCExecBatch(const UniValue& vReq);
 void RPCNotifyBlockChange(bool ibd, const CBlockIndex*);
 
-#endif // DYNAMIC_RPCSERVER_H
+#endif // CREDIT_RPCSERVER_H

@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_CERTIFICATE_H
-#define DYNAMIC_BDAP_CERTIFICATE_H
+#ifndef CREDIT_BDAP_CERTIFICATE_H
+#define CREDIT_BDAP_CERTIFICATE_H
 
 #include "bdap.h"
 #include "bdap/domainentry.h"
@@ -109,4 +109,4 @@ public:
     bool ValidateValues(std::string& errorMessage);
 };
 
-#endif // DYNAMIC_BDAP_CERTIFICATE_H
+#endif // CREDIT_BDAP_CERTIFICATE_H

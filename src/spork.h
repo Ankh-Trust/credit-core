@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_SPORK_H
-#define DYNAMIC_SPORK_H
+#ifndef CREDIT_SPORK_H
+#define CREDIT_SPORK_H
 
 #include "hash.h"
 #include "key.h"
@@ -22,9 +23,9 @@ static const int SPORK_2_INSTANTSEND_ENABLED = 10001;
 static const int SPORK_3_INSTANTSEND_BLOCK_FILTERING = 10002;
 static const int SPORK_5_INSTANTSEND_MAX_VALUE = 10004;
 static const int SPORK_6_NEW_SIGS = 10005;
-static const int SPORK_8_DYNODE_PAYMENT_ENFORCEMENT = 10007;
+static const int SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT = 10007;
 static const int SPORK_9_SUPERBLOCKS_ENABLED = 10008;
-static const int SPORK_10_DYNODE_PAY_UPDATED_NODES = 10009;
+static const int SPORK_10_SERVICENODE_PAY_UPDATED_NODES = 10009;
 static const int SPORK_12_RECONSIDER_BLOCKS = 10011;
 static const int SPORK_13_OLD_SUPERBLOCK_FLAG = 10012;
 static const int SPORK_14_REQUIRE_SENTINEL_FLAG = 10013;
@@ -37,9 +38,9 @@ static const int SPORK_END = SPORK_30_ACTIVATE_BDAP;
 extern std::map<int, int64_t> mapSporkDefaults;
 extern CSporkManager sporkManager;
 
-/** 
- * Sporks are network parameters used primarily to prevent forking and turn 
- * on/off certain features. They are a soft consensus mechanism. 
+/**
+ * Sporks are network parameters used primarily to prevent forking and turn
+ * on/off certain features. They are a soft consensus mechanism.
  *
  * We use 2 main classes to manage the spork system.
  *
@@ -170,7 +171,7 @@ public:
         }
         // we don't serialize pubkey ids because pubkeys should be
         // hardcoded or be setted with cmdline or options, should
-        // not reuse pubkeys from previous dynamicd run
+        // not reuse pubkeys from previous creditd run
         READWRITE(mapSporksByHash);
         READWRITE(mapSporksActive);
         // we don't serialize private key to prevent its leakage
@@ -286,4 +287,4 @@ public:
     std::string ToString() const;
 };
 
-#endif // DYNAMIC_SPORK_H
+#endif // CREDIT_SPORK_H

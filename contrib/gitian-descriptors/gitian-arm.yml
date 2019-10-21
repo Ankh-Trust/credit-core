@@ -1,11 +1,11 @@
 ---
-name: "dynamic-arm-2.4.0.0"
+name: "credit-arm-1.0.0.0"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++-aarch64-linux-gnu"
 - "g++-4.8-aarch64-linux-gnu"
@@ -29,8 +29,8 @@ packages:
 - "python"
 reference_datetime: "2019-01-01 00:00:00"
 remotes:
-- "url": "https://github.com/duality-solutions/dynamic.git"
-  "dir": "dynamic"
+- "url": "https://github.com/duality-solutions/credit.git"
+  "dir": "credit"
 files: []
 script: |
   WRAP_DIR=$HOME/wrapped
@@ -70,7 +70,7 @@ script: |
     done
   done
   export PATH=${WRAP_DIR}:${PATH}
-  cd dynamic
+  cd credit
   BASEPREFIX=`pwd`/depends
   # Build dependencies for each host
   for i in $HOSTS; do
@@ -80,13 +80,13 @@ script: |
   ./autogen.sh
   ./configure --prefix=${BASEPREFIX}/`echo "${HOSTS}" | awk '{print $1;}'`
   make dist
-  SOURCEDIST=`echo dynamic-*.tar.gz`
+  SOURCEDIST=`echo credit-*.tar.gz`
   DISTNAME=`echo ${SOURCEDIST} | sed 's/.tar.*//'`
   # Correct tar file order
   mkdir -p temp
   pushd temp
   tar xf ../$SOURCEDIST
-  find dynamic-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
+  find credit-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
   popd
   ORIGPATH="$PATH"
   # Extract the release tarball into a dir for each host and build
@@ -109,4 +109,3 @@ script: |
   done
   mkdir -p $OUTDIR/src
   mv $SOURCEDIST $OUTDIR/src
- 

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -8,8 +9,8 @@
 /**
  * Functionality for communicating with Tor.
  */
-#ifndef DYNAMIC_TORCONTROL_H
-#define DYNAMIC_TORCONTROL_H
+#ifndef CREDIT_TORCONTROL_H
+#define CREDIT_TORCONTROL_H
 
 #include "scheduler.h"
 
@@ -20,4 +21,4 @@ void StartTorControl(boost::thread_group& threadGroup, CScheduler& scheduler);
 void InterruptTorControl();
 void StopTorControl();
 
-#endif // DYNAMIC_TORCONTROL_H
+#endif // CREDIT_TORCONTROL_H

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CORE_MEMUSAGE_H
-#define DYNAMIC_CORE_MEMUSAGE_H
+#ifndef CREDIT_CORE_MEMUSAGE_H
+#define CREDIT_CORE_MEMUSAGE_H
 
 #include "memusage.h"
 
@@ -71,4 +72,4 @@ static inline size_t RecursiveDynamicUsage(const CBlockLocator& locator)
     return memusage::DynamicUsage(locator.vHave);
 }
 
-#endif // DYNAMIC_CORE_MEMUSAGE_H
+#endif // CREDIT_CORE_MEMUSAGE_H

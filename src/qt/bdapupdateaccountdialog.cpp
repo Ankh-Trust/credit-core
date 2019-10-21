@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -18,13 +19,13 @@
 
 #include <boost/algorithm/string.hpp>
 
-BdapUpdateAccountDialog::BdapUpdateAccountDialog(QWidget *parent, BDAP::ObjectType accountType, std::string account, std::string commonName, std::string expirationDate, int DynamicUnits) : QDialog(parent),
+BdapUpdateAccountDialog::BdapUpdateAccountDialog(QWidget *parent, BDAP::ObjectType accountType, std::string account, std::string commonName, std::string expirationDate, int CreditUnits) : QDialog(parent),
                                                         ui(new Ui::BdapUpdateAccountDialog)
 {
     //By default, accountType is USER. so only change stuff if different
     ui->setupUi(this);
     inputAccountType = accountType;
-    nDynamicUnits = DynamicUnits;
+    nCreditUnits = CreditUnits;
 
     std::string objectID = "";
     std::vector<std::string> results;
@@ -41,12 +42,12 @@ BdapUpdateAccountDialog::BdapUpdateAccountDialog(QWidget *parent, BDAP::ObjectTy
 
     ui->lineEditID->setText(QString::fromStdString(objectID));
     ui->lineEditCommonName->setText(QString::fromStdString(commonName));
-    ui->labelExpirationDateInfo->setText(QString::fromStdString(expirationDate)); 
+    ui->labelExpirationDateInfo->setText(QString::fromStdString(expirationDate));
 
     connect(ui->pushButtonUpdate, SIGNAL(clicked()), this, SLOT(updateAccount()));
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(goCancel()));
     connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(goCancel()));
- 
+
     ui->labelErrorMsg->setVisible(false);
     ui->pushButtonOK->setVisible(false);
 }
@@ -71,7 +72,7 @@ void BdapUpdateAccountDialog::updateAccount()
     commonName = ui->lineEditCommonName->text().toStdString();
     registrationMonths = ui->lineEditRegistrationMonths->text().toStdString();
 
-    if (registrationMonths.length() >> 0) 
+    if (registrationMonths.length() >> 0)
     {
         try {
             regMonths = std::stoi(registrationMonths);
@@ -79,7 +80,7 @@ void BdapUpdateAccountDialog::updateAccount()
             QMessageBox::critical(this, QObject::tr("BDAP Error"),QObject::tr("Registration months must be a number."));
             return;
         }
-        
+
         CAmount tmpAmount;
         if ( (!ParseFixedPoint(registrationMonths, 0, &tmpAmount)) || (regMonths < 0) ) {
             QMessageBox::critical(this, QObject::tr("BDAP Error"),QObject::tr("Additional months cannot be less than zero, and must be a whole number (no decimals)."));
@@ -102,7 +103,7 @@ void BdapUpdateAccountDialog::updateAccount()
 
     ui->pushButtonUpdate->setVisible(false);
     ui->pushButtonCancel->setVisible(false);
-    
+
     params.push_back(accountID);
     params.push_back(commonName);
 
@@ -120,7 +121,7 @@ void BdapUpdateAccountDialog::updateAccount()
 
     } //end inputAccountType if
 
-    if (!bdapFeesPopup(this,OP_BDAP_MODIFY,OP_BDAP_ACCOUNT_ENTRY,inputAccountType,nDynamicUnits,regMonths)) {
+    if (!bdapFeesPopup(this,OP_BDAP_MODIFY,OP_BDAP_ACCOUNT_ENTRY,inputAccountType,nCreditUnits,regMonths)) {
         goClose();
         return;
     }
@@ -163,7 +164,7 @@ void BdapUpdateAccountDialog::goClose()
 std::string BdapUpdateAccountDialog::ignoreErrorCode(const std::string input)
 {
     //assuming error code is in the following format: ERROR CODE - ERROR MESSAGE
-    
+
     std::vector<std::string> results;
     std::string returnvalue = input;
 

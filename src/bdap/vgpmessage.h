@@ -4,8 +4,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_VGPMESSAGE_H
-#define DYNAMIC_BDAP_VGPMESSAGE_H
+#ifndef CREDIT_BDAP_VGPMESSAGE_H
+#define CREDIT_BDAP_VGPMESSAGE_H
 
 #include "serialize.h"
 #include "sync.h"
@@ -26,7 +26,7 @@ class CVGPMessage;
 static constexpr size_t MAX_MESSAGE_SIZE = 8192;
 static constexpr int MIN_VGP_MESSAGE_PEER_PROTO_VERSION = 71000;
 static constexpr size_t MAX_MESSAGE_DATA_LENGTH = 8192;
-static constexpr uint32_t MIN_CLIENT_VERSION = 2040000;
+static constexpr uint32_t MIN_CLIENT_VERSION = 1000000;
 static constexpr size_t MAX_SIGNATURE_SIZE = 72;
 static constexpr size_t MAX_WALLET_PUBKEY_SIZE = 40;
 static constexpr int KEEP_MESSAGE_LOG_ALIVE_SECONDS = 300; // 5 minutes.
@@ -111,10 +111,10 @@ public:
 
     void SetNull();
 
-    bool EncryptMessage(const std::vector<unsigned char>& vchType, const std::vector<unsigned char>& vchMessage, const std::vector<unsigned char>& vchSenderFQDN, 
+    bool EncryptMessage(const std::vector<unsigned char>& vchType, const std::vector<unsigned char>& vchMessage, const std::vector<unsigned char>& vchSenderFQDN,
                         const std::vector<std::vector<unsigned char>>& vvchPubKeys, const bool fKeepLast, std::string& strErrorMessage);
 
-    bool DecryptMessage(const std::array<char, 32>& arrPrivateSeed, std::vector<unsigned char>& vchType, 
+    bool DecryptMessage(const std::array<char, 32>& arrPrivateSeed, std::vector<unsigned char>& vchType,
                         std::vector<unsigned char>& vchMessage, std::vector<unsigned char>& vchSenderFQDN, bool& fKeepLast, std::string& strErrorMessage);
 
     std::vector<unsigned char> Type();
@@ -187,8 +187,8 @@ bool DecryptMessage(CUnsignedVGPMessage& unsignedMessage);
 void AddMyMessage(const CVGPMessage& message);
 void GetMyLinkMessages(const uint256& subjectID, std::vector<CUnsignedVGPMessage>& vMessages);
 void GetMyLinkMessagesByType(const std::vector<unsigned char>& vchType, const std::vector<unsigned char>& vchRecipientFQDN, std::vector<CVGPMessage>& vMessages, bool& fKeepLast);
-void GetMyLinkMessagesBySubjectAndSender(const uint256& subjectID, const std::vector<unsigned char>& vchSenderFQDN, 
+void GetMyLinkMessagesBySubjectAndSender(const uint256& subjectID, const std::vector<unsigned char>& vchSenderFQDN,
                                             const std::vector<unsigned char>& vchType, std::vector<CVGPMessage>& vchMessages, bool& fKeepLast);
 void KeepLastTypeBySender(std::vector<CVGPMessage>& vMessages);
 
-#endif // DYNAMIC_BDAP_VGPMESSAGE_H
+#endif // CREDIT_BDAP_VGPMESSAGE_H

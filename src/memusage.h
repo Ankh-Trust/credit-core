@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_MEMUSAGE_H
-#define DYNAMIC_MEMUSAGE_H
+#ifndef CREDIT_MEMUSAGE_H
+#define CREDIT_MEMUSAGE_H
 
 #include "indirectmap.h"
 
@@ -27,7 +28,7 @@ namespace memusage
 /** Compute the total memory used by allocating alloc bytes. */
 static size_t MallocUsage(size_t alloc);
 
-/** Dynamic memory usage for built-in types is zero. */
+/** Credit memory usage for built-in types is zero. */
 static inline size_t DynamicUsage(const int8_t& v) { return 0; }
 static inline size_t DynamicUsage(const uint8_t& v) { return 0; }
 static inline size_t DynamicUsage(const int16_t& v) { return 0; }
@@ -190,4 +191,4 @@ static inline size_t DynamicUsage(const std::unordered_map<X, Y, Z>& m)
 
 } // namespace memusage
 
-#endif // DYNAMIC_MEMUSAGE_H
+#endif // CREDIT_MEMUSAGE_H

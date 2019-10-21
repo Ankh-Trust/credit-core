@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_UI_INTERFACE_H
-#define DYNAMIC_UI_INTERFACE_H
+#ifndef CREDIT_UI_INTERFACE_H
+#define CREDIT_UI_INTERFACE_H
 
 #include <stdint.h>
 #include <string>
@@ -83,8 +84,8 @@ public:
     /** Number of network connections changed. */
     boost::signals2::signal<void(int newNumConnections)> NotifyNumConnectionsChanged;
 
-    /** Number of Dynodes changed. */
-    boost::signals2::signal<void(int newNumDynodes)> NotifyStrDynodeCountChanged;
+    /** Number of ServiceNodes changed. */
+    boost::signals2::signal<void(int newNumServiceNodes)> NotifyStrServiceNodeCountChanged;
 
     /**
      * New, updated or cancelled alert.
@@ -126,4 +127,4 @@ std::string AmountHighWarn(const std::string& optname);
 
 extern CClientUIInterface uiInterface;
 
-#endif // DYNAMIC_UI_INTERFACE_H
+#endif // CREDIT_UI_INTERFACE_H

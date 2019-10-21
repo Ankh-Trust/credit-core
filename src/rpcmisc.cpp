@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -7,7 +8,7 @@
 
 #include "base58.h"
 #include "clientversion.h"
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "init.h"
 #include "net.h"
 #include "netbase.h"
@@ -57,8 +58,8 @@ UniValue getinfo(const JSONRPCRequest& request)
             "  \"version\": xxxxx,           (numeric) the server version\n"
             "  \"protocolversion\": xxxxx,   (numeric) the protocol version\n"
             "  \"walletversion\": xxxxx,     (numeric) the wallet version\n"
-            "  \"balance\": xxxxxxx,         (numeric) the total dynamic balance of the wallet\n"
-            "  \"privatesend_balance\": xxxxxx, (numeric) the anonymized dynamic balance of the wallet\n"
+            "  \"balance\": xxxxxxx,         (numeric) the total credit balance of the wallet\n"
+            "  \"privatesend_balance\": xxxxxx, (numeric) the anonymized credit balance of the wallet\n"
             "  \"blocks\": xxxxxx,           (numeric) the current number of blocks processed in the server\n"
             "  \"timeoffset\": xxxxx,        (numeric) the time offset\n"
             "  \"connections\": xxxxx,       (numeric) the number of connections\n"
@@ -124,10 +125,10 @@ UniValue debug(const JSONRPCRequest& request)
         throw std::runtime_error(
             "debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool"
             "|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|"
-            "dynamic|privatesend|instantsend|dynode|spork|keepass|dnpayments|gobject|dht|bdap|validation|stealth|)\n"
+            "credit|privatesend|instantsend|servicenode|spork|keepass|dnpayments|gobject|dht|bdap|validation|stealth|)\n"
             "Change debug category on the fly. Specify single category or use a plus to specify many.\n"
             "\nExamples:\n" +
-            HelpExampleCli("debug", "dynamic") + HelpExampleRpc("debug", "dynamic+net"));
+            HelpExampleCli("debug", "credit") + HelpExampleRpc("debug", "credit+net"));
 
     std::string strMode = request.params[0].get_str();
 
@@ -152,26 +153,26 @@ UniValue dnsync(const JSONRPCRequest& request)
 
     if (strMode == "status") {
         UniValue objStatus(UniValue::VOBJ);
-        objStatus.push_back(Pair("AssetID", dynodeSync.GetAssetID()));
-        objStatus.push_back(Pair("AssetName", dynodeSync.GetAssetName()));
-        objStatus.push_back(Pair("AssetStartTime", dynodeSync.GetAssetStartTime()));
-        objStatus.push_back(Pair("Attempt", dynodeSync.GetAttempt()));
-        objStatus.push_back(Pair("IsBlockchainSynced", dynodeSync.IsBlockchainSynced()));
-        objStatus.push_back(Pair("IsDynodeListSynced", dynodeSync.IsDynodeListSynced()));
-        objStatus.push_back(Pair("IsWinnersListSynced", dynodeSync.IsWinnersListSynced()));
-        objStatus.push_back(Pair("IsSynced", dynodeSync.IsSynced()));
-        objStatus.push_back(Pair("IsFailed", dynodeSync.IsFailed()));
+        objStatus.push_back(Pair("AssetID", servicenodeSync.GetAssetID()));
+        objStatus.push_back(Pair("AssetName", servicenodeSync.GetAssetName()));
+        objStatus.push_back(Pair("AssetStartTime", servicenodeSync.GetAssetStartTime()));
+        objStatus.push_back(Pair("Attempt", servicenodeSync.GetAttempt()));
+        objStatus.push_back(Pair("IsBlockchainSynced", servicenodeSync.IsBlockchainSynced()));
+        objStatus.push_back(Pair("IsServiceNodeListSynced", servicenodeSync.IsServiceNodeListSynced()));
+        objStatus.push_back(Pair("IsWinnersListSynced", servicenodeSync.IsWinnersListSynced()));
+        objStatus.push_back(Pair("IsSynced", servicenodeSync.IsSynced()));
+        objStatus.push_back(Pair("IsFailed", servicenodeSync.IsFailed()));
         return objStatus;
     }
 
     if (strMode == "next") {
-        dynodeSync.SwitchToNextAsset(*g_connman);
-        return "sync updated to " + dynodeSync.GetAssetName();
+        servicenodeSync.SwitchToNextAsset(*g_connman);
+        return "sync updated to " + servicenodeSync.GetAssetName();
     }
 
     if (strMode == "reset") {
-        dynodeSync.Reset();
-        dynodeSync.SwitchToNextAsset(*g_connman);
+        servicenodeSync.Reset();
+        servicenodeSync.SwitchToNextAsset(*g_connman);
         return "success";
     }
     return "failure";
@@ -209,7 +210,7 @@ public:
             obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
             UniValue a(UniValue::VARR);
             BOOST_FOREACH (const CTxDestination& addr, addresses)
-                a.push_back(CDynamicAddress(addr).ToString());
+                a.push_back(CCreditAddress(addr).ToString());
             obj.push_back(Pair("addresses", a));
             if (whichType == TX_MULTISIG)
                 obj.push_back(Pair("sigsrequired", nRequired));
@@ -308,14 +309,14 @@ UniValue validateaddress(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
-            "validateaddress \"dynamicaddress\"\n"
-            "\nReturn information about the given dynamic address.\n"
+            "validateaddress \"creditaddress\"\n"
+            "\nReturn information about the given credit address.\n"
             "\nArguments:\n"
-            "1. \"dynamicaddress\"     (string, required) The dynamic address to validate\n"
+            "1. \"creditaddress\"     (string, required) The credit address to validate\n"
             "\nResult:\n"
             "{\n"
             "  \"isvalid\" : true|false,       (boolean) If the address is valid or not. If not, this is the only property returned.\n"
-            "  \"address\" : \"dynamicaddress\", (string) The dynamic address validated\n"
+            "  \"address\" : \"creditaddress\", (string) The credit address validated\n"
             "  \"scriptPubKey\" : \"hex\",       (string) The hex encoded scriptPubKey generated by the address\n"
             "  \"ismine\" : true|false,        (boolean) If the address is yours or not\n"
             "  \"iswatchonly\" : true|false,   (boolean) If the address is watchonly\n"
@@ -336,7 +337,7 @@ UniValue validateaddress(const JSONRPCRequest& request)
     LOCK(cs_main);
 #endif
 
-    CDynamicAddress address(request.params[0].get_str());
+    CCreditAddress address(request.params[0].get_str());
     bool isValid = address.IsValid();
 
     UniValue ret(UniValue::VOBJ);
@@ -402,8 +403,8 @@ CScript _createmultisig_redeemScript(const UniValue& params)
     for (unsigned int i = 0; i < keys.size(); i++) {
         const std::string& ks = keys[i].get_str();
 #ifdef ENABLE_WALLET
-        // Case 1: Dynamic address and we have full public key:
-        CDynamicAddress address(ks);
+        // Case 1: Credit address and we have full public key:
+        CCreditAddress address(ks);
         if (pwalletMain && address.IsValid()) {
             CKeyID keyID;
             if (!address.GetKeyID(keyID))
@@ -448,9 +449,9 @@ UniValue createmultisig(const JSONRPCRequest& request)
 
                           "\nArguments:\n"
                           "1. nrequired      (numeric, required) The number of required signatures out of the n keys or addresses.\n"
-                          "2. \"keys\"       (string, required) A json array of keys which are dynamic addresses or hex-encoded public keys\n"
+                          "2. \"keys\"       (string, required) A json array of keys which are credit addresses or hex-encoded public keys\n"
                           "     [\n"
-                          "       \"key\"    (string) dynamic address or hex-encoded public key\n"
+                          "       \"key\"    (string) credit address or hex-encoded public key\n"
                           "       ,...\n"
                           "     ]\n"
 
@@ -470,7 +471,7 @@ UniValue createmultisig(const JSONRPCRequest& request)
     // Construct using pay-to-script-hash:
     CScript inner = _createmultisig_redeemScript(request.params);
     CScriptID innerID(inner);
-    CDynamicAddress address(innerID);
+    CCreditAddress address(innerID);
 
     UniValue result(UniValue::VOBJ);
     result.push_back(Pair("address", address.ToString()));
@@ -483,10 +484,10 @@ UniValue verifymessage(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 3)
         throw std::runtime_error(
-            "verifymessage \"dynamicaddress\" \"signature\" \"message\"\n"
+            "verifymessage \"creditaddress\" \"signature\" \"message\"\n"
             "\nVerify a signed message\n"
             "\nArguments:\n"
-            "1. \"dynamicaddress\"  (string, required) The dynamic address to use for the signature.\n"
+            "1. \"creditaddress\"  (string, required) The credit address to use for the signature.\n"
             "2. \"signature\"       (string, required) The signature provided by the signer in base 64 encoding (see signmessage).\n"
             "3. \"message\"         (string, required) The message that was signed.\n"
             "\nResult:\n"
@@ -504,7 +505,7 @@ UniValue verifymessage(const JSONRPCRequest& request)
     std::string strSign = request.params[1].get_str();
     std::string strMessage = request.params[2].get_str();
 
-    CDynamicAddress addr(strAddress);
+    CCreditAddress addr(strAddress);
     if (!addr.IsValid())
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
 
@@ -549,7 +550,7 @@ UniValue signmessagewithprivkey(const JSONRPCRequest& request)
     std::string strPrivkey = request.params[0].get_str();
     std::string strMessage = request.params[1].get_str();
 
-    CDynamicSecret vchSecret;
+    CCreditSecret vchSecret;
     bool fGood = vchSecret.SetString(strPrivkey);
     if (!fGood)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key");
@@ -597,9 +598,9 @@ UniValue setmocktime(const JSONRPCRequest& request)
 bool getAddressFromIndex(const int& type, const uint160& hash, std::string& address)
 {
     if (type == 2) {
-        address = CDynamicAddress(CScriptID(hash)).ToString();
+        address = CCreditAddress(CScriptID(hash)).ToString();
     } else if (type == 1) {
-        address = CDynamicAddress(CKeyID(hash)).ToString();
+        address = CCreditAddress(CKeyID(hash)).ToString();
     } else {
         return false;
     }
@@ -609,7 +610,7 @@ bool getAddressFromIndex(const int& type, const uint160& hash, std::string& addr
 bool getAddressesFromParams(const UniValue& params, std::vector<std::pair<uint160, int> >& addresses)
 {
     if (params[0].isStr()) {
-        CDynamicAddress address(params[0].get_str());
+        CCreditAddress address(params[0].get_str());
         uint160 hashBytes;
         int type = 0;
         if (!address.GetIndexKey(hashBytes, type)) {
@@ -625,7 +626,7 @@ bool getAddressesFromParams(const UniValue& params, std::vector<std::pair<uint16
         std::vector<UniValue> values = addressValues.getValues();
 
         for (std::vector<UniValue>::iterator it = values.begin(); it != values.end(); ++it) {
-            CDynamicAddress address(it->get_str());
+            CCreditAddress address(it->get_str());
             uint160 hashBytes;
             int type = 0;
             if (!address.GetIndexKey(hashBytes, type)) {
@@ -1123,9 +1124,9 @@ static const CRPCCommand commands[] =
         {"addressindex", "getaddresstxids", &getaddresstxids, false, {"addresses"}},
         {"addressindex", "getaddressbalance", &getaddressbalance, false, {"addresses"}},
 
-        /* Dynamic features */
-        {"dynamic", "dnsync", &dnsync, true, {}},
-        {"dynamic", "spork", &spork, true, {"value"}},
+        /* Credit features */
+        {"credit", "dnsync", &dnsync, true, {}},
+        {"credit", "spork", &spork, true, {"value"}},
 
         /* Not shown in help */
         {"hidden", "setmocktime", &setmocktime, true, {"timestamp"}},

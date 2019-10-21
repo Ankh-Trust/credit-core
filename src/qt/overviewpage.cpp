@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,7 +10,7 @@
 #include "ui_overviewpage.h"
 
 #include "clientmodel.h"
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiconstants.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
@@ -20,7 +21,7 @@
 #include "utilitydialog.h"
 #include "walletmodel.h"
 
-#include "dynode-sync.h"
+#include "servicenode-sync.h"
 #include "init.h"
 #include "instantsend.h"
 #include "privatesend-client.h"
@@ -30,8 +31,7 @@
 #include <QSettings>
 #include <QTimer>
 
-#define ICON_OFFSET 16
-#define DECORATION_SIZE 54
+#define DECORATION_SIZE 17
 #define NUM_ITEMS 7
 #define NUM_ITEMS_ADV 7
 
@@ -39,7 +39,7 @@ class TxViewDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    TxViewDelegate(const PlatformStyle* _platformStyle, QObject* parent = nullptr) : QAbstractItemDelegate(parent), unit(DynamicUnits::DYN),
+    TxViewDelegate(const PlatformStyle* _platformStyle, QObject* parent = nullptr) : QAbstractItemDelegate(parent), unit(CreditUnits::_AC),
                                                                                      platformStyle(_platformStyle)
     {
     }
@@ -50,13 +50,13 @@ public:
 
         QIcon icon = qvariant_cast<QIcon>(index.data(TransactionTableModel::RawDecorationRole));
         QRect mainRect = option.rect;
-        mainRect.moveLeft(ICON_OFFSET);
-        QRect decorationRect(mainRect.topLeft(), QSize(DECORATION_SIZE, DECORATION_SIZE));
-        int xspace = DECORATION_SIZE + 8;
-        int ypad = 6;
-        int halfheight = (mainRect.height() - 2 * ypad) / 2;
-        QRect amountRect(mainRect.left() + xspace, mainRect.top() + ypad, mainRect.width() - xspace - ICON_OFFSET, halfheight);
-        QRect addressRect(mainRect.left() + xspace, mainRect.top() + ypad + halfheight, mainRect.width() - xspace, halfheight);
+        QRect decorationRect(mainRect.left(), mainRect.top()+DECORATION_SIZE, DECORATION_SIZE, DECORATION_SIZE);
+        int xspace = DECORATION_SIZE + 6;
+        int ypad = 1;
+        int halfheight = (mainRect.height() - 3*ypad - 4)/3 ;
+        QRect amountRect(mainRect.left() + xspace, mainRect.top()+ypad+halfheight, 150, DECORATION_SIZE);
+        QRect addressRect(mainRect.left() + xspace, mainRect.top()+ypad, 300, DECORATION_SIZE);
+        QRect dateRect(mainRect.left() + xspace, mainRect.top()+ypad+halfheight*2, 150, DECORATION_SIZE);
         icon = platformStyle->SingleColorIcon(icon);
         icon.paint(painter, decorationRect);
 
@@ -86,24 +86,24 @@ public:
         } else if (!confirmed) {
             foreground = COLOR_UNCONFIRMED;
         } else {
-            foreground = option.palette.color(QPalette::Text);
+            foreground = COLOR_POSITIVE;
         }
         painter->setPen(foreground);
-        QString amountText = DynamicUnits::floorWithUnit(unit, amount, true, DynamicUnits::separatorAlways);
+        QString amountText = CreditUnits::floorWithUnit(unit, amount, true, CreditUnits::separatorAlways);
         if (!confirmed) {
             amountText = QString("[") + amountText + QString("]");
         }
-        painter->drawText(amountRect, Qt::AlignRight | Qt::AlignVCenter, amountText);
+        painter->drawText(amountRect, Qt::AlignLeft | Qt::AlignVCenter, amountText);
 
-        painter->setPen(option.palette.color(QPalette::Text));
-        painter->drawText(amountRect, Qt::AlignLeft | Qt::AlignVCenter, GUIUtil::dateTimeStr(date));
+        painter->setPen(COLOR_BAREADDRESS);
+        painter->drawText(dateRect, Qt::AlignLeft | Qt::AlignVCenter, GUIUtil::dateTimeStr(date));
 
         painter->restore();
     }
 
     inline QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
     {
-        return QSize(DECORATION_SIZE, DECORATION_SIZE);
+        return QSize(DECORATION_SIZE, DECORATION_SIZE*2.9 + 4);
     }
 
     int unit;
@@ -125,11 +125,11 @@ OverviewPage::OverviewPage(const PlatformStyle* platformStyle, QWidget* parent) 
                                                                                   txdelegate(new TxViewDelegate(platformStyle, this))
 {
     ui->setupUi(this);
-    QString theme = GUIUtil::getThemeName();
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
     ui->listTransactions->setIconSize(QSize(DECORATION_SIZE, DECORATION_SIZE));
+    ui->listTransactions->setMinimumHeight(NUM_ITEMS * 3 * (DECORATION_SIZE + 2));
     // Note: minimum height of listTransactions will be set later in updateAdvancedPSUI() to reflect actual settings
     ui->listTransactions->setAttribute(Qt::WA_MacShowFocusRect, false);
 
@@ -151,8 +151,8 @@ OverviewPage::OverviewPage(const PlatformStyle* platformStyle, QWidget* parent) 
     if (fLiteMode)
         return;
 
-    // Disable any PS UI for Dynode or when autobackup is disabled or failed for whatever reason
-    if (fDynodeMode || nWalletBackups <= 0) {
+    // Disable any PS UI for ServiceNode or when autobackup is disabled or failed for whatever reason
+    if (fServiceNodeMode || nWalletBackups <= 0) {
         DisablePrivateSendCompletely();
         if (nWalletBackups <= 0) {
             ui->labelPrivateSendEnabled->setToolTip(tr("Automatic backups are disabled, no mixing available!"));
@@ -200,15 +200,15 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     currentWatchOnlyBalance = watchOnlyBalance;
     currentWatchUnconfBalance = watchUnconfBalance;
     currentWatchImmatureBalance = watchImmatureBalance;
-    ui->labelBalance->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, balance, false, DynamicUnits::separatorAlways));
-    ui->labelUnconfirmed->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, unconfirmedBalance, false, DynamicUnits::separatorAlways));
-    ui->labelImmature->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, immatureBalance, false, DynamicUnits::separatorAlways));
-    ui->labelAnonymized->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, anonymizedBalance, false, DynamicUnits::separatorAlways));
-    ui->labelTotal->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, balance + unconfirmedBalance + immatureBalance, false, DynamicUnits::separatorAlways));
-    ui->labelWatchAvailable->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, watchOnlyBalance, false, DynamicUnits::separatorAlways));
-    ui->labelWatchPending->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, watchUnconfBalance, false, DynamicUnits::separatorAlways));
-    ui->labelWatchImmature->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, watchImmatureBalance, false, DynamicUnits::separatorAlways));
-    ui->labelWatchTotal->setText(DynamicUnits::floorHtmlWithUnit(nDisplayUnit, watchOnlyBalance + watchUnconfBalance + watchImmatureBalance, false, DynamicUnits::separatorAlways));
+    ui->labelBalance->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, balance, false, CreditUnits::separatorAlways));
+    ui->labelUnconfirmed->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, unconfirmedBalance, false, CreditUnits::separatorAlways));
+    ui->labelImmature->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, immatureBalance, false, CreditUnits::separatorAlways));
+    ui->labelAnonymized->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, anonymizedBalance, false, CreditUnits::separatorAlways));
+    ui->labelTotal->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, balance + unconfirmedBalance + immatureBalance, false, CreditUnits::separatorAlways));
+    ui->labelWatchAvailable->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, watchOnlyBalance, false, CreditUnits::separatorAlways));
+    ui->labelWatchPending->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, watchUnconfBalance, false, CreditUnits::separatorAlways));
+    ui->labelWatchImmature->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, watchImmatureBalance, false, CreditUnits::separatorAlways));
+    ui->labelWatchTotal->setText(CreditUnits::floorHtmlWithUnit(nDisplayUnit, watchOnlyBalance + watchUnconfBalance + watchImmatureBalance, false, CreditUnits::separatorAlways));
 
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -264,7 +264,7 @@ void OverviewPage::setWalletModel(WalletModel* model)
 {
     this->walletModel = model;
     if (model && model->getOptionsModel()) {
-        // update the display unit, to not use the default ("DYN")
+        // update the display unit, to not use the default ("0AC")
         updateDisplayUnit();
         // Keep up to date with wallet
         setBalance(model->getBalance(), model->getUnconfirmedBalance(), model->getImmatureBalance(), model->getAnonymizedBalance(),
@@ -317,21 +317,21 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 
 void OverviewPage::updatePrivateSendProgress()
 {
-    if (!dynodeSync.IsBlockchainSynced() || ShutdownRequested())
+    if (!servicenodeSync.IsBlockchainSynced() || ShutdownRequested())
         return;
 
     if (!pwalletMain)
         return;
 
     QString strAmountAndRounds;
-    QString strPrivateSendAmount = DynamicUnits::formatHtmlWithUnit(nDisplayUnit, privateSendClient.nPrivateSendAmount * COIN, false, DynamicUnits::separatorAlways);
+    QString strPrivateSendAmount = CreditUnits::formatHtmlWithUnit(nDisplayUnit, privateSendClient.nPrivateSendAmount * COIN, false, CreditUnits::separatorAlways);
 
     if (currentBalance == 0) {
         ui->privateSendProgress->setValue(0);
         ui->privateSendProgress->setToolTip(tr("No inputs detected"));
 
         // when balance is zero just show info from settings
-        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), DynamicUnits::decimals(nDisplayUnit) + 1);
+        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), CreditUnits::decimals(nDisplayUnit) + 1);
         strAmountAndRounds = strPrivateSendAmount + " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds);
 
         ui->labelAmountRounds->setToolTip(tr("No inputs detected"));
@@ -353,17 +353,17 @@ void OverviewPage::updatePrivateSendProgress()
     if (nMaxToAnonymize >= privateSendClient.nPrivateSendAmount * COIN) {
         ui->labelAmountRounds->setToolTip(tr("Found enough compatible inputs to anonymize %1")
                                               .arg(strPrivateSendAmount));
-        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), DynamicUnits::decimals(nDisplayUnit) + 1);
+        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), CreditUnits::decimals(nDisplayUnit) + 1);
         strAmountAndRounds = strPrivateSendAmount + " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds);
     } else {
-        QString strMaxToAnonymize = DynamicUnits::formatHtmlWithUnit(nDisplayUnit, nMaxToAnonymize, false, DynamicUnits::separatorAlways);
-        ui->labelAmountRounds->setToolTip(tr("Not enough compatible inputs to anonymize <span style='color:red;'>%1</span>,<br>"
-                                             "will anonymize <span style='color:red;'>%2</span> instead")
+        QString strMaxToAnonymize = CreditUnits::formatHtmlWithUnit(nDisplayUnit, nMaxToAnonymize, false, CreditUnits::separatorAlways);
+        ui->labelAmountRounds->setToolTip(tr("Not enough compatible inputs to anonymize <span style='color: #66023c;'>%1</span>,<br>"
+                                             "will anonymize <span style='color: #66023c;'>%2</span> instead")
                                               .arg(strPrivateSendAmount)
                                               .arg(strMaxToAnonymize));
-        strMaxToAnonymize = strMaxToAnonymize.remove(strMaxToAnonymize.indexOf("."), DynamicUnits::decimals(nDisplayUnit) + 1);
-        strAmountAndRounds = "<span style='color:red;'>" +
-                             QString(DynamicUnits::factor(nDisplayUnit) == 1 ? "" : "~") + strMaxToAnonymize +
+        strMaxToAnonymize = strMaxToAnonymize.remove(strMaxToAnonymize.indexOf("."), CreditUnits::decimals(nDisplayUnit) + 1);
+        strAmountAndRounds = "<span style='color: #66023c;'>" +
+                             QString(CreditUnits::factor(nDisplayUnit) == 1 ? "" : "~") + strMaxToAnonymize +
                              " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds) + "</span>";
     }
     ui->labelAmountRounds->setText(strAmountAndRounds);
@@ -452,7 +452,7 @@ void OverviewPage::updateAdvancedPSUI(bool fShowAdvancedPSUI)
 
 void OverviewPage::privateSendStatus()
 {
-    if (!dynodeSync.IsBlockchainSynced() || ShutdownRequested())
+    if (!servicenodeSync.IsBlockchainSynced() || ShutdownRequested())
         return;
 
     static int64_t nLastPSProgressBlockTime = 0;
@@ -465,7 +465,7 @@ void OverviewPage::privateSendStatus()
 
     QString strKeysLeftText(tr("keys left: %1").arg(pwalletMain->nKeysLeftSinceAutoBackup));
     if (pwalletMain->nKeysLeftSinceAutoBackup < PRIVATESEND_KEYS_THRESHOLD_WARNING) {
-        strKeysLeftText = "<span style='color:red;'>" + strKeysLeftText + "</span>";
+        strKeysLeftText = "<span style='color: #66023c;'>" + strKeysLeftText + "</span>";
     }
     ui->labelPrivateSendEnabled->setToolTip(strKeysLeftText);
 
@@ -494,7 +494,7 @@ void OverviewPage::privateSendStatus()
         if (settings.value("fLowKeysWarning").toBool()) {
             QString strWarn = tr("Very low number of keys left since last automatic backup!") + "<br><br>" +
                               tr("We are about to create a new automatic backup for you, however "
-                                 "<span style='color:red;'> you should always make sure you have backups "
+                                 "<span style='color: #66023c;'> you should always make sure you have backups "
                                  "saved in some safe place</span>!") +
                               "<br><br>" +
                               tr("Note: You turn this message off in options.");
@@ -603,7 +603,7 @@ void OverviewPage::togglePrivateSend()
     if (!privateSendClient.fEnablePrivateSend) {
         const CAmount nMinAmount = CPrivateSend::GetSmallestDenomination() + CPrivateSend::GetMaxCollateralAmount();
         if (currentBalance < nMinAmount) {
-            QString strMinAmount(DynamicUnits::formatWithUnit(nDisplayUnit, nMinAmount));
+            QString strMinAmount(CreditUnits::formatWithUnit(nDisplayUnit, nMinAmount));
             QMessageBox::warning(this, tr("PrivateSend"),
                 tr("PrivateSend requires at least %1 to use.").arg(strMinAmount),
                 QMessageBox::Ok, QMessageBox::Ok);
@@ -670,7 +670,7 @@ void OverviewPage::DisablePrivateSendCompletely()
     ui->privateSendReset->setText("(" + tr("Disabled") + ")");
     ui->framePrivateSend->setEnabled(false);
     if (nWalletBackups <= 0) {
-        ui->labelPrivateSendEnabled->setText("<span style='color:red;'>(" + tr("Disabled") + ")</span>");
+        ui->labelPrivateSendEnabled->setText("<span style='color: #66023c;'>(" + tr("Disabled") + ")</span>");
     }
     privateSendClient.fEnablePrivateSend = false;
 }

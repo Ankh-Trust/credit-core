@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,8 +10,8 @@
 #error This header can only be compiled as C++.
 #endif
 
-#ifndef DYNAMIC_PROTOCOL_H
-#define DYNAMIC_PROTOCOL_H
+#ifndef CREDIT_PROTOCOL_H
+#define CREDIT_PROTOCOL_H
 
 #include "netaddress.h"
 #include "serialize.h"
@@ -65,7 +66,7 @@ public:
 };
 
 /**
- * Dynamic protocol message types. When adding new message types, don't forget
+ * Credit protocol message types. When adding new message types, don't forget
  * to update allNetMessageTypes in protocol.cpp.
  */
 namespace NetMsgType
@@ -243,15 +244,15 @@ extern const char* GETBLOCKTXN;
  * @since protocol version 71000 as described by BIP 152
  */
 extern const char* BLOCKTXN;
-// Dynamic message types
+// Credit message types
 // NOTE: do NOT declare non-implmented here, we don't want them to be exposed to the outside
 // TODO: add description
 extern const char* TXLOCKREQUEST;
 extern const char* TXLOCKVOTE;
 extern const char* SPORK;
 extern const char* GETSPORKS;
-extern const char* DYNODEPAYMENTVOTE;
-extern const char* DYNODEPAYMENTSYNC;
+extern const char* SERVICENODEPAYMENTVOTE;
+extern const char* SERVICENODEPAYMENTSYNC;
 extern const char* DNANNOUNCE;
 extern const char* DNPING;
 extern const char* PSACCEPT;
@@ -280,14 +281,14 @@ enum ServiceFlags : uint64_t {
     // Nothing
     NODE_NONE = 0,
     // NODE_NETWORK means that the node is capable of serving the block chain. It is currently
-    // set by all Dynamic nodes, and is unset by SPV clients or other peers that just want
+    // set by all Credit nodes, and is unset by SPV clients or other peers that just want
     // network services but don't provide them.
     NODE_NETWORK = (1 << 0),
     // NODE_GETUTXO means the node is capable of responding to the getutxo protocol request.
     // See BIP 64 for details on how this is implemented.
     NODE_GETUTXO = (1 << 1),
     // NODE_BLOOM means the node is capable and willing to handle bloom-filtered connections.
-    // Dynamic nodes used to support this by default, without advertising this bit.
+    // Credit nodes used to support this by default, without advertising this bit.
     NODE_BLOOM = (1 << 2),
     // NODE_XTHIN means the node supports Xtreme Thinblocks
     // If this is turned off then the node will not service nor make xthin requests
@@ -349,19 +350,19 @@ enum GetDataMsg {
     // Nodes may always request a MSG_FILTERED_BLOCK in a getdata, however,
     // MSG_FILTERED_BLOCK should not appear in any invs except as a part of getdata.
     MSG_FILTERED_BLOCK = 3,
-    // Dynamic message types
+    // Credit message types
     MSG_TXLOCK_REQUEST = 4,
     MSG_TXLOCK_VOTE = 5,
     MSG_SPORK = 6,
-    MSG_DYNODE_PAYMENT_VOTE = 7,
-    MSG_DYNODE_PAYMENT_BLOCK = 8,
-    MSG_DYNODE_QUORUM = 9, // not implemented
-    MSG_DYNODE_ANNOUNCE = 10,
-    MSG_DYNODE_PING = 11,
+    MSG_SERVICENODE_PAYMENT_VOTE = 7,
+    MSG_SERVICENODE_PAYMENT_BLOCK = 8,
+    MSG_SERVICENODE_QUORUM = 9, // not implemented
+    MSG_SERVICENODE_ANNOUNCE = 10,
+    MSG_SERVICENODE_PING = 11,
     MSG_PSTX = 12,
     MSG_GOVERNANCE_OBJECT = 13,
     MSG_GOVERNANCE_OBJECT_VOTE = 14,
-    MSG_DYNODE_VERIFY = 15,
+    MSG_SERVICENODE_VERIFY = 15,
     // Nodes may always request a MSG_CMPCT_BLOCK in a getdata, however,
     // MSG_CMPCT_BLOCK should not appear in any invs except as a part of getdata.
     MSG_CMPCT_BLOCK = 16, //!< Defined in BIP152
@@ -396,4 +397,4 @@ public:
     uint256 hash;
 };
 
-#endif // DYNAMIC_PROTOCOL_H
+#endif // CREDIT_PROTOCOL_H

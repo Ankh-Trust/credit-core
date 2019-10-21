@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -151,7 +152,7 @@ bool CProposalValidator::ValidatePaymentAddress()
         return false;
     }
 
-    CDynamicAddress address(strPaymentAddress);
+    CCreditAddress address(strPaymentAddress);
     if (!address.IsValid()) {
         strErrorMessages += "payment_address is invalid;";
         return false;

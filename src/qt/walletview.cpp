@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -10,10 +11,10 @@
 #include "addressbookpage.h"
 #include "askpassphrasedialog.h"
 #include "clientmodel.h"
-#include "dynamicgui.h"
+#include "creditgui.h"
 #include "guiutil.h"
 #include "miningpage.h"
-#include "bdappage.h"
+// #include "bdappage.h"
 #include "optionsmodel.h"
 #include "overviewpage.h"
 #include "platformstyle.h"
@@ -25,7 +26,7 @@
 #include "transactionview.h"
 #include "walletmodel.h"
 
-#include "dynodeconfig.h"
+#include "servicenodeconfig.h"
 #include "ui_interface.h"
 
 #include <QAction>
@@ -52,7 +53,7 @@ WalletView::WalletView(const PlatformStyle* _platformStyle, QWidget* parent) : Q
     receiveCoinsPage = new ReceiveCoinsDialog(platformStyle);
 
     miningPage = new MiningPage(platformStyle);
-    bdapPage = new BdapPage(platformStyle);
+//    bdapPage = new BdapPage(platformStyle);
 
     usedSendingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
     usedReceivingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
@@ -65,8 +66,7 @@ WalletView::WalletView(const PlatformStyle* _platformStyle, QWidget* parent) : Q
     QPushButton* exportButton = new QPushButton(tr("&Export"), this);
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
     if (platformStyle->getImagesOnButtons()) {
-        QString theme = GUIUtil::getThemeName();
-        exportButton->setIcon(QIcon(":/icons/" + theme + "/export"));
+        exportButton->setIcon(QIcon(":/icons/export"));
     }
     hbox_buttons->addStretch();
 
@@ -87,19 +87,19 @@ WalletView::WalletView(const PlatformStyle* _platformStyle, QWidget* parent) : Q
     transactionsPage->setLayout(vbox);
 
     QSettings settings;
-    if (settings.value("fShowDynodesTab").toBool()) {
-        dynodeListPage = new DynodeList(platformStyle);
+    if (settings.value("fShowServiceNodesTab").toBool()) {
+        servicenodeListPage = new ServiceNodeList(platformStyle);
     }
 
     addWidget(overviewPage);
     addWidget(sendCoinsPage);
     addWidget(receiveCoinsPage);
     addWidget(transactionsPage);
-    if (settings.value("fShowDynodesTab").toBool()) {
-        addWidget(dynodeListPage);
+    if (settings.value("fShowServiceNodesTab").toBool()) {
+        addWidget(servicenodeListPage);
     }
     addWidget(miningPage);
-    addWidget(bdapPage);
+//    addWidget(bdapPage);
 
     // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
     connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), transactionView, SLOT(focusTransaction(QModelIndex)));
@@ -125,7 +125,7 @@ WalletView::~WalletView()
 {
 }
 
-void WalletView::setDynamicGUI(DynamicGUI* gui)
+void WalletView::setCreditGUI(CreditGUI* gui)
 {
     if (gui) {
         // Clicking on a transaction on the overview page simply sends you to transaction history page
@@ -154,10 +154,10 @@ void WalletView::setClientModel(ClientModel* _clientModel)
 
     overviewPage->setClientModel(_clientModel);
     sendCoinsPage->setClientModel(_clientModel);
-    bdapPage->setClientModel(_clientModel);
+//    bdapPage->setClientModel(_clientModel);
     QSettings settings;
-    if (settings.value("fShowDynodesTab").toBool()) {
-        dynodeListPage->setClientModel(_clientModel);
+    if (settings.value("fShowServiceNodesTab").toBool()) {
+        servicenodeListPage->setClientModel(_clientModel);
     }
 }
 
@@ -172,11 +172,11 @@ void WalletView::setWalletModel(WalletModel* _walletModel)
     usedSendingAddressesPage->setModel(_walletModel->getAddressTableModel());
     transactionView->setModel(_walletModel);
     QSettings settings;
-    if (settings.value("fShowDynodesTab").toBool()) {
-        dynodeListPage->setWalletModel(_walletModel);
+    if (settings.value("fShowServiceNodesTab").toBool()) {
+        servicenodeListPage->setWalletModel(_walletModel);
     }
     miningPage->setModel(_walletModel);
-    bdapPage->setModel(_walletModel);
+//    bdapPage->setModel(_walletModel);
 
     if (_walletModel) {
         // Receive and pass through messages from wallet model
@@ -254,11 +254,11 @@ void WalletView::gotoHistoryPage()
     setCurrentWidget(transactionsPage);
 }
 
-void WalletView::gotoDynodePage()
+void WalletView::gotoServiceNodePage()
 {
     QSettings settings;
-    if (settings.value("fShowDynodesTab").toBool()) {
-        setCurrentWidget(dynodeListPage);
+    if (settings.value("fShowServiceNodesTab").toBool()) {
+        setCurrentWidget(servicenodeListPage);
     }
 }
 
@@ -267,10 +267,12 @@ void WalletView::gotoMiningPage()
     setCurrentWidget(miningPage);
 }
 
-void WalletView::gotoBdapPage()
-{
-    setCurrentWidget(bdapPage);
-}
+/*
+ * void WalletView::gotoBdapPage()
+ * {
+ *     setCurrentWidget(bdapPage);
+ * }
+ */
 
 void WalletView::gotoSignMessageTab(QString addr)
 {

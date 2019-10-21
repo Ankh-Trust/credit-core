@@ -5,8 +5,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_COMPRESSOR_H
-#define DYNAMIC_COMPRESSOR_H
+#ifndef CREDIT_COMPRESSOR_H
+#define CREDIT_COMPRESSOR_H
 
 #include "primitives/transaction.h"
 #include "script/script.h"
@@ -125,4 +125,4 @@ public:
     }
 };
 
-#endif // DYNAMIC_COMPRESSOR_H
+#endif // CREDIT_COMPRESSOR_H

@@ -1,12 +1,13 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_GOVERNANCE_CLASSES_H
-#define DYNAMIC_GOVERNANCE_CLASSES_H
+#ifndef CREDIT_GOVERNANCE_CLASSES_H
+#define CREDIT_GOVERNANCE_CLASSES_H
 
-//#define ENABLE_DYNAMIC_DEBUG
+//#define ENABLE_CREDIT_DEBUG
 
 #include "base58.h"
 #include "chainparams.h"
@@ -100,7 +101,7 @@ public:
     {
     }
 
-    CGovernancePayment(CDynamicAddress addrIn, CAmount nAmountIn)
+    CGovernancePayment(CCreditAddress addrIn, CAmount nAmountIn)
         : fValid(false),
           script(),
           nAmount(0)

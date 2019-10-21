@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_MINER_UTIL_H
-#define DYNAMIC_MINER_UTIL_H
+#ifndef CREDIT_MINER_UTIL_H
+#define CREDIT_MINER_UTIL_H
 
 #include <atomic>
 #include <memory>
@@ -36,8 +37,8 @@ struct CBlockTemplate {
     CBlock block;
     std::vector<CAmount> vTxFees;
     std::vector<int64_t> vTxSigOps;
-    CTxOut txoutDynode;                 // dynode payment
-    std::vector<CTxOut> voutSuperblock; // dynode payment
+    CTxOut txoutServiceNode;                 // servicenode payment
+    std::vector<CTxOut> voutSuperblock; // servicenode payment
 };
 
 /** Set pubkey script in generated block */
@@ -52,4 +53,4 @@ bool ProcessBlockFound(const CBlock& block, const CChainParams& chainparams);
 void IncrementExtraNonce(CBlock& pblock, const CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 int64_t UpdateTime(CBlockHeader& pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev);
 
-#endif // DYNAMIC_MINER_UTIL_H
+#endif // CREDIT_MINER_UTIL_H

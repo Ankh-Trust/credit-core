@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_INIT_H
-#define DYNAMIC_INIT_H
+#ifndef CREDIT_INIT_H
+#define CREDIT_INIT_H
 
 #include <string>
 
@@ -59,8 +60,8 @@ void SwapMnemonicWalletFile();
 
 /** The help message mode determines what help message to show */
 enum HelpMessageMode {
-    HMM_DYNAMICD,
-    HMM_DYNAMIC_QT
+    HMM_CREDITD,
+    HMM_CREDIT_QT
 };
 
 /** Help for options shared between UI and daemon (for -help) */
@@ -68,4 +69,4 @@ std::string HelpMessage(HelpMessageMode mode);
 /** Returns licensing information (for -version) */
 std::string LicenseInfo();
 
-#endif // DYNAMIC_INIT_H
+#endif // CREDIT_INIT_H

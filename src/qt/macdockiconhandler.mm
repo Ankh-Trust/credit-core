@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -27,9 +28,9 @@ static MacDockIconHandler *s_instance = NULL;
 bool dockClickHandler(id self,SEL _cmd,...) {
     Q_UNUSED(self)
     Q_UNUSED(_cmd)
-    
+
     s_instance->handleDockIconClickEvent();
-    
+
     // Return NO (false) to suppress the default OS X actions
     return false;
 }
@@ -37,7 +38,7 @@ bool dockClickHandler(id self,SEL _cmd,...) {
 void setupDockClickHandler() {
     Class cls = objc_getClass("NSApplication");
     id appInst = objc_msgSend((id)cls, sel_registerName("sharedApplication"));
-    
+
     if (appInst != NULL) {
         id delegate = objc_msgSend(appInst, sel_registerName("delegate"));
         Class delClass = (Class)objc_msgSend(delegate,  sel_registerName("class"));

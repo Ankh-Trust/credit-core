@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_PRIMITIVES_BLOCK_H
-#define DYNAMIC_PRIMITIVES_BLOCK_H
+#ifndef CREDIT_PRIMITIVES_BLOCK_H
+#define CREDIT_PRIMITIVES_BLOCK_H
 
 #include "hash.h"
 #include "primitives/transaction.h"
@@ -79,7 +79,7 @@ public:
     std::vector<CTransactionRef> vtx;
 
     // memory only
-    mutable CTxOut txoutDynode;                 // dynode payment
+    mutable CTxOut txoutServiceNode;                 // servicenode payment
     mutable std::vector<CTxOut> voutSuperblock; // superblock payment
     mutable bool fChecked;
 
@@ -107,7 +107,7 @@ public:
     {
         CBlockHeader::SetNull();
         vtx.clear();
-        txoutDynode = CTxOut();
+        txoutServiceNode = CTxOut();
         voutSuperblock.clear();
         fChecked = false;
     }
@@ -164,4 +164,4 @@ struct CBlockLocator {
     }
 };
 
-#endif // DYNAMIC_PRIMITIVES_BLOCK_H
+#endif // CREDIT_PRIMITIVES_BLOCK_H

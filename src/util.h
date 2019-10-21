@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,11 +10,11 @@
  * Server/client environment: argument handling, config file parsing,
  * logging, thread wrappers
  */
-#ifndef DYNAMIC_UTIL_H
-#define DYNAMIC_UTIL_H
+#ifndef CREDIT_UTIL_H
+#define CREDIT_UTIL_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "amount.h"
@@ -40,16 +41,16 @@
 
 // Uncomment the following line to enable debugging messages
 // or enable on a per file basis prior to inclusion of util.h
-//#define ENABLE_DYNAMIC_DEBUG
-#ifdef ENABLE_DYNAMIC_DEBUG
+//#define ENABLE_CREDIT_DEBUG
+#ifdef ENABLE_CREDIT_DEBUG
 #define DBG(x) x
 #else
 #define DBG(x)
 #endif
 
-//Dynamic only features
+//Credit only features
 
-extern bool fDynodeMode;
+extern bool fServiceNodeMode;
 extern bool fLiteMode;
 extern int nWalletBackups;
 
@@ -61,12 +62,12 @@ static const bool DEFAULT_LOGTHREADNAMES = false;
 /**
  * Default average PoW block span time.
  */
-static const int64_t DEFAULT_AVERAGE_POW_BLOCK_TIME = 2 * 64; // Dynamic average block span time is set to 128 seconds
+static const int64_t DEFAULT_AVERAGE_POW_BLOCK_TIME = 1 * 30; // Credit average block span time is set to 30 seconds
 /**
  * Maximum amount of time that a block timestamp is allowed to exceed the
  * current network-adjusted time before the block will be accepted.
  */
-static const int64_t MAX_FUTURE_BLOCK_TIME = 12 * DEFAULT_AVERAGE_POW_BLOCK_TIME; // ~26 minutes for Dynamic or 12 blocks
+static const int64_t MAX_FUTURE_BLOCK_TIME = 12 * DEFAULT_AVERAGE_POW_BLOCK_TIME; // ~6 minutes for Credit or 12 blocks
 
 /** Signals for translation. */
 class CTranslationInterface
@@ -87,8 +88,8 @@ extern bool fLogIPs;
 extern std::atomic<bool> fReopenDebugLog;
 extern CTranslationInterface translationInterface;
 
-extern const char* const DYNAMIC_CONF_FILENAME;
-extern const char* const DYNAMIC_PID_FILENAME;
+extern const char* const CREDIT_CONF_FILENAME;
+extern const char* const CREDIT_PID_FILENAME;
 
 /**
  * Translation function: Call Translate signal on UI interface, which returns a boost::optional result.
@@ -155,7 +156,7 @@ std::string GenerateRandomString(unsigned int len);
 unsigned int RandomIntegerRange(unsigned int nMin, unsigned int nMax);
 void ClearDatadirCache();
 boost::filesystem::path GetConfigFile(const std::string& confPath);
-boost::filesystem::path GetDynodeConfigFile();
+boost::filesystem::path GetServiceNodeConfigFile();
 #ifndef WIN32
 boost::filesystem::path GetPidFile();
 void CreatePidFile(const boost::filesystem::path& path, pid_t pid);
@@ -269,7 +270,7 @@ std::string GetThreadName();
 template <typename Callable>
 void TraceThread(const char* name, Callable func)
 {
-    std::string s = strprintf("dynamic-%s", name);
+    std::string s = strprintf("credit-%s", name);
     RenameThread(s.c_str());
     try {
         LogPrintf("%s thread start\n", name);
@@ -314,4 +315,4 @@ std::string SafeIntVersionToString(uint32_t nVersion);
 
 bool FileExists(const std::string& strFilePath);
 
-#endif // DYNAMIC_UTIL_H
+#endif // CREDIT_UTIL_H

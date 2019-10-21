@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -35,7 +36,7 @@ class CBaseMainParams : public CBaseChainParams
 public:
     CBaseMainParams()
     {
-        nRPCPort = 33350;
+        nRPCPort = 33650;
     }
 };
 static CBaseMainParams mainParams;
@@ -48,7 +49,7 @@ class CBaseTestNetParams : public CBaseChainParams
 public:
     CBaseTestNetParams()
     {
-        nRPCPort = 33450;
+        nRPCPort = 33750;
         strDataDir = "testnet3";
     }
 };
@@ -62,7 +63,7 @@ class CBaseRegTestParams : public CBaseChainParams
 public:
     CBaseRegTestParams()
     {
-        nRPCPort = 33550;
+        nRPCPort = 33850;
         strDataDir = "regtest";
     }
 };

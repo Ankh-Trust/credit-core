@@ -1,26 +1,26 @@
-bin_PROGRAMS += qt/dynamic-qt
-EXTRA_LIBRARIES += qt/libdynamicqt.a
+bin_PROGRAMS += qt/credit-qt
+EXTRA_LIBRARIES += qt/libcreditqt.a
 
-# dynamic qt core #
+# credit qt core #
 QT_TS = \
-  qt/locale/dynamic_bg.ts \
-  qt/locale/dynamic_de.ts \
-  qt/locale/dynamic_en.ts \
-  qt/locale/dynamic_es.ts \
-  qt/locale/dynamic_fi.ts \
-  qt/locale/dynamic_fr.ts \
-  qt/locale/dynamic_it.ts \
-  qt/locale/dynamic_ja.ts \
-  qt/locale/dynamic_ko.ts \
-  qt/locale/dynamic_nl.ts \
-  qt/locale/dynamic_pl.ts \
-  qt/locale/dynamic_pt.ts \
-  qt/locale/dynamic_ru.ts \
-  qt/locale/dynamic_sk.ts \
-  qt/locale/dynamic_sv.ts \
-  qt/locale/dynamic_vi.ts \
-  qt/locale/dynamic_zh_CN.ts \
-  qt/locale/dynamic_zh_TW.ts
+  qt/locale/credit_bg.ts \
+  qt/locale/credit_de.ts \
+  qt/locale/credit_en.ts \
+  qt/locale/credit_es.ts \
+  qt/locale/credit_fi.ts \
+  qt/locale/credit_fr.ts \
+  qt/locale/credit_it.ts \
+  qt/locale/credit_ja.ts \
+  qt/locale/credit_ko.ts \
+  qt/locale/credit_nl.ts \
+  qt/locale/credit_pl.ts \
+  qt/locale/credit_pt.ts \
+  qt/locale/credit_ru.ts \
+  qt/locale/credit_sk.ts \
+  qt/locale/credit_sv.ts \
+  qt/locale/credit_vi.ts \
+  qt/locale/credit_zh_CN.ts \
+  qt/locale/credit_zh_TW.ts
 
 QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \
@@ -32,7 +32,7 @@ QT_FORMS_UI = \
   qt/forms/bdapupdateaccountdialog.ui \
   qt/forms/bdapuserdetaildialog.ui \
   qt/forms/coincontroldialog.ui \
-  qt/forms/dynodelist.ui \
+  qt/forms/servicenodelist.ui \
   qt/forms/editaddressdialog.ui \
   qt/forms/helpmessagedialog.ui \
   qt/forms/intro.ui \
@@ -49,7 +49,7 @@ QT_FORMS_UI = \
   qt/forms/sendcoinsdialog.ui \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
-  qt/forms/transactiondescdialog.ui 
+  qt/forms/transactiondescdialog.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -69,11 +69,11 @@ QT_MOC_CPP = \
   qt/moc_coincontroldialog.cpp \
   qt/moc_coincontroltreewidget.cpp \
   qt/moc_csvmodelwriter.cpp \
-  qt/moc_dynamicaddressvalidator.cpp \
-  qt/moc_dynamicamountfield.cpp \
-  qt/moc_dynamicgui.cpp \
-  qt/moc_dynamicunits.cpp \
-  qt/moc_dynodelist.cpp \
+  qt/moc_creditaddressvalidator.cpp \
+  qt/moc_creditamountfield.cpp \
+  qt/moc_creditgui.cpp \
+  qt/moc_creditunits.cpp \
+  qt/moc_servicenodelist.cpp \
   qt/moc_editaddressdialog.cpp \
   qt/moc_guiutil.cpp \
   qt/moc_intro.cpp \
@@ -112,27 +112,27 @@ QT_MOC_CPP = \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp
 
-DYNAMIC_MM = \
+CREDIT_MM = \
   qt/macdockiconhandler.mm \
   qt/macnotificationhandler.mm
 
 QT_MOC = \
-  qt/dynamic.moc \
-  qt/dynamicamountfield.moc \
+  qt/credit.moc \
+  qt/creditamountfield.moc \
   qt/intro.moc \
   qt/overviewpage.moc \
   qt/rpcconsole.moc
 
-QT_QRC_CPP = qt/qrc_dynamic.cpp
-QT_QRC = qt/dynamic.qrc
-QT_QRC_LOCALE_CPP = qt/qrc_dynamic_locale.cpp
-QT_QRC_LOCALE = qt/dynamic_locale.qrc
+QT_QRC_CPP = qt/qrc_credit.cpp
+QT_QRC = qt/credit.qrc
+QT_QRC_LOCALE_CPP = qt/qrc_credit_locale.cpp
+QT_QRC_LOCALE = qt/credit_locale.qrc
 
 PROTOBUF_CC = qt/paymentrequest.pb.cc
 PROTOBUF_H = qt/paymentrequest.pb.h
 PROTOBUF_PROTO = qt/paymentrequest.proto
 
-DYNAMIC_QT_H = \
+CREDIT_QT_H = \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
   qt/askpassphrasedialog.h \
@@ -150,11 +150,11 @@ DYNAMIC_QT_H = \
   qt/coincontroldialog.h \
   qt/coincontroltreewidget.h \
   qt/csvmodelwriter.h \
-  qt/dynamicaddressvalidator.h \
-  qt/dynamicamountfield.h \
-  qt/dynamicgui.h \
-  qt/dynamicunits.h \
-  qt/dynodelist.h \
+  qt/creditaddressvalidator.h \
+  qt/creditamountfield.h \
+  qt/creditgui.h \
+  qt/creditunits.h \
+  qt/servicenodelist.h \
   qt/editaddressdialog.h \
   qt/guiconstants.h \
   qt/guiutil.h \
@@ -200,90 +200,92 @@ DYNAMIC_QT_H = \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
   qt/winshutdownmonitor.h
-  
-RES_ICONS = \
-  qt/res/icons/dynamic.icns \
-  qt/res/icons/dynamic.ico \
-  qt/res/icons/dynamic.png \
-  qt/res/icons/drk/about.png \
-  qt/res/icons/drk/about_qt.png \
-  qt/res/icons/drk/add.png \
-  qt/res/icons/drk/address-book.png \
-  qt/res/icons/drk/bdap.png \
-  qt/res/icons/drk/browse.png \
-  qt/res/icons/drk/chevron.png \
-  qt/res/icons/drk/clock1.png \
-  qt/res/icons/drk/clock2.png \
-  qt/res/icons/drk/clock3.png \
-  qt/res/icons/drk/clock4.png \
-  qt/res/icons/drk/clock5.png \
-  qt/res/icons/drk/configure.png \
-  qt/res/icons/drk/connect0_16.png \
-  qt/res/icons/drk/connect1_16.png \
-  qt/res/icons/drk/connect2_16.png \
-  qt/res/icons/drk/connect3_16.png \
-  qt/res/icons/drk/connect4_16.png \
-  qt/res/icons/drk/debugwindow.png \
-  qt/res/icons/drk/decentralised.png \
-  qt/res/icons/drk/drkpurple_editpaste.png \
-  qt/res/icons/drk/drkpurple_address-book.png \
-  qt/res/icons/drk/drkpurple_editcopy.png \
-  qt/res/icons/drk/drkpurple_remove.png \
-  qt/res/icons/drk/dynamic_testnet.ico \
-  qt/res/icons/drk/dynamic_testnet.png \
-  qt/res/icons/drk/dynamic.png \
-  qt/res/icons/drk/dynode_network.png \
-  qt/res/icons/drk/edit.png \
-  qt/res/icons/drk/editcopy.png \
-  qt/res/icons/drk/editpaste.png \
-  qt/res/icons/drk/export.png \
-  qt/res/icons/drk/eye_minus.png \
-  qt/res/icons/drk/eye_plus.png \
-  qt/res/icons/drk/eye.png \
-  qt/res/icons/drk/filesave.png \
-  qt/res/icons/drk/fluid.png \
-  qt/res/icons/drk/hd_disabled.png \
-  qt/res/icons/drk/hd_enabled.png \
-  qt/res/icons/drk/history.png \
-  qt/res/icons/drk/key.png \
-  qt/res/icons/drk/lock_closed.png \
-  qt/res/icons/drk/lock_open.png \
-  qt/res/icons/drk/notsynced.png \
-  qt/res/icons/drk/overview.png \
-  qt/res/icons/drk/quit.png \
-  qt/res/icons/drk/receive.png \
-  qt/res/icons/drk/remove.png \
-  qt/res/icons/drk/send.png \
-  qt/res/icons/drk/synced.png \
-  qt/res/icons/drk/transaction_abandoned.png \
-  qt/res/icons/drk/transaction_conflicted.png \
-  qt/res/icons/drk/transaction0.png \
-  qt/res/icons/drk/transaction2.png \
-  qt/res/icons/drk/tx_inout.png \
-  qt/res/icons/drk/tx_input.png \
-  qt/res/icons/drk/tx_mined.png \
-  qt/res/icons/drk/tx_output.png \
-  qt/res/icons/drk/unit_dyn.png \
-  qt/res/icons/drk/unit_mdyn.png \
-  qt/res/icons/drk/unit_satoshis.png \
-  qt/res/icons/drk/unit_udyn.png \
-  qt/res/icons/drk/fontbigger.png \
-  qt/res/icons/drk/fontsmaller.png \
-  qt/res/icons/drk/verify.png \
-  qt/res/icons/drk/warning.png
 
-DYNAMIC_QT_CPP = \
+RES_ICONS = \
+  qt/res/icons/credit.icns \
+  qt/res/icons/credit.ico \
+  qt/res/icons/credit.png \
+  qt/res/icons/about.png \
+  qt/res/icons/about_qt.png \
+  qt/res/icons/add.png \
+  qt/res/icons/address-book.png \
+  qt/res/icons/bdap.png \
+  qt/res/icons/browse.png \
+  qt/res/icons/chevron.png \
+  qt/res/icons/clock1.png \
+  qt/res/icons/clock2.png \
+  qt/res/icons/clock3.png \
+  qt/res/icons/clock4.png \
+  qt/res/icons/clock5.png \
+  qt/res/icons/configure.png \
+  qt/res/icons/connect0.png \
+  qt/res/icons/connect1.png \
+  qt/res/icons/connect2.png \
+  qt/res/icons/connect3.png \
+  qt/res/icons/connect4.png \
+  qt/res/icons/debugwindow.png \
+  qt/res/icons/decentralised.png \
+  qt/res/icons/credit_testnet.ico \
+  qt/res/icons/credit_testnet.png \
+  qt/res/icons/credit.png \
+  qt/res/icons/servicenode_network.png \
+  qt/res/icons/edit.png \
+  qt/res/icons/editcopy.png \
+  qt/res/icons/editpaste.png \
+  qt/res/icons/export.png \
+  qt/res/icons/eye_minus.png \
+  qt/res/icons/eye_plus.png \
+  qt/res/icons/eye.png \
+  qt/res/icons/filesave.png \
+  qt/res/icons/fluid.png \
+  qt/res/icons/hd_disabled.png \
+  qt/res/icons/hd_enabled.png \
+  qt/res/icons/history.png \
+  qt/res/icons/key.png \
+  qt/res/icons/lock_closed.png \
+  qt/res/icons/lock_open.png \
+  qt/res/icons/miner.png \
+  qt/res/icons/notsynced.png \
+  qt/res/icons/open.png \
+  qt/res/icons/overview.png \
+  qt/res/icons/quit.png \
+  qt/res/icons/receive.png \
+  qt/res/icons/remove.png \
+  qt/res/icons/save.png \
+  qt/res/icons/send.png \
+  qt/res/icons/splash_testnet.png \
+  qt/res/icons/splash.png \
+  qt/res/icons/synced.png \
+  qt/res/icons/transaction_abandoned.png \
+  qt/res/icons/transaction_confirmed.png \
+  qt/res/icons/transaction_conflicted.png \
+  qt/res/icons/transaction0.png \
+  qt/res/icons/tx_inout.png \
+  qt/res/icons/tx_input.png \
+  qt/res/icons/tx_mined.png \
+  qt/res/icons/tx_output.png \
+  qt/res/icons/unit_dyn.png \
+  qt/res/icons/unit_mdyn.png \
+  qt/res/icons/unit_satoshis.png \
+  qt/res/icons/unit_udyn.png \
+  qt/res/icons/fontbigger.png \
+  qt/res/icons/fontsmaller.png \
+  qt/res/icons/verify.png \
+  qt/res/icons/warning.png
+
+CREDIT_QT_CPP = \
   qt/bantablemodel.cpp \
   qt/bdapaccounttablemodel.cpp \
   qt/bdaplinktablemodel.cpp \
   qt/clientmodel.cpp \
   qt/csvmodelwriter.cpp \
-  qt/dynamicaddressvalidator.cpp \
-  qt/dynamicamountfield.cpp \
-  qt/dynamicgui.cpp \
-  qt/dynamicunits.cpp \
+  qt/creditaddressvalidator.cpp \
+  qt/creditamountfield.cpp \
+  qt/creditgui.cpp \
+  qt/creditunits.cpp \
   qt/guiutil.cpp \
   qt/intro.cpp \
+  qt/listview.h \
   qt/modaloverlay.cpp \
   qt/networkstyle.cpp \
   qt/notificator.cpp \
@@ -300,11 +302,11 @@ DYNAMIC_QT_CPP = \
   qt/utilitydialog.cpp
 
 if TARGET_WINDOWS
-DYNAMIC_QT_CPP += qt/winshutdownmonitor.cpp
+CREDIT_QT_CPP += qt/winshutdownmonitor.cpp
 endif
 
 if ENABLE_WALLET
-DYNAMIC_QT_CPP += \
+CREDIT_QT_CPP += \
   qt/addressbookpage.cpp \
   qt/addresstablemodel.cpp \
   qt/askpassphrasedialog.cpp \
@@ -317,7 +319,7 @@ DYNAMIC_QT_CPP += \
   qt/bdapuserdetaildialog.cpp \
   qt/coincontroldialog.cpp \
   qt/coincontroltreewidget.cpp \
-  qt/dynodelist.cpp \
+  qt/servicenodelist.cpp \
   qt/editaddressdialog.cpp \
   qt/hashrategraphwidget.cpp \
   qt/miningpage.cpp \
@@ -345,40 +347,23 @@ DYNAMIC_QT_CPP += \
   qt/walletview.cpp
 endif
 
-RES_IMAGES = \
-  qt/res/images/drk/about.png \
-  qt/res/images/drk/checked.png \
-  qt/res/images/drk/drk_walletFrame_bg.png \
-  qt/res/images/drk/drk_walletFrame.png \
-  qt/res/images/drk/drkpurple_downArrow_small.png \
-  qt/res/images/drk/drkpurple_downArrow.png \
-  qt/res/images/drk/drkpurple_leftArrow_small.png \
-  qt/res/images/drk/drkpurple_qtreeview_selected.png \
-  qt/res/images/drk/drkpurple_rightArrow_small.png \
-  qt/res/images/drk/drkpurple_upArrow_small.png \
-  qt/res/images/drk/dynamic_logo_horizontal.png \
-  qt/res/images/drk/splash_testnet.png \
-  qt/res/images/drk/splash.png \
-  qt/res/images/drk/unchecked.png 
-
-RES_CSS = \
-  qt/res/css/drk.css 
+RES_IMAGES =
 
 RES_MOVIES = $(wildcard qt/res/movies/spinner-*.png)
 
-DYNAMIC_RC = qt/res/dynamic-qt-res.rc
+CREDIT_RC = qt/res/credit-qt-res.rc
 
-DYNAMIC_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
+CREDIT_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
   -I$(builddir)/qt/forms -DQT_NO_KEYWORDS
 
-qt_libdynamicqt_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(DYNAMIC_QT_INCLUDES) \
+qt_libcreditqt_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES) $(CREDIT_QT_INCLUDES) \
   $(QT_INCLUDES) $(QT_DBUS_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
-qt_libdynamicqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_libcreditqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 
-qt_libdynamicqt_a_SOURCES = $(DYNAMIC_QT_CPP) $(DYNAMIC_QT_H) $(QT_FORMS_UI) \
+qt_libcreditqt_a_SOURCES = $(CREDIT_QT_CPP) $(CREDIT_QT_H) $(QT_FORMS_UI) \
   $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES)
 
-nodist_qt_libdynamicqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
+nodist_qt_libcreditqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
   $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
 
 # forms/foo.h -> forms/ui_foo.h
@@ -387,75 +372,75 @@ QT_FORMS_H=$(join $(dir $(QT_FORMS_UI)),$(addprefix ui_, $(notdir $(QT_FORMS_UI:
 # Most files will depend on the forms and moc files as includes. Generate them
 # before anything else.
 $(QT_MOC): $(QT_FORMS_H)
-$(qt_libdynamicqt_a_OBJECTS) $(qt_dynamic_qt_OBJECTS) : | $(QT_MOC)
+$(qt_libcreditqt_a_OBJECTS) $(qt_credit_qt_OBJECTS) : | $(QT_MOC)
 
 #Generating these with a half-written protobuf header leads to wacky results.
 #This makes sure it's done.
 $(QT_MOC): $(PROTOBUF_H)
 $(QT_MOC_CPP): $(PROTOBUF_H)
 
-# dynamic-qt binary #
-qt_dynamic_qt_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(DYNAMIC_QT_INCLUDES) \
+# credit-qt binary #
+qt_credit_qt_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES) $(CREDIT_QT_INCLUDES) \
   $(QT_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
-qt_dynamic_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_credit_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 
-qt_dynamic_qt_SOURCES = qt/dynamic.cpp
+qt_credit_qt_SOURCES = qt/credit.cpp
 if TARGET_DARWIN
-  qt_dynamic_qt_SOURCES += $(DYNAMIC_MM)
+  qt_credit_qt_SOURCES += $(CREDIT_MM)
 endif
 if TARGET_WINDOWS
-  qt_dynamic_qt_SOURCES += $(DYNAMIC_RC)
+  qt_credit_qt_SOURCES += $(CREDIT_RC)
 endif
-qt_dynamic_qt_LDADD = qt/libdynamicqt.a $(LIBDYNAMIC_SERVER)
+qt_credit_qt_LDADD = qt/libcreditqt.a $(LIBCREDIT_SERVER)
 if ENABLE_WALLET
-qt_dynamic_qt_LDADD += $(LIBDYNAMIC_WALLET)
+qt_credit_qt_LDADD += $(LIBCREDIT_WALLET)
 endif
-qt_dynamic_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_credit_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 if ENABLE_GPU
-qt_dynamic_qt_LDADD += $(LIBDYNAMIC_GPU_LDADD_EXTRA)
-qt_dynamic_qt_LDFLAGS += $(LIBDYNAMIC_GPU_LDFLAGS_EXTRA)
+qt_credit_qt_LDADD += $(LIBCREDIT_GPU_LDADD_EXTRA)
+qt_credit_qt_LDFLAGS += $(LIBCREDIT_GPU_LDFLAGS_EXTRA)
 endif
 if ENABLE_ZMQ
-qt_dynamic_qt_LDADD += $(LIBDYNAMIC_ZMQ) $(ZMQ_LIBS)
+qt_credit_qt_LDADD += $(LIBCREDIT_ZMQ) $(ZMQ_LIBS)
 endif
 
-qt_dynamic_qt_LDADD += $(LIBDYNAMIC_CLI) $(LIBDYNAMIC_COMMON) $(LIBDYNAMIC_UTIL) $(LIBDYNAMIC_CONSENSUS) $(LIBDYNAMIC_CRYPTO) $(LIBUNIVALUE) $(LIBVGP) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
+qt_credit_qt_LDADD += $(LIBCREDIT_CLI) $(LIBCREDIT_COMMON) $(LIBCREDIT_UTIL) $(LIBCREDIT_CONSENSUS) $(LIBCREDIT_CRYPTO) $(LIBUNIVALUE) $(LIBVGP) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
   $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) $(LIBTORRENT) \
   $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-qt_dynamic_qt_LIBTOOLFLAGS = --tag CXX
+qt_credit_qt_LIBTOOLFLAGS = --tag CXX
 
 #locale/foo.ts -> locale/foo.qm
 QT_QM=$(QT_TS:.ts=.qm)
 
 SECONDARY: $(QT_QM)
 
-qt/dynamicstrings.cpp: $(libdynamic_server_a_SOURCES) $(libdynamic_wallet_a_SOURCES) $(libdynamic_common_a_SOURCES)
+qt/creditstrings.cpp: $(libcredit_server_a_SOURCES) $(libcredit_wallet_a_SOURCES) $(libcredit_common_a_SOURCES)
 	@test -n $(XGETTEXT) || echo "xgettext is required for updating translations"
 	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) ../share/qt/extract_strings_qt.py $^
 
-translate: qt/dynamicstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(DYNAMIC_QT_CPP) $(DYNAMIC_QT_H) $(DYNAMIC_MM)
+translate: qt/creditstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(CREDIT_QT_CPP) $(CREDIT_QT_H) $(CREDIT_MM)
 	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts qt/locale/dynamic_en.ts
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts qt/locale/credit_en.ts
 
 $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	@test -f $(RCC)
 	@test -f $(@D)/$(<F) || cp -f $< $(@D)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name dynamic_locale $(@D)/$(<F) | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name credit_locale $(@D)/$(<F) | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
 $(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES) $(PROTOBUF_H)
 	@test -f $(RCC)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name dynamic $< | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name credit $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
-CLEAN_QT = $(nodist_qt_libdynamicqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
+CLEAN_QT = $(nodist_qt_libcreditqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
 
 CLEANFILES += $(CLEAN_QT)
 
-dynamic_qt_clean: FORCE
-	rm -f $(CLEAN_QT) $(qt_libdynamicqt_a_OBJECTS) $(qt_dynamic_qt_OBJECTS) qt/dynamic-qt$(EXEEXT) $(LIBDYNAMICQT)
+credit_qt_clean: FORCE
+	rm -f $(CLEAN_QT) $(qt_libcreditqt_a_OBJECTS) $(qt_credit_qt_OBJECTS) qt/credit-qt$(EXEEXT) $(LIBCREDITQT)
 
-dynamic_qt : qt/dynamic-qt$(EXEEXT)
+credit_qt : qt/credit-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)

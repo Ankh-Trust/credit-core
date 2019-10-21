@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_QVALIDATEDLINEEDIT_H
-#define DYNAMIC_QT_QVALIDATEDLINEEDIT_H
+#ifndef CREDIT_QT_QVALIDATEDLINEEDIT_H
+#define CREDIT_QT_QVALIDATEDLINEEDIT_H
 
 #include <QLineEdit>
 
@@ -43,4 +44,4 @@ private Q_SLOTS:
     void checkValidity();
 };
 
-#endif // DYNAMIC_QT_QVALIDATEDLINEEDIT_H
+#endif // CREDIT_QT_QVALIDATEDLINEEDIT_H

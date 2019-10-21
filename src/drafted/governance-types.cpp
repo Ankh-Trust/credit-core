@@ -7,8 +7,8 @@ GovernanceObjectType GovernanceStringToType(std::string strType) {
     if(strType == "AllTypes") type = AllTypes;
     if(strType == "Error") type = Error;
     if(strType == "ValueOverride") type = ValueOverride;
-    if(strType == "DynamicNetwork") type = DynamicNetwork;
-    if(strType == "DynamicNetworkVariable") type = DynamicNetworkVariable;
+    if(strType == "CreditNetwork") type = CreditNetwork;
+    if(strType == "CreditNetworkVariable") type = CreditNetworkVariable;
     if(strType == "Category") type = Category;
     if(strType == "Group") type = Group;
     if(strType == "User") type = User;
@@ -28,8 +28,8 @@ std::string GovernanceTypeToString(GovernanceObjectType type) {
     if(type == AllTypes) s = "AllTypes";
     if(type == Error) s = "Error";
     if(type == ValueOverride) s = "ValueOverride";
-    if(type == DynamicNetwork) s = "DynamicNetwork";
-    if(type == DynamicNetworkVariable) s = "DynamicNetworkVariable";
+    if(type == CreditNetwork) s = "CreditNetwork";
+    if(type == CreditNetworkVariable) s = "CreditNetworkVariable";
     if(type == Category) s = "Category";
     if(type == Group) s = "Group";
     if(type == User) s = "User";

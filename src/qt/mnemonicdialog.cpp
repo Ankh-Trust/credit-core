@@ -42,8 +42,8 @@ MnemonicDialog::MnemonicDialog(QWidget *parent) :
 //        // Restore failed (perhaps missing setting), center the window
 //        move(QApplication::desktop()->availableGeometry().center() - frameGeometry().center());
 //    }
-    QString restyleSheet = "QPushButton{background-color:rgb(255,149,0);color: black;   border-radius: 2px;border-style: outset;border: 1px groove gray}""QPushButton:pressed{background-color:rgb(112, 170, 245);border-style: inset;border: 1px groove gray }";
-    QString styleSheet = "QPushButton{background-color:rgb(27,173,248);color: black;   border-radius: 2px;border-style: outset;border: 1px groove gray}""QPushButton:pressed{background-color:rgb(112, 170, 245);border-style: inset; border: 1px groove gray}";
+    QString restyleSheet = "QPushButton{border-radius: 2px;border-style: outset;border: 1px groove gray}""QPushButton:pressed{border-style: inset;border: 1px groove gray }";
+    QString styleSheet = "QPushButton{border-radius: 2px;border-style: outset;border: 1px groove gray}""QPushButton:pressed{border-style: inset; border: 1px groove gray}";
 
     ui->importMnemonic->setStyleSheet(styleSheet);
     ui->reimportMnemonic->setStyleSheet(restyleSheet);
@@ -64,10 +64,10 @@ MnemonicDialog::MnemonicDialog(QWidget *parent) :
 
     //initialize Language dropdowns
     std::vector<std::string> languageOptions = {
-        "English", 
+        "English",
         "Chinese Simplified",
         "Chinese Traditional",
-        "French", 
+        "French",
         //"German",
         "Italian",
         "Japanese",
@@ -116,7 +116,7 @@ void MnemonicDialog::combobox2ItemChanged(int input)
 void MnemonicDialog::on_importPrivatekey_clicked()
 {
     bool ForceRescan = true;
-    
+
     importPrivatekey(ForceRescan);
 }
 
@@ -162,14 +162,14 @@ void MnemonicDialog::on_toolButtonImportMnemonic_Paste_clicked()
 
 void MnemonicDialog::on_toolButtonImportMnemonic_Clear_clicked()
 {
-    ui->mnemonicEdit->setText("");  
+    ui->mnemonicEdit->setText("");
 }
 
 
 
 void MnemonicDialog::on_toolButtonCreateMnemonic_Clear_clicked()
 {
-    ui->textEditNewRecoveryPhrase->setText("");  
+    ui->textEditNewRecoveryPhrase->setText("");
 }
 
 
@@ -195,7 +195,7 @@ void MnemonicDialog::on_fileButton_clicked()
     QString dataDir = GUIUtil::boostPathToQString(GetDataDir(false));
     QString dir = QDir::toNativeSeparators(QFileDialog::getOpenFileName(this, tr("Choose File"),dataDir));
     if(!dir.isEmpty())
-        ui->fileEdit->setText(dir);        
+        ui->fileEdit->setText(dir);
 }
 
 void MnemonicDialog::on_reimportMnemonic_clicked()
@@ -206,7 +206,7 @@ void MnemonicDialog::on_reimportMnemonic_clicked()
 
 void MnemonicDialog::createMnemonic() {
     ui->textEditNewRecoveryPhrase->clear();
-    
+
     int value = std::stoi(ui->comboBoxBytesOfEntropy->currentText().toStdString());
     QString languageValue = ui->comboBoxLanguage->currentText();
     languageValue.replace(QString(" "),QString(""));
@@ -218,7 +218,7 @@ void MnemonicDialog::createMnemonic() {
 
     SecureString recoveryPhrase = CMnemonic::Generate(value,selectLanguage);
 
-    
+
     ui->textEditNewRecoveryPhrase->setText(recoveryPhrase.c_str());
 
 
@@ -316,7 +316,7 @@ void MnemonicDialog::importWallet(bool forceRescan){
     filepath.insert(0,QString("importwallet "));
     if(forceRescan)
         filepath.append(QString(" true"));
-        
+
     Q_EMIT cmdToConsole(filepath);
 }
 
@@ -328,7 +328,7 @@ void MnemonicDialog::importPrivatekey(bool forceRescan){
         QMessageBox::critical(this, "Error", QString("Error: ") + QString::fromStdString("privatekey is null"));
         return;
     }
-    CDynamicSecret vchSecret;
+    CCreditSecret vchSecret;
     bool fGood = vchSecret.SetString(privatekeystr.toStdString());
 
     if (!fGood) {
@@ -338,6 +338,6 @@ void MnemonicDialog::importPrivatekey(bool forceRescan){
     privatekeystr.insert(0,QString("importprivkey "));
     if(forceRescan)
         privatekeystr.append(QString(" \"\" true"));
-    
+
     Q_EMIT cmdToConsole(privatekeystr);
 }

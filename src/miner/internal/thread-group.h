@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_INTERNAL_THREAD_GROUP_H
-#define DYNAMIC_INTERNAL_THREAD_GROUP_H
+#ifndef CREDIT_INTERNAL_THREAD_GROUP_H
+#define CREDIT_INTERNAL_THREAD_GROUP_H
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -83,4 +83,4 @@ void ThreadGroup<T, Context>::SyncGroupTarget()
     }
 };
 
-#endif // DYNAMIC_INTERNAL_THREAD_GROUP_H
+#endif // CREDIT_INTERNAL_THREAD_GROUP_H

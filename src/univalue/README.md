@@ -29,4 +29,3 @@ $ make
 
 UniValue provides a single dynamic RAII C++ object class,
 and minimizes template use (contra json_spirit).
-

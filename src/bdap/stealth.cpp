@@ -185,7 +185,7 @@ int CStealthAddress::ToRaw(std::vector<uint8_t> &raw) const
 
 std::string CStealthAddress::Encoded() const
 {
-    return CDynamicAddress(*this).ToString();
+    return CCreditAddress(*this).ToString();
 }
 
 int CStealthAddress::SetScanPubKey(const CPubKey &pk)
@@ -295,7 +295,7 @@ int StealthSecret(const CKey &secret, const ec_point &pubkey, const ec_point &pk
     secp256k1_ec_pubkey_serialize(secp256k1_ctx_stealth, &pkOut[0], &len, &R, SECP256K1_EC_COMPRESSED); // Returns: 1 always.
     sharedSOut.SetFlags(1, 1);
     LogPrint("stealth", "%s address from id %s, address from key %s\n", __func__, 
-                                CDynamicAddress(CPubKey(pkOut).GetID()).ToString(), CDynamicAddress(sharedSOut.GetPubKey().GetID()).ToString());
+                                CCreditAddress(CPubKey(pkOut).GetID()).ToString(), CCreditAddress(sharedSOut.GetPubKey().GetID()).ToString());
     return 0;
 }
 
@@ -459,7 +459,7 @@ int MakeStealthData(const stealth_prefix& prefix, const CKey& sShared, const CPu
 int PrepareStealthOutput(const CStealthAddress &sx, CScript& scriptPubKey, std::vector<uint8_t>& vData, std::string& sError)
 {
     LogPrint("stealth", "%s -- scan_pubkey %d, spend_pubkey %d, spend_secret_id %s, scan_secret valid %s, spend_secret_id isnull = %s\n", __func__, 
-                                 sx.scan_pubkey.size(), sx.spend_pubkey.size(), CDynamicAddress(sx.spend_secret_id).ToString(), 
+                                 sx.scan_pubkey.size(), sx.spend_pubkey.size(), CCreditAddress(sx.spend_secret_id).ToString(), 
                                  sx.scan_secret.IsValid() ? "True" : "False", sx.spend_secret_id.IsNull() ? "Yes" : "No");
     if (sx.IsNull()) {
         sError = "Stealth address is null.";
@@ -473,11 +473,11 @@ int PrepareStealthOutput(const CStealthAddress &sx, CScript& scriptPubKey, std::
         sEphem.MakeNewKey(true);
         if (StealthSecret(sEphem, sx.scan_pubkey, sx.spend_pubkey, sShared, pkSendTo) == 0)
         {
-            LogPrint("stealth", "%s -- Shared wallet address (%s) created for stealth tx\n", __func__, CDynamicAddress(sShared.GetPubKey().GetID()).ToString());
+            LogPrint("stealth", "%s -- Shared wallet address (%s) created for stealth tx\n", __func__, CCreditAddress(sShared.GetPubKey().GetID()).ToString());
             break;
         }
         else {
-            LogPrintf("%s -- StealthSecret failed for sEphem %s\n", __func__, CDynamicAddress(sEphem.GetPubKey().GetID()).ToString());
+            LogPrintf("%s -- StealthSecret failed for sEphem %s\n", __func__, CCreditAddress(sEphem.GetPubKey().GetID()).ToString());
             return -1;
         }
     }

@@ -2,11 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_ZMQ_ZMQCONFIG_H
-#define DYNAMIC_ZMQ_ZMQCONFIG_H
+#ifndef CREDIT_ZMQ_ZMQCONFIG_H
+#define CREDIT_ZMQ_ZMQCONFIG_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include <stdarg.h>
@@ -26,4 +26,4 @@
 
 void zmqError(const char *str);
 
-#endif // DYNAMIC_ZMQ_ZMQCONFIG_H
+#endif // CREDIT_ZMQ_ZMQCONFIG_H

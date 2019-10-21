@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -6,7 +7,7 @@
 #ifndef PRIVATESENDCLIENT_H
 #define PRIVATESENDCLIENT_H
 
-#include "dynode.h"
+#include "servicenode.h"
 #include "privatesend-util.h"
 #include "privatesend.h"
 #include "wallet/wallet.h"
@@ -14,28 +15,30 @@
 class CPrivateSendClientManager;
 class CConnman;
 
-static const int DENOMS_COUNT_MAX = 100;
 
 static const int MIN_PRIVATESEND_SESSIONS = 1;
 static const int MIN_PRIVATESEND_ROUNDS = 2;
 static const int MIN_PRIVATESEND_AMOUNT = 2;
+static const int MIN_PRIVATESEND_DENOMS = 10;
 static const int MIN_PRIVATESEND_LIQUIDITY = 0;
 static const int MAX_PRIVATESEND_SESSIONS = 10;
 static const int MAX_PRIVATESEND_ROUNDS = 16;
-static const int MAX_PRIVATESEND_AMOUNT = 100;
-static const int MAX_PRIVATESEND_LIQUIDITY = 10;
+static const int MAX_PRIVATESEND_AMOUNT = 2147483647 / COIN;
+static const int MAX_PRIVATESEND_DENOMS = 100000;
+static const int MAX_PRIVATESEND_LIQUIDITY = 100;
 static const int DEFAULT_PRIVATESEND_SESSIONS = 4;
 static const int DEFAULT_PRIVATESEND_ROUNDS = 4;
-static const int DEFAULT_PRIVATESEND_AMOUNT = 100;
+static const int DEFAULT_PRIVATESEND_AMOUNT = 1000;
+static const int DEFAULT_PRIVATESEND_DENOMS = 300;
 static const int DEFAULT_PRIVATESEND_LIQUIDITY = 0;
 
 static const bool DEFAULT_PRIVATESEND_MULTISESSION = false;
 
 // Warn user if mixing in gui or try to create backup if mixing in daemon mode
 // when we have only this many keys left
-static const int PRIVATESEND_KEYS_THRESHOLD_WARNING = 50;
+static const int PRIVATESEND_KEYS_THRESHOLD_WARNING = 100;
 // Stop mixing completely, it's too dangerous to continue when we have only this many keys left
-static const int PRIVATESEND_KEYS_THRESHOLD_STOP = 25;
+static const int PRIVATESEND_KEYS_THRESHOLD_STOP = 50;
 
 // The main object for accessing mixing
 extern CPrivateSendClientManager privateSendClient;
@@ -91,7 +94,7 @@ private:
     std::string strLastMessage;
     std::string strAutoDenomResult;
 
-    dynode_info_t infoMixingDynode;
+    servicenode_info_t infoMixingServiceNode;
     CMutableTransaction txMyCollateral; // client side collateral
     CPendingPsaRequest pendingPsaRequest;
 
@@ -115,7 +118,7 @@ private:
     /// step 2: send denominated inputs and outputs prepared in step 1
     bool SendDenominate(const std::vector<std::pair<CTxPSIn, CTxOut> >& vecPSInOutPairsIn, CConnman& connman);
 
-    /// Get Dynodes updates about the progress of mixing
+    /// Get ServiceNodes updates about the progress of mixing
     bool CheckPoolStateUpdate(PoolState nStateNew, int nEntriesCountNew, PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID, int nSessionIDNew = 0);
     // Set the 'state' value, with some logging and capturing when the state changed
     void SetState(PoolState nStateNew);
@@ -137,7 +140,7 @@ public:
                                   fLastEntryAccepted(false),
                                   strLastMessage(),
                                   strAutoDenomResult(),
-                                  infoMixingDynode(),
+                                  infoMixingServiceNode(),
                                   txMyCollateral(),
                                   pendingPsaRequest(),
                                   keyHolderStorage()
@@ -152,12 +155,12 @@ public:
 
     std::string GetStatus(bool fWaitForBlock);
 
-    bool GetMixingDynodeInfo(dynode_info_t& dnInfoRet) const;
+    bool GetMixingServiceNodeInfo(servicenode_info_t& dnInfoRet) const;
 
     /// Passively run mixing in the background according to the configuration in settings
     bool DoAutomaticDenominating(CConnman& connman, bool fDryRun = false);
 
-    /// As a client, submit part of a future mixing transaction to a Dynode to start the process
+    /// As a client, submit part of a future mixing transaction to a ServiceNode to start the process
     bool SubmitDenominate(CConnman& connman);
 
     bool ProcessPendingPsaRequest(CConnman& connman);
@@ -170,8 +173,8 @@ public:
 class CPrivateSendClientManager : public CPrivateSendBaseManager
 {
 private:
-    // Keep track of the used Dynodes
-    std::vector<COutPoint> vecDynodesUsed;
+    // Keep track of the used ServiceNodes
+    std::vector<COutPoint> vecServiceNodesUsed;
 
     std::vector<CAmount> vecDenominationsSkipped;
 
@@ -195,6 +198,7 @@ public:
     int nPrivateSendSessions;
     int nPrivateSendRounds;
     int nPrivateSendAmount;
+    int nPrivateSendDenoms;
     int nLiquidityProvider;
     bool fEnablePrivateSend;
     bool fPrivateSendMultiSession;
@@ -202,7 +206,7 @@ public:
     int nCachedNumBlocks;    //used for the overview screen
     bool fCreateAutoBackups; //builtin support for automatic backups
 
-    CPrivateSendClientManager() : vecDynodesUsed(),
+    CPrivateSendClientManager() : vecServiceNodesUsed(),
                                   vecDenominationsSkipped(),
                                   peqSessions(),
                                   nCachedLastSuccessBlock(0),
@@ -211,6 +215,7 @@ public:
                                   nCachedBlockHeight(0),
                                   nPrivateSendRounds(DEFAULT_PRIVATESEND_ROUNDS),
                                   nPrivateSendAmount(DEFAULT_PRIVATESEND_AMOUNT),
+                                  nPrivateSendDenoms(DEFAULT_PRIVATESEND_DENOMS),
                                   nLiquidityProvider(DEFAULT_PRIVATESEND_LIQUIDITY),
                                   fEnablePrivateSend(false),
                                   fPrivateSendMultiSession(DEFAULT_PRIVATESEND_MULTISESSION),
@@ -232,7 +237,7 @@ public:
     std::string GetStatuses();
     std::string GetSessionDenoms();
 
-    bool GetMixingDynodesInfo(std::vector<dynode_info_t>& vecDnInfoRet) const;
+    bool GetMixingServiceNodesInfo(std::vector<servicenode_info_t>& vecDnInfoRet) const;
 
     /// Passively run mixing in the background according to the configuration in settings
     bool DoAutomaticDenominating(CConnman& connman, bool fDryRun = false);
@@ -241,8 +246,8 @@ public:
 
     void ProcessPendingPsaRequest(CConnman& connman);
 
-    void AddUsedDynode(const COutPoint& outpointDn);
-    dynode_info_t GetNotUsedDynode();
+    void AddUsedServiceNode(const COutPoint& outpointDn);
+    servicenode_info_t GetNotUsedServiceNode();
 
     void UpdatedSuccessBlock();
 

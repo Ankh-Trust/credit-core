@@ -3,11 +3,12 @@
 // Copyright (c) 2013-2017 Emercoin Developers
 // Copyright (c) 2014-2017 The Dash Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_PRIMITIVES_TRANSACTION_H
-#define DYNAMIC_PRIMITIVES_TRANSACTION_H
+#ifndef CREDIT_PRIMITIVES_TRANSACTION_H
+#define CREDIT_PRIMITIVES_TRANSACTION_H
 
 #include "amount.h"
 #include "script/script.h"
@@ -408,4 +409,4 @@ struct CompareOutputBIP69 {
     }
 };
 
-#endif // DYNAMIC_PRIMITIVES_TRANSACTION_H
+#endif // CREDIT_PRIMITIVES_TRANSACTION_H

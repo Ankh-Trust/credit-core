@@ -212,8 +212,8 @@
           <string>Done</string>
          </property>
          <property name="icon">
-          <iconset resource="../dynamic.qrc">
-           <normaloff>:/icons/drk/transaction_confirmed</normaloff>:/icons/drk/transaction_confirmed</iconset>
+          <iconset resource="../credit.qrc">
+           <normaloff>:/icons/transaction_confirmed</normaloff>:/icons/transaction_confirmed</iconset>
          </property>
         </widget>
        </item>
@@ -237,7 +237,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../dynamic.qrc"/>
+  <include location="../credit.qrc"/>
  </resources>
  <connections/>
 </ui>

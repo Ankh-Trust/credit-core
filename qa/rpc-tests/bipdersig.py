@@ -7,10 +7,10 @@
 # Test the BIP66 changeover logic
 #
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
-class BIP66Test(DynamicTestFramework):
+class BIP66Test(CreditTestFramework):
 
     def setup_network(self):
         self.nodes = []

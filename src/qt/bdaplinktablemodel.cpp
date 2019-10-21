@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -43,7 +44,7 @@ public:
         std::vector<std::string> params;
         int nNewRow = 0;
         int recordsFound = 0;
-    
+
         std::string keyName {""};
         std::string getRequestor {""};
         std::string getRecipient {""};
@@ -65,7 +66,7 @@ public:
             } //if rowcount
         } //if not isempty
 
-        //Execute proper RPC call 
+        //Execute proper RPC call
         if (tableWidgetName == "tableWidgetComplete") {
                 params.push_back("complete");
                 jreq.params = RPCConvertValues("link", params);
@@ -83,7 +84,7 @@ public:
         } else {
             return;
         }
-        
+
         UniValue result = UniValue(UniValue::VOBJ);
 
         //Handle RPC errors
@@ -216,8 +217,8 @@ BdapLinkTableModel::BdapLinkTableModel(BdapPage* parent) : QAbstractTableModel(p
     /*
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), SLOT(refresh()));
-    timer->setInterval(60000); //MODEL_UPDATE_DELAY originally 
-    startAutoRefresh();  
+    timer->setInterval(60000); //MODEL_UPDATE_DELAY originally
+    startAutoRefresh();
     */
 
 }
@@ -321,7 +322,7 @@ void BdapLinkTableModel::refreshPendingAccept()
 {
     searchPARequestor = bdapPage->getPARequestorSearch();
     searchPARecipient = bdapPage->getPARecipientSearch();
-    
+
     Q_EMIT layoutAboutToBeChanged();
     priv->refreshLinks(pendingAcceptTable,pendingAcceptStatus,searchPARequestor,searchPARecipient);
     Q_EMIT layoutChanged();

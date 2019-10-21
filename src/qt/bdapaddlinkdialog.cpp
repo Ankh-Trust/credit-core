@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -18,20 +19,20 @@
 #include <boost/algorithm/string.hpp>
 #include <stdio.h>
 
-BdapAddLinkDialog::BdapAddLinkDialog(QWidget *parent, int DynamicUnits) : QDialog(parent),
+BdapAddLinkDialog::BdapAddLinkDialog(QWidget *parent, int CreditUnits) : QDialog(parent),
                                                         ui(new Ui::BdapAddLinkDialog)
 {
     ui->setupUi(this);
 
-    nDynamicUnits = DynamicUnits;
+    nCreditUnits = CreditUnits;
 
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(goCancel()));
     connect(ui->pushButtonAddLink, SIGNAL(clicked()), this, SLOT(addLink()));
 
     QStringList fromList;
     QStringList toList;
-    std::vector<std::string> accountListFrom; 
-    std::vector<std::string> accountListTo; 
+    std::vector<std::string> accountListFrom;
+    std::vector<std::string> accountListTo;
 
     //setup autocomplete for FROM input
     populateList(accountListFrom,LinkUserType::LINK_REQUESTOR);
@@ -135,7 +136,7 @@ void BdapAddLinkDialog::addLink()
         return;
     } //if requestor
 
-    if (!bdapFeesPopup(this,OP_BDAP_NEW,OP_BDAP_LINK_REQUEST,BDAP::ObjectType::BDAP_LINK_REQUEST,nDynamicUnits)) {
+    if (!bdapFeesPopup(this,OP_BDAP_NEW,OP_BDAP_LINK_REQUEST,BDAP::ObjectType::BDAP_LINK_REQUEST,nCreditUnits)) {
         goClose();
         return;
     }
@@ -180,7 +181,7 @@ void BdapAddLinkDialog::goClose()
 
 std::string BdapAddLinkDialog::ignoreErrorCode(const std::string input)
 {
-    //assuming error code is in the following format: ERROR CODE - ERROR MESSAGE   
+    //assuming error code is in the following format: ERROR CODE - ERROR MESSAGE
     std::vector<std::string> results;
     std::string returnvalue = input;
 

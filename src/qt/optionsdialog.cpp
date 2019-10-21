@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,13 +7,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
 
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 #include "netbase.h"
 #include "optionsmodel.h"
@@ -91,9 +92,6 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet) : QDialog(paren
         ui->digits->addItem(digits, digits);
     }
 
-    /* Theme selector */
-    ui->theme->addItem(QString("DYNAMIC-purple"), QVariant("drk"));
-
     /* Language selector */
     QDir translations(":translations");
     ui->lang->addItem(QString("(") + tr("default") + QString(")"), QVariant(""));
@@ -123,7 +121,7 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet) : QDialog(paren
     ui->thirdPartyTxUrls->setPlaceholderText("https://example.com/tx/%s");
 #endif
 
-    ui->unit->setModel(new DynamicUnits(this));
+    ui->unit->setModel(new CreditUnits(this));
 
     /* Widget-to-option mapper */
     mapper = new QDataWidgetMapper(this);
@@ -171,7 +169,7 @@ void OptionsDialog::setModel(OptionsModel* _model)
     connect(ui->databaseCache, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
     connect(ui->threadsScriptVerif, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
     /* Wallet */
-    connect(ui->showDynodesTab, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
+    connect(ui->showServiceNodesTab, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     connect(ui->spendZeroConfChange, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     /* Network */
     connect(ui->allowIncoming, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
@@ -179,7 +177,6 @@ void OptionsDialog::setModel(OptionsModel* _model)
     connect(ui->connectSocksTor, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     /* Display */
     connect(ui->digits, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
-    connect(ui->theme, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->lang, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString&)), this, SLOT(showRestartWarning()));
 }
@@ -187,13 +184,13 @@ void OptionsDialog::setModel(OptionsModel* _model)
 void OptionsDialog::setMapper()
 {
     /* Main */
-    mapper->addMapping(ui->dynamicAtStartup, OptionsModel::StartAtStartup);
+    mapper->addMapping(ui->creditAtStartup, OptionsModel::StartAtStartup);
     mapper->addMapping(ui->threadsScriptVerif, OptionsModel::ThreadsScriptVerif);
     mapper->addMapping(ui->databaseCache, OptionsModel::DatabaseCache);
 
     /* Wallet */
     mapper->addMapping(ui->coinControlFeatures, OptionsModel::CoinControlFeatures);
-    mapper->addMapping(ui->showDynodesTab, OptionsModel::ShowDynodesTab);
+    mapper->addMapping(ui->showServiceNodesTab, OptionsModel::ShowServiceNodesTab);
     mapper->addMapping(ui->showAdvancedPSUI, OptionsModel::ShowAdvancedPSUI);
     mapper->addMapping(ui->showPrivateSendPopups, OptionsModel::ShowPrivateSendPopups);
     mapper->addMapping(ui->lowKeysWarning, OptionsModel::LowKeysWarning);
@@ -223,7 +220,6 @@ void OptionsDialog::setMapper()
 
     /* Display */
     mapper->addMapping(ui->digits, OptionsModel::Digits);
-    mapper->addMapping(ui->theme, OptionsModel::Theme);
     mapper->addMapping(ui->lang, OptionsModel::Language);
     mapper->addMapping(ui->unit, OptionsModel::DisplayUnit);
     mapper->addMapping(ui->thirdPartyTxUrls, OptionsModel::ThirdPartyTxUrls);
@@ -280,7 +276,7 @@ void OptionsDialog::on_hideTrayIcon_stateChanged(int fState)
 
 void OptionsDialog::showRestartWarning(bool fPersistent)
 {
-    ui->statusLabel->setStyleSheet("QLabel { color: red; }");
+    ui->statusLabel->setStyleSheet("QLabel { color: #66023c; }");
 
     if (fPersistent) {
         ui->statusLabel->setText(tr("Client restart required to activate changes."));
@@ -306,7 +302,7 @@ void OptionsDialog::updateProxyValidationState()
         ui->statusLabel->clear();
     } else {
         setOkButtonState(false);
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
+        ui->statusLabel->setStyleSheet("QLabel { color: #66023c; }");
         ui->statusLabel->setText(tr("The supplied proxy address is invalid."));
     }
 }

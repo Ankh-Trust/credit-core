@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CHAINPARAMS_H
-#define DYNAMIC_CHAINPARAMS_H
+#ifndef CREDIT_CHAINPARAMS_H
+#define CREDIT_CHAINPARAMS_H
 
 #include "chainparamsbase.h"
 #include "consensus/params.h"
@@ -40,7 +41,7 @@ struct ChainTxData {
 
 /**
  * CChainParams defines various tweakable parameters of a given instance of the
- * Dynamic system. There are three: the main network on which people trade goods
+ * Credit system. There are three: the main network on which people trade goods
  * and services, the public test network which gets reset from time to time and
  * a regression test mode which is intended for private networks only. It has
  * minimal difficulty to ensure that blocks can be found instantly.
@@ -122,7 +123,7 @@ protected:
     int nFulfilledRequestExpireTime;
     std::vector<std::string> vSporkAddresses;
     int nMinSporkKeys;
-    std::string strDynodePaymentsPubKey;
+    std::string strServiceNodePaymentsPubKey;
 };
 
 /**
@@ -147,4 +148,4 @@ void SelectParams(const std::string& chain);
  */
 void UpdateRegtestBIP9Parameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout);
 
-#endif // DYNAMIC_CHAINPARAMS_H
+#endif // CREDIT_CHAINPARAMS_H

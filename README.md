@@ -1,61 +1,57 @@
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+# **Credit (0AC) v1.0.0.0**
 
-[![Build Status](https://travis-ci.org/duality-solutions/Dynamic.png?branch=master)](https://travis-ci.org/duality-solutions/Dynamic)
+![0AC logo](https://github.com/Ankh-Trust/credit-core/blob/master/src/qt/res/icons/about.png)
 
-# **Dynamic (DYN) v2.4.0.0**
+**Copyright (c) 2019-2019 [Ankh](https://ankh.foundation)**
 
-![DYN logo](https://github.com/duality-solutions/Dynamic/blob/master/src/qt/res/icons/drk/about.png)
-
-**Copyright (c) 2016-2019 [Duality Blockchain Solutions](https://duality.solutions/)**
-
-What is [Dynamic](https://duality.solutions/dynamic)?
+What is [Credit](https://ankh.foundation/credit)?
 ----------------
-* Coin Suffix: DYN
+* Coin Suffix: 0AC
 * PoW Mining Algorithm: Argon2d
 * PoW Difficulty Algorithm: Digishield V3
 * PoW Period: Unlimited
-* PoW Target Spacing: 128 Seconds
+* PoW Target Spacing: 30 Seconds
 * PoW Reward per Block: Controlled via Fluid Protocol
-* PoW Reward Start Height: Block 5,137
+* PoW Reward Start Height: Block 5
 * Maturity: 10 Blocks
-* PoW Blocks: ~675 per day
-* Dynode Collateral Amount: 1000 DYN
-* Dynode Min Confirmation: 17 Blocks
-* Dynode Reward: Controlled via Fluid Protocol
-* Dynode Reward Start Height: Block 10,273
+* PoW Blocks: ~2,880 per day
+* ServiceNode Collateral Amount: 50,000 0AC
+* ServiceNode Min Confirmation: 17 Blocks
+* ServiceNode Reward: Controlled via Fluid Protocol
+* ServiceNode Reward Start Height: Block 43,200
 * Total Coins: 2<sup>63</sup> - 1
-* Min TX Fee: 0.0001 DYN
+* Min TX Fee: 0.0001 0AC
 * Max Block Size: 4MB
 
 
-[Dynamic(DYN)](https://duality.solutions/dynamic) allows fast, secure, verifiable transfers of data using blockchain technology and enables third-party developers to build low-cost solutions across varied industry using the BDAP protocol. Dynamic can be used to run incentivized Dynodes; the second tier of nodes on the network processing, verifying, validating and storing data.
+[Credit(0AC)](https://.../credit) allows fast, secure, verifiable transactions using blockchain technology. Credit can be used to run incentivized ServiceNodes; the second tier of nodes on the network.
 
 **MainNet Parameters**
-P2P Port = 33300
-RPC Port = 33350
-Dynodes = 33300
-Magic Bytes: 0x5e 0x61 0x74 0x80
+P2P Port = 33600
+RPC Port = 33650
+ServiceNodes = 33600
+Magic Bytes: 0x63 0x65 0x78 0x83
 
 **TestNet Parameters**
-P2P Port = 33400
-RPC Port = 33450
-Dynodes = 33400
-Magic Bytes: 0x2f 0x32 0x15 0x40
+P2P Port = 33700
+RPC Port = 33750
+ServiceNodes = 33700
+Magic Bytes: 0x33 0x36 0x19 0x43
 
 **RegTest Parameters**
-P2P Port = 33500
-RPC Port = 33550
-Dynodes = 33500
-Magic Bytes = 0x2f 0x32 0x15 0x3f
+P2P Port = 33800
+RPC Port = 33850
+ServiceNodes = 33800
+Magic Bytes = 0x33 0x36 0x19 0x43
 
 
 UNIX BUILD NOTES
 ====================
-Some notes on how to build [Dynamic](https://duality.solutions/dynamic) in Unix. 
+Some notes on how to build [Credit](https://.../credit) in Unix.
 
 Note
 ---------------------
-Always use absolute paths to configure and compile Dynamic and the dependencies,
+Always use absolute paths to configure and compile Credit and the dependencies,
 for example, when specifying the the path of the dependency:
 
     ../dist/configure --enable-cxx --disable-shared --with-pic --prefix=$BDB_PREFIX
@@ -73,7 +69,7 @@ make
 make install # optional
 ```
 
-This will build dynamic-qt as well if the dependencies are met.
+This will build credit-qt as well if the dependencies are met.
 
 Dependencies
 ---------------------
@@ -85,7 +81,7 @@ These dependencies are required:
  libssl      | SSL Support      | Secure communications
  libboost    | Boost            | C++ Library
  libevent    | Networking       | OS independent asynchronous networking
- 
+
 Optional dependencies:
 
  Library     | Purpose          | Description
@@ -96,23 +92,23 @@ Optional dependencies:
  protobuf    | Payments in GUI  | Data interchange format used for payment protocol (only needed when GUI enabled)
  libqrencode | QR codes in GUI  | Optional for generating QR codes (only needed when GUI enabled)
  libzmq3     | ZMQ notification | Optional, allows generating ZMQ notifications (requires ZMQ version >= 4.x)
- 
+
 For the versions used in the release, see [release-process.md](release-process.md) under *Fetch and build inputs*.
 
 System requirements
 --------------------
 
-C++ compilers are memory-hungry. It is recommended to have at least 3 GB of memory available when compiling Dynamic.
+C++ compilers are memory-hungry. It is recommended to have at least 3 GB of memory available when compiling Credit.
 
 Dependency Build Instructions: Ubuntu & Debian
 ----------------------------------------------
 
-It is required to build Dynamic on Ubuntu 18.04LTS(Bionic) or later due to C++14/GCC7 requirements. Also OpenSSL 1.1.0g is included in Ubuntu 18.04LTS and later, however it is suggested to use OpenSSL 1.1.1LTS.
+It is required to build Credit on Ubuntu 18.04LTS(Bionic) or later due to C++14/GCC7 requirements. Also OpenSSL 1.1.0g is included in Ubuntu 18.04LTS and later, however it is suggested to use OpenSSL 1.1.1LTS.
 
 Build requirements:
 
     sudo apt-get install build-essential libtool autotools-dev autoconf pkg-config libssl-dev libcrypto++-dev libevent-dev git automake
-    
+
 For Ubuntu 18.04LTS(Bionic) and later, or Debian 7 and later; libboost-all-dev has to be installed:
 
     sudo apt-get install libboost-all-dev
@@ -146,11 +142,11 @@ Optional (see --with-miniupnpc and --enable-upnp-default):
 ZMQ dependencies (provides ZMQ API 4.x):
 
         sudo apt-get install libzmq3-dev
-    
+
 Dependencies for the GUI: Ubuntu & Debian
 -----------------------------------------
 
-If you want to build Dynamic-Qt, make sure that the required packages for Qt development are installed. Qt 5 is necessary to build the GUI. If both Qt 4 and Qt 5 are installed, Qt 5 will be used. Pass `--with-gui=qt5` to configure to choose Qt5. To build without GUI pass `--without-gui`.
+If you want to build Credit-Qt, make sure that the required packages for Qt development are installed. Qt 5 is necessary to build the GUI. If both Qt 4 and Qt 5 are installed, Qt 5 will be used. Pass `--with-gui=qt5` to configure to choose Qt5. To build without GUI pass `--without-gui`.
 
 For Qt 5 you need the following:
 
@@ -159,13 +155,13 @@ For Qt 5 you need the following:
 libqrencode (optional) can be installed with:
 
     sudo apt-get install libqrencode-dev
-    
-Once these are installed, they will be found by configure and a dynamic-qt executable will be
+
+Once these are installed, they will be found by configure and a credit-qt executable will be
 built by default.
 
 Notes
 -----
-The release is built with GCC and then "strip dynamicd" to strip the debug
+The release is built with GCC and then "strip creditd" to strip the debug
 symbols, which reduces the executable size by about 90%.
 
 miniupnpc
@@ -195,12 +191,12 @@ It is recommended to use Berkeley DB 4.8 and is included in the dependencies abo
 
 If you have to, or wish to build Berkeley DB 4.8 yourself:
 
-``` 
+```
     bash
-    DYNAMIC_ROOT=$(pwd)
+    CREDIT_ROOT=$(pwd)
 
-    # Pick some path to install BDB to, here we create a directory within the dynamic directory
-    BDB_PREFIX="${DYNAMIC_ROOT}/db4"
+    # Pick some path to install BDB to, here we create a directory within the credit directory
+    BDB_PREFIX="${CREDIT_ROOT}/db4"
     mkdir -p $BDB_PREFIX
 
     # Fetch the source and verify that it is not tampered with
@@ -213,11 +209,11 @@ If you have to, or wish to build Berkeley DB 4.8 yourself:
     cd db-4.8.30.NC/build_unix/
     #  Note: Do a static build so that it can be embedded into the exectuable, instead of having to find a .so at runtime
     ../dist/configure --prefix=/usr/local --enable-cxx
-    make 
+    make
     sudo make install
 
-    # Configure Dynamic to use our own-built instance of BDB
-    cd $DYNAMIC_ROOT
+    # Configure Credit to use our own-built instance of BDB
+    cd $CREDIT_ROOT
     ./configure (other args...) LDFLAGS="-L${BDB_PREFIX}/lib/" CPPFLAGS="-I${BDB_PREFIX}/include/"
 ```
 
@@ -234,7 +230,7 @@ If you need to build Boost yourself, in terminal enter:
 
 Security
 --------
-To help make your Dynamic installation more secure by making certain attacks impossible to exploit even if a vulnerability is found, binaries are hardened by default.
+To help make your Credit installation more secure by making certain attacks impossible to exploit even if a vulnerability is found, binaries are hardened by default.
 
 This can be disabled with:
 
@@ -258,23 +254,23 @@ Hardening enables the following features:
 
     To test that you have built PIE executable, install scanelf, part of paxutils, and use:
 
-    scanelf -e ./dynamicd
+    scanelf -e ./creditd
 
-    
+
     The output should contain:
-    
+
     TYPE
-    ET_DYN
+    ET__AC
 
 * Non-executable Stack
     If the stack is executable then trivial stack based buffer overflow exploits are possible if
-    vulnerable buffers are found. By default, dynamic should be built with a non-executable stack
+    vulnerable buffers are found. By default, credit should be built with a non-executable stack
     but if one of the libraries it uses asks for an executable stack or someone makes a mistake
     and uses a compiler extension which requires an executable stack, it will silently build an
     executable without the non-executable stack protection.
 
     To verify that the stack is non-executable after compiling use:
-    `scanelf -e ./dynamicd`
+    `scanelf -e ./creditd`
 
     the output should contain:
     STK/REL/PTL
@@ -284,7 +280,7 @@ Hardening enables the following features:
 
 Disable-wallet mode
 --------------------
-When the intention is to run only a P2P node without a wallet, dynamic may be compiled in
+When the intention is to run only a P2P node without a wallet, credit may be compiled in
 disable-wallet mode with:
 
     ./configure --disable-wallet
@@ -296,12 +292,12 @@ call not `getwork`.
 
 AVX2 Mining Optimisations
 -------------------------
-For increased performance when mining, AVX2 optimisations can be enabled. 
+For increased performance when mining, AVX2 optimisations can be enabled.
 
 At configure time:
 
     --enable-avx2
-    
+
 CPU's with AVX2 support:
 
     Intel
@@ -319,12 +315,12 @@ CPU's with AVX2 support:
 
 AVX512 Mining Optimisations
 -------------------------
-For increased performance when mining, AVX512 optimisations can be enabled. 
+For increased performance when mining, AVX512 optimisations can be enabled.
 
 At configure time:
 
     --enable-avx512f
-    
+
 CPU's with AVX512 support:
 
     Intel
@@ -334,7 +330,7 @@ CPU's with AVX512 support:
         Skylake-X processor, 2017
         Cannonlake processor, expected in 2019
         Ice Lake processor, expected in 2019
-       
+
 
 GPU Mining
 ----------
@@ -343,12 +339,12 @@ To enable GPU mining within the wallet, OpenCL or CUDA can be utilised. Please u
 For OpenCL you need the following:
 
     sudo apt-get install ocl-icd-opencl-dev
-    
+
 For CUDA please visit: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
-    
+
 At configure time for OpenCL(Nvidia/AMD):
 
-    --enable-gpu 
+    --enable-gpu
 
 At configure time for CUDA(Nvidia):
 
@@ -369,15 +365,13 @@ Use Qt Creator as IDE
 You can use Qt Creator as IDE, for debugging and for manipulating forms, etc.
 Download Qt Creator from http://www.qt.io/download/. Download the "community edition" and only install Qt Creator (uncheck the rest during the installation process).
 
-1. Make sure you installed everything through homebrew mentioned above 
+1. Make sure you installed everything through homebrew mentioned above
 2. Do a proper ./configure --with-gui=qt5 --enable-debug
 3. In Qt Creator do "New Project" -> Import Project -> Import Existing Project
-4. Enter "dynamic-qt" as project name, enter src/qt as location
+4. Enter "credit-qt" as project name, enter src/qt as location
 5. Leave the file selection as it is
 6. Confirm the "summary page"
 7. In the "Projects" tab select "Manage Kits..."
 8. Select the default "Desktop" kit and select "Clang (x86 64bit in /usr/bin)" as compiler
 9. Select LLDB as debugger (you might need to set the path to your installtion)
 10. Start debugging with Qt Creator
-
-

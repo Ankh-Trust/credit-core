@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -168,7 +169,7 @@ class CPrivateSendQueue
 {
 public:
     int nDenom;
-    COutPoint dynodeOutpoint;
+    COutPoint servicenodeOutpoint;
     int64_t nTime;
     bool fReady; //ready for submit
     std::vector<unsigned char> vchSig;
@@ -176,7 +177,7 @@ public:
     bool fTried;
 
     CPrivateSendQueue() : nDenom(0),
-                          dynodeOutpoint(COutPoint()),
+                          servicenodeOutpoint(COutPoint()),
                           nTime(0),
                           fReady(false),
                           vchSig(std::vector<unsigned char>()),
@@ -185,7 +186,7 @@ public:
     }
 
     CPrivateSendQueue(int nDenom, COutPoint outpoint, int64_t nTime, bool fReady) : nDenom(nDenom),
-                                                                                    dynodeOutpoint(outpoint),
+                                                                                    servicenodeOutpoint(outpoint),
                                                                                     nTime(nTime),
                                                                                     fReady(fReady),
                                                                                     vchSig(std::vector<unsigned char>()),
@@ -205,14 +206,14 @@ public:
             CTxIn txin{};
             if (ser_action.ForRead()) {
                 READWRITE(txin);
-                dynodeOutpoint = txin.prevout;
+                servicenodeOutpoint = txin.prevout;
             } else {
-                txin = CTxIn(dynodeOutpoint);
+                txin = CTxIn(servicenodeOutpoint);
                 READWRITE(txin);
             }
         } else {
             // using new format directly
-            READWRITE(dynodeOutpoint);
+            READWRITE(servicenodeOutpoint);
         }
         READWRITE(nTime);
         READWRITE(fReady);
@@ -224,14 +225,14 @@ public:
     uint256 GetSignatureHash() const;
     /** Sign this mixing transaction
      *  \return true if all conditions are met:
-     *     1) we have an active Dynode,
-     *     2) we have a valid Dynode private key,
+     *     1) we have an active ServiceNode,
+     *     2) we have a valid ServiceNode private key,
      *     3) we signed the message successfully, and
      *     4) we verified the message successfully
      */
     bool Sign();
-    /// Check if we have a valid Dynode address
-    bool CheckSignature(const CPubKey& pubKeyDynode) const;
+    /// Check if we have a valid ServiceNode address
+    bool CheckSignature(const CPubKey& pubKeyServiceNode) const;
 
     bool Relay(CConnman& connman);
 
@@ -240,13 +241,13 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("nDenom=%d, nTime=%lld, fReady=%s, fTried=%s, dynode=%s",
-            nDenom, nTime, fReady ? "true" : "false", fTried ? "true" : "false", dynodeOutpoint.ToStringShort());
+        return strprintf("nDenom=%d, nTime=%lld, fReady=%s, fTried=%s, servicenode=%s",
+            nDenom, nTime, fReady ? "true" : "false", fTried ? "true" : "false", servicenodeOutpoint.ToStringShort());
     }
 
     friend bool operator==(const CPrivateSendQueue& a, const CPrivateSendQueue& b)
     {
-        return a.nDenom == b.nDenom && a.dynodeOutpoint == b.dynodeOutpoint && a.nTime == b.nTime && a.fReady == b.fReady;
+        return a.nDenom == b.nDenom && a.servicenodeOutpoint == b.servicenodeOutpoint && a.nTime == b.nTime && a.fReady == b.fReady;
     }
 };
 
@@ -261,13 +262,13 @@ private:
 
 public:
     CTransactionRef tx;
-    COutPoint dynodeOutpoint;
+    COutPoint servicenodeOutpoint;
     std::vector<unsigned char> vchSig;
     int64_t sigTime;
 
     CPrivateSendBroadcastTx() : nConfirmedHeight(-1),
                                 tx(MakeTransactionRef()),
-                                dynodeOutpoint(),
+                                servicenodeOutpoint(),
                                 vchSig(),
                                 sigTime(0)
     {
@@ -275,7 +276,7 @@ public:
 
     CPrivateSendBroadcastTx(const CTransactionRef& _tx, COutPoint _outpoint, int64_t _sigTime) : nConfirmedHeight(-1),
                                                                                                  tx(_tx),
-                                                                                                 dynodeOutpoint(_outpoint),
+                                                                                                 servicenodeOutpoint(_outpoint),
                                                                                                  vchSig(),
                                                                                                  sigTime(_sigTime)
     {
@@ -293,14 +294,14 @@ public:
             CTxIn txin{};
             if (ser_action.ForRead()) {
                 READWRITE(txin);
-                dynodeOutpoint = txin.prevout;
+                servicenodeOutpoint = txin.prevout;
             } else {
-                txin = CTxIn(dynodeOutpoint);
+                txin = CTxIn(servicenodeOutpoint);
                 READWRITE(txin);
             }
         } else {
             // using new format directly
-            READWRITE(dynodeOutpoint);
+            READWRITE(servicenodeOutpoint);
         }
         if (!(s.GetType() & SER_GETHASH)) {
             READWRITE(vchSig);
@@ -324,7 +325,7 @@ public:
     uint256 GetSignatureHash() const;
 
     bool Sign();
-    bool CheckSignature(const CPubKey& pubKeyDynode) const;
+    bool CheckSignature(const CPubKey& pubKeyServiceNode) const;
 
     void SetConfirmedHeight(int nConfirmedHeightIn) { nConfirmedHeight = nConfirmedHeightIn; }
     bool IsExpired(int nHeight);
@@ -336,7 +337,7 @@ class CPrivateSendBaseSession
 protected:
     mutable CCriticalSection cs_privatesend;
 
-    std::vector<CPrivateSendEntry> vecEntries; // Dynode/clients entries
+    std::vector<CPrivateSendEntry> vecEntries; // ServiceNode/clients entries
 
     PoolState nState;                // should be one of the POOL_STATE_XXX values
     int64_t nTimeLastSuccessfulStep; // the time when last successful mixing step was performed, in UTC milliseconds
@@ -404,7 +405,7 @@ public:
     static std::vector<CAmount> GetStandardDenominations() { return vecStandardDenominations; }
     static CAmount GetSmallestDenomination() { return vecStandardDenominations.back(); }
 
-    /// Get the denominations for a specific amount of Dynamic.
+    /// Get the denominations for a specific amount of Credit.
     static int GetDenominationsByAmounts(const std::vector<CAmount>& vecAmount);
 
     static bool IsDenominatedAmount(CAmount nInputAmount);

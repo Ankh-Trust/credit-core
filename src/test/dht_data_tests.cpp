@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
@@ -12,7 +13,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include "bdap/linking.h"
 #include "bdap/utils.h"
 #include "dht/ed25519.h"
@@ -41,7 +42,7 @@ BOOST_AUTO_TEST_CASE(dht_data_test1)
     CKeyEd25519 key; //key1
     CKeyEd25519 key2; //key2
     CKeyEd25519 key3; //key3 - this key will not be added
-    std::string strOperationType = "oauth"; 
+    std::string strOperationType = "oauth";
     std::vector<std::vector<unsigned char>> vvchPubKeys;
     std::vector<unsigned char> vchValue = vchFromString("GET /authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1"); //= vchFromValue(); //?????
 

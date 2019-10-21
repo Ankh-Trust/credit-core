@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_TEST_COMPATTESTS_H
-#define DYNAMIC_QT_TEST_COMPATTESTS_H
+#ifndef CREDIT_QT_TEST_COMPATTESTS_H
+#define CREDIT_QT_TEST_COMPATTESTS_H
 
 #include <QObject>
 #include <QTest>
@@ -16,4 +16,4 @@ private Q_SLOTS:
     void bswapTests();
 };
 
-#endif // DYNAMIC_QT_TEST_COMPATTESTS_H
+#endif // CREDIT_QT_TEST_COMPATTESTS_H

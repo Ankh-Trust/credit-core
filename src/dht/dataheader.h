@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_DHT_DATAHEADER_H
-#define DYNAMIC_DHT_DATAHEADER_H
+#ifndef CREDIT_DHT_DATAHEADER_H
+#define CREDIT_DHT_DATAHEADER_H
 
 #include "serialize.h"
 
@@ -224,4 +224,4 @@ private:
     std::string strHex;
     std::string ToHex();
 };
-#endif // DYNAMIC_DHT_DATAHEADER_H
+#endif // CREDIT_DHT_DATAHEADER_H

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_HASH_H
-#define DYNAMIC_HASH_H
+#ifndef CREDIT_HASH_H
+#define CREDIT_HASH_H
 
 #include "crypto/argon2d/argon2.h"
 #include "crypto/blake2/blake2.h"
@@ -287,7 +288,7 @@ public:
 uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val);
 uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint32_t extra);
 
-/* ----------- Dynamic Hash ------------------------------------------------ */
+/* ----------- Credit Hash ------------------------------------------------ */
 /// Argon2d are parametrized by:
 /// A time cost, which defines the amount of computation realized and therefore the execution time, given in number of iterations
 /// A memory cost, which defines the memory usage, given in kibibytes (1 kibibytes = kilobytes 1.024)
@@ -395,4 +396,4 @@ inline uint256 hash_Argon2d(const T1 pbegin, const T1 pend, const unsigned int& 
     }
     return hashResult;
 }
-#endif // DYNAMIC_HASH_H
+#endif // CREDIT_HASH_H

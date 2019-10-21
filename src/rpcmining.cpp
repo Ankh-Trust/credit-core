@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -32,8 +33,8 @@
 #include "wallet/wallet.h"
 #endif
 
-#include "dynode-payments.h"
-#include "dynode-sync.h"
+#include "servicenode-payments.h"
+#include "servicenode-sync.h"
 #include "governance-classes.h"
 
 #include <univalue.h>
@@ -82,14 +83,14 @@ UniValue getpowrewardstart(const UniValue& params, bool fHelp)
     return Params().GetConsensus().nRewardsStart + 1;
 }
 
-UniValue getdynoderewardstart(const UniValue& params, bool fHelp)
+UniValue getservicenoderewardstart(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() > 1)
         throw std::runtime_error(
-            "getdynoderewardstart [nHeight]\n"
-            "Returns block when Dynode rewards begin.");
+            "getservicenoderewardstart [nHeight]\n"
+            "Returns block when ServiceNode rewards begin.");
 
-    return Params().GetConsensus().nDynodePaymentsStartBlock + 1;
+    return Params().GetConsensus().nServiceNodePaymentsStartBlock + 1;
 }
 
 /**
@@ -162,7 +163,7 @@ UniValue getgenerate(const JSONRPCRequest& request)
             "getgenerate\n"
             "\nReturn if the server is set to generate coins or not. The default is false.\n"
             "It is set with the command line argument -gen (or " +
-            std::string(DYNAMIC_CONF_FILENAME) + " setting gen)\n"
+            std::string(CREDIT_CONF_FILENAME) + " setting gen)\n"
                                                  "It can also be set with the setgenerate call.\n"
                                                  "\nResult\n"
                                                  "true|false      (boolean) If the server is set to generate coins or not\n"
@@ -262,7 +263,7 @@ UniValue generatetoaddress(const JSONRPCRequest& request)
             "\nMine blocks immediately to a specified address (before the RPC call returns)\n"
             "\nArguments:\n"
             "1. numblocks    (numeric, required) How many blocks are generated immediately.\n"
-            "2. address    (string, required) The address to send the newly generated Dynamic to.\n"
+            "2. address    (string, required) The address to send the newly generated Credit to.\n"
             "3. maxtries     (numeric, optional) How many iterations to try (default = 1000000).\n"
             "\nResult\n"
             "[ blockhashes ]     (array) hashes of blocks generated\n"
@@ -281,7 +282,7 @@ UniValue generatetoaddress(const JSONRPCRequest& request)
         nMaxTries = request.params[2].get_int();
     }
 
-    CDynamicAddress address(request.params[1].get_str());
+    CCreditAddress address(request.params[1].get_str());
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Error: Invalid address");
 
@@ -561,13 +562,13 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
             "  \"curtime\" : ttt,                  (numeric) current timestamp in seconds since epoch (Jan 1 1970 GMT)\n"
             "  \"bits\" : \"xxx\",                 (string) compressed target of next block\n"
             "  \"height\" : n                      (numeric) The height of the next block\n"
-            "  \"dynode\" : {                   (json object) required Dynode payee that must be included in the next block\n"
+            "  \"servicenode\" : {                   (json object) required ServiceNode payee that must be included in the next block\n"
             "      \"payee\" : \"xxxx\",             (string) payee address\n"
             "      \"script\" : \"xxxx\",            (string) payee scriptPubKey\n"
             "      \"amount\": n                   (numeric) required amount to pay\n"
             "  },\n"
-            "  \"dynode_payments_started\" :  true|false, (boolean) true, if Dynode payments started\n"
-            "  \"dynode_payments_enforced\" : true|false, (boolean) true, if Dynode payments are enforced\n"
+            "  \"servicenode_payments_started\" :  true|false, (boolean) true, if ServiceNode payments started\n"
+            "  \"servicenode_payments_enforced\" : true|false, (boolean) true, if ServiceNode payments are enforced\n"
             "  \"superblock\" : [                  (array) required superblock payees that must be included in the next block\n"
             "      {\n"
             "         \"payee\" : \"xxxx\",          (string) payee address\n"
@@ -652,19 +653,19 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     if (Params().MiningRequiresPeers()) {
         if (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
-            throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Dynamic is not connected!");
+            throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Credit is not connected!");
 
         if (IsInitialBlockDownload())
-            throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Dynamic is downloading blocks...");
+            throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Credit is downloading blocks...");
     }
 
     CScript payee;
-    if (sporkManager.IsSporkActive(SPORK_8_DYNODE_PAYMENT_ENFORCEMENT) && !dynodeSync.IsWinnersListSynced() && !dnpayments.GetBlockPayee(chainActive.Height() + 1, payee))
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Dynamic is downloading Dynode winners...");
+    if (sporkManager.IsSporkActive(SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT) && !servicenodeSync.IsWinnersListSynced() && !dnpayments.GetBlockPayee(chainActive.Height() + 1, payee))
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Credit is downloading ServiceNode winners...");
 
     // next block is a superblock and we need governance info to correctly construct it
-    if (sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED) && !dynodeSync.IsSynced() && CSuperblock::IsValidBlockHeight(chainActive.Height() + 1))
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Dynamic is syncing with network...");
+    if (sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED) && !servicenodeSync.IsSynced() && CSuperblock::IsValidBlockHeight(chainActive.Height() + 1))
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Credit is syncing with network...");
 
     static unsigned int nTransactionsUpdatedLast;
 
@@ -858,18 +859,18 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
     result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
     result.push_back(Pair("height", nHeight));
 
-    UniValue dynodeObj(UniValue::VOBJ);
-    if (pblocktemplate->txoutDynode != CTxOut()) {
+    UniValue servicenodeObj(UniValue::VOBJ);
+    if (pblocktemplate->txoutServiceNode != CTxOut()) {
         CTxDestination address1;
-        ExtractDestination(pblocktemplate->txoutDynode.scriptPubKey, address1);
-        CDynamicAddress address2(address1);
-        dynodeObj.push_back(Pair("payee", address2.ToString().c_str()));
-        dynodeObj.push_back(Pair("script", HexStr(pblocktemplate->txoutDynode.scriptPubKey.begin(), pblocktemplate->txoutDynode.scriptPubKey.end())));
-        dynodeObj.push_back(Pair("amount", pblocktemplate->txoutDynode.nValue));
+        ExtractDestination(pblocktemplate->txoutServiceNode.scriptPubKey, address1);
+        CCreditAddress address2(address1);
+        servicenodeObj.push_back(Pair("payee", address2.ToString().c_str()));
+        servicenodeObj.push_back(Pair("script", HexStr(pblocktemplate->txoutServiceNode.scriptPubKey.begin(), pblocktemplate->txoutServiceNode.scriptPubKey.end())));
+        servicenodeObj.push_back(Pair("amount", pblocktemplate->txoutServiceNode.nValue));
     }
-    result.push_back(Pair("dynode", dynodeObj));
-    result.push_back(Pair("dynode_payments_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nDynodePaymentsStartBlock));
-    result.push_back(Pair("dynode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_DYNODE_PAYMENT_ENFORCEMENT)));
+    result.push_back(Pair("servicenode", servicenodeObj));
+    result.push_back(Pair("servicenode_payments_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nServiceNodePaymentsStartBlock));
+    result.push_back(Pair("servicenode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT)));
 
     UniValue superblockObjArray(UniValue::VARR);
     if (pblocktemplate->voutSuperblock.size()) {
@@ -877,7 +878,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
             UniValue entry(UniValue::VOBJ);
             CTxDestination address1;
             ExtractDestination(txout.scriptPubKey, address1);
-            CDynamicAddress address2(address1);
+            CCreditAddress address2(address1);
             entry.push_back(Pair("payee", address2.ToString().c_str()));
             entry.push_back(Pair("script", HexStr(txout.scriptPubKey.begin(), txout.scriptPubKey.end())));
             entry.push_back(Pair("amount", txout.nValue));
@@ -889,10 +890,10 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
     CScript scriptMint;
     if (areWeMinting) {
         // Add minting output to superblock payments
-        CAmount fluidIssuance = nCoinbaseValue - GetFluidDynodeReward(nHeight) - GetFluidMiningReward(nHeight);
+        CAmount fluidIssuance = nCoinbaseValue - GetFluidServiceNodeReward(nHeight) - GetFluidMiningReward(nHeight);
         if (fluidIssuance > 0) {
             UniValue entry(UniValue::VOBJ);
-            CDynamicAddress mintAddress = fluidMint.GetDestinationAddress();
+            CCreditAddress mintAddress = fluidMint.GetDestinationAddress();
             if (!mintAddress.IsScript()) {
                 scriptMint = GetScriptForDestination(mintAddress.Get());
             } else {

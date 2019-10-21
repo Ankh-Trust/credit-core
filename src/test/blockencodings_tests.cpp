@@ -7,7 +7,7 @@
 #include "chainparams.h"
 #include "random.h"
 
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 
 #include <boost/test/unit_test.hpp>
 

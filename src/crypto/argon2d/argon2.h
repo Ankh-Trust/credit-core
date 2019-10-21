@@ -19,7 +19,7 @@
 #define ARGON2_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include <limits.h>

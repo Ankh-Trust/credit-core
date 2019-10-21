@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CONSENSUS_CONSENSUS_H
-#define DYNAMIC_CONSENSUS_CONSENSUS_H
+#ifndef CREDIT_CONSENSUS_CONSENSUS_H
+#define CREDIT_CONSENSUS_CONSENSUS_H
 
 /** The maximum allowed size for a transaction, in bytes */
 static const unsigned int MAX_TX_SIZE = 1000000; // 1 MB to match the default maximum network send size.
@@ -24,4 +24,4 @@ enum {
     LOCKTIME_MEDIAN_TIME_PAST = (1 << 1),
 };
 
-#endif // DYNAMIC_CONSENSUS_CONSENSUS_H
+#endif // CREDIT_CONSENSUS_CONSENSUS_H

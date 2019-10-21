@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_TIMEDATA_H
-#define DYNAMIC_TIMEDATA_H
+#ifndef CREDIT_TIMEDATA_H
+#define CREDIT_TIMEDATA_H
 
 #include <stdint.h>
 
@@ -18,7 +19,7 @@ static const int64_t DEFAULT_MAX_TIME_ADJUSTMENT = 70 * 60;
 
 class CNetAddr;
 
-/** 
+/**
  * Median filter over a stream of values.
  * Returns the median of the last N numbers
  */
@@ -80,4 +81,4 @@ int64_t GetAdjustedTime();
 int64_t GetNodesOffset();
 void AddTimeData(const CNetAddr& ip, int64_t nTime);
 
-#endif // DYNAMIC_TIMEDATA_H
+#endif // CREDIT_TIMEDATA_H

@@ -8,13 +8,13 @@
 #
 
 import time
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 from test_framework.script import *
 from test_framework.mininode import *
 import binascii
 
-class TxIndexTest(DynamicTestFramework):
+class TxIndexTest(CreditTestFramework):
 
     def setup_chain(self):
         print("Initializing test directory "+self.options.tmpdir)

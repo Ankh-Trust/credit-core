@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -18,13 +19,13 @@
 #include <boost/algorithm/string.hpp>
 #include <stdio.h>
 
-BdapAddUserDialog::BdapAddUserDialog(QWidget *parent, int DynamicUnits, BDAP::ObjectType accountType) : QDialog(parent),
+BdapAddUserDialog::BdapAddUserDialog(QWidget *parent, int CreditUnits, BDAP::ObjectType accountType) : QDialog(parent),
                                                         ui(new Ui::BdapAddUserDialog)
 {
     //By default, accountType is USER. so only change stuff if different
     ui->setupUi(this);
     inputAccountType = accountType;
-    nDynamicUnits = DynamicUnits;
+    nCreditUnits = CreditUnits;
 
     if (inputAccountType == BDAP::ObjectType::BDAP_GROUP) {
 
@@ -36,7 +37,7 @@ BdapAddUserDialog::BdapAddUserDialog(QWidget *parent, int DynamicUnits, BDAP::Ob
     connect(ui->addUser, SIGNAL(clicked()), this, SLOT(goAddUser()));
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(goCancel()));
     connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(goCancel()));
- 
+
     ui->labelErrorMsg->setVisible(false);
     ui->pushButtonOK->setVisible(false);
 
@@ -62,8 +63,8 @@ void BdapAddUserDialog::goAddUser()
     accountID = ui->lineEdit_userID->text().toStdString();
     commonName = ui->lineEdit_commonName->text().toStdString();
     registrationMonths = ui->lineEdit_registrationMonths->text().toStdString();
-    
-    if (registrationMonths.length() >> 0) 
+
+    if (registrationMonths.length() >> 0)
     {
         try {
             regMonths = std::stoi(registrationMonths);
@@ -95,7 +96,7 @@ void BdapAddUserDialog::goAddUser()
     ui->addUser->setVisible(false);
     ui->cancel->setVisible(false);
 
-    if (!bdapFeesPopup(this,OP_BDAP_NEW,OP_BDAP_ACCOUNT_ENTRY,inputAccountType,nDynamicUnits,regMonths)) {
+    if (!bdapFeesPopup(this,OP_BDAP_NEW,OP_BDAP_ACCOUNT_ENTRY,inputAccountType,nCreditUnits,regMonths)) {
         goClose();
         return;
     }

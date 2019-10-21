@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,8 +7,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_ADDRMAN_H
-#define DYNAMIC_ADDRMAN_H
+#ifndef CREDIT_ADDRMAN_H
+#define CREDIT_ADDRMAN_H
 
 #include "netaddress.h"
 #include "protocol.h"
@@ -171,8 +172,8 @@ public:
 //! the maximum number of nodes to return in a getaddr call
 #define ADDRMAN_GETADDR_MAX 2500
 
-/** 
- * Stochastical (IP) address manager 
+/**
+ * Stochastical (IP) address manager
  */
 class CAddrMan
 {
@@ -594,4 +595,4 @@ public:
     }
 };
 
-#endif // DYNAMIC_ADDRMAN_H
+#endif // CREDIT_ADDRMAN_H

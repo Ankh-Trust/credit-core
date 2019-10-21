@@ -205,7 +205,7 @@ void CDomainEntryDB::WriteDomainEntryIndex(const CDomainEntry& entry, const int 
 {
     if (IsArgSet("-zmqpubbdaprecord")) {
         UniValue oName(UniValue::VOBJ);
-        CDynamicAddress address(EncodeBase58(entry.WalletAddress));
+        CCreditAddress address(EncodeBase58(entry.WalletAddress));
         oName.push_back(Pair("address", address.ToString()));
         oName.push_back(Pair("expires_on", entry.nExpireTime));
         oName.push_back(Pair("dht_publickey", HexStr(entry.DHTPublicKey)));
@@ -507,11 +507,11 @@ static bool CheckDeleteDomainEntryTxInputs(const CDomainEntry& entry, const CScr
             return error(errorMessage.c_str());
         }
         // Get current wallet address used for BDAP tx
-        CDynamicAddress txAddress = GetScriptAddress(scriptOp);
+        CCreditAddress txAddress = GetScriptAddress(scriptOp);
         // Get previous wallet address used for BDAP tx
         CScript prevScriptPubKey;
         GetBDAPOpScript(prevTx, prevScriptPubKey);
-        CDynamicAddress prevAddress = GetScriptAddress(prevScriptPubKey);
+        CCreditAddress prevAddress = GetScriptAddress(prevScriptPubKey);
         if (txAddress.ToString() != prevAddress.ToString())
         {
             //check if previous wallet address is used for update and delete txs
@@ -570,11 +570,11 @@ static bool CheckUpdateDomainEntryTxInputs(CDomainEntry& entry, const CScript& s
             return error(errorMessage.c_str());
         }
         // Get current wallet address used for BDAP tx
-        CDynamicAddress txAddress = GetScriptAddress(scriptOp);
+        CCreditAddress txAddress = GetScriptAddress(scriptOp);
         // Get previous wallet address used for BDAP tx
         CScript prevScriptPubKey;
         GetBDAPOpScript(prevTx, prevScriptPubKey);
-        CDynamicAddress prevAddress = GetScriptAddress(prevScriptPubKey);
+        CCreditAddress prevAddress = GetScriptAddress(prevScriptPubKey);
         if (txAddress.ToString() != prevAddress.ToString())
         {
             //check if previous wallet address is used for update and delete txs

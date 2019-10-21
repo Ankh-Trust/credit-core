@@ -4,30 +4,30 @@
 
 #include "base58.h"
 #include "fluid.h"
-#include "fluiddynode.h"
+#include "fluidservicenode.h"
 #include "fluidmining.h"
 #include "fluidmint.h"
 #include "fluidsovereign.h"
 
-CAmount GetFluidDynodeReward(const int nHeight)
+CAmount GetFluidServiceNodeReward(const int nHeight)
 {
     if (fluid.FLUID_ACTIVATE_HEIGHT > nHeight)
-        return GetStandardDynodePayment(nHeight);
+        return GetStandardServiceNodePayment(nHeight);
 
-    if (!CheckFluidDynodeDB())
-        return GetStandardDynodePayment(nHeight);
+    if (!CheckFluidServiceNodeDB())
+        return GetStandardServiceNodePayment(nHeight);
 
-    if (pFluidDynodeDB->IsEmpty())
-        return GetStandardDynodePayment(nHeight);
+    if (pFluidServiceNodeDB->IsEmpty())
+        return GetStandardServiceNodePayment(nHeight);
 
-    CFluidDynode lastDynodeRecord;
-    if (!pFluidDynodeDB->GetLastFluidDynodeRecord(lastDynodeRecord, nHeight)) {
-        return GetStandardDynodePayment(nHeight);
+    CFluidServiceNode lastServiceNodeRecord;
+    if (!pFluidServiceNodeDB->GetLastFluidServiceNodeRecord(lastServiceNodeRecord, nHeight)) {
+        return GetStandardServiceNodePayment(nHeight);
     }
-    if (lastDynodeRecord.DynodeReward > 0) {
-        return lastDynodeRecord.DynodeReward;
+    if (lastServiceNodeRecord.ServiceNodeReward > 0) {
+        return lastServiceNodeRecord.ServiceNodeReward;
     } else {
-        return GetStandardDynodePayment(nHeight);
+        return GetStandardServiceNodePayment(nHeight);
     }
 }
 
@@ -74,7 +74,7 @@ bool GetMintingInstructions(const int nHeight, CFluidMint& fluidMint)
 }
 
 /** Checks if any given address is a current sovereign wallet address (invoked by RPC) */
-bool IsSovereignAddress(const CDynamicAddress& inputAddress)
+bool IsSovereignAddress(const CCreditAddress& inputAddress)
 {
     if (!inputAddress.IsValid()) {
         return false;
@@ -90,7 +90,7 @@ bool IsSovereignAddress(const CDynamicAddress& inputAddress)
     }
 
     for (const std::vector<unsigned char>& vchAddress : lastSovereign.SovereignAddresses) {
-        CDynamicAddress attemptKey(StringFromCharVector(vchAddress));
+        CCreditAddress attemptKey(StringFromCharVector(vchAddress));
         if (attemptKey.IsValid() && inputAddress == attemptKey) {
             return true;
         }
@@ -98,10 +98,10 @@ bool IsSovereignAddress(const CDynamicAddress& inputAddress)
     return false;
 }
 
-bool GetAllFluidDynodeRecords(std::vector<CFluidDynode>& dynodeEntries)
+bool GetAllFluidServiceNodeRecords(std::vector<CFluidServiceNode>& servicenodeEntries)
 {
-    if (CheckFluidDynodeDB()) {
-        if (!pFluidDynodeDB->GetAllFluidDynodeRecords(dynodeEntries)) {
+    if (CheckFluidServiceNodeDB()) {
+        if (!pFluidServiceNodeDB->GetAllFluidServiceNodeRecords(servicenodeEntries)) {
             return false;
         }
     } else {
@@ -172,16 +172,16 @@ bool CheckSignatureQuorum(const std::vector<unsigned char>& vchFluidScript, std:
         return false;
     }
 
-    std::pair<CDynamicAddress, bool> keyOne;
-    std::pair<CDynamicAddress, bool> keyTwo;
-    std::pair<CDynamicAddress, bool> keyThree;
+    std::pair<CCreditAddress, bool> keyOne;
+    std::pair<CCreditAddress, bool> keyTwo;
+    std::pair<CCreditAddress, bool> keyThree;
     keyOne.second = false;
     keyTwo.second = false;
     keyThree.second = false;
 
     for (const std::string& sovereignAddress : fluidSovereigns) {
-        CDynamicAddress attemptKey;
-        CDynamicAddress xKey(sovereignAddress);
+        CCreditAddress attemptKey;
+        CCreditAddress xKey(sovereignAddress);
 
         if (!xKey.IsValid())
             return false;

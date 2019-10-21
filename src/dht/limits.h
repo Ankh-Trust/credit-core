@@ -2,13 +2,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_DHT_LIMITS_H
-#define DYNAMIC_DHT_LIMITS_H
+#ifndef CREDIT_DHT_LIMITS_H
+#define CREDIT_DHT_LIMITS_H
 
 /**!
 These limit classes define allowed salts (records) that the DHT will accept for storage.
 The first version contains a list of acceptable salts but in future versions, this list will
-be dynamic.  Application developers that want to store data in the DHT can purchase a certificate
+be credit.  Application developers that want to store data in the DHT can purchase a certificate
 that allows their custom op code.
 */
 
@@ -30,4 +30,4 @@ public:
 bool CheckSalt(const std::string& strSalt, const unsigned int nHeight, std::string& strErrorMessage);
 bool CheckPubKey(const std::vector<unsigned char>& vchPubKey);
 
-#endif // DYNAMIC_DHT_LIMITS_H
+#endif // CREDIT_DHT_LIMITS_H

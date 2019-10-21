@@ -9,11 +9,11 @@
 
 import time
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
 
-class TimestampIndexTest(DynamicTestFramework):
+class TimestampIndexTest(CreditTestFramework):
 
     def setup_chain(self):
         print("Initializing test directory "+self.options.tmpdir)

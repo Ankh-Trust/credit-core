@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_RPCCLIENT_H
-#define DYNAMIC_RPCCLIENT_H
+#ifndef CREDIT_RPCCLIENT_H
+#define CREDIT_RPCCLIENT_H
 
 #include <univalue.h>
 
@@ -23,4 +24,4 @@ UniValue RPCConvertNamedValues(const std::string& strMethod, const std::vector<s
  */
 UniValue ParseNonRFCJSONValue(const std::string& strVal);
 
-#endif // DYNAMIC_RPCCLIENT_H
+#endif // CREDIT_RPCCLIENT_H

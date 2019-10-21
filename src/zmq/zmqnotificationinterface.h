@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_ZMQ_ZMQNOTIFICATIONINTERFACE_H
-#define DYNAMIC_ZMQ_ZMQNOTIFICATIONINTERFACE_H
+#ifndef CREDIT_ZMQ_ZMQNOTIFICATIONINTERFACE_H
+#define CREDIT_ZMQ_ZMQNOTIFICATIONINTERFACE_H
 
 #include "validationinterface.h"
 #include <string>
@@ -39,4 +39,4 @@ private:
     std::list<CZMQAbstractNotifier*> notifiers;
 };
 
-#endif // DYNAMIC_ZMQ_ZMQNOTIFICATIONINTERFACE_H
+#endif // CREDIT_ZMQ_ZMQNOTIFICATIONINTERFACE_H

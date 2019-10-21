@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -57,14 +58,14 @@ void CHDChain::Debug(std::string strName) const
             CExtKey extkey;
             extkey.SetMaster(&vchSeed[0], vchSeed.size());
 
-            CDynamicExtKey b58extkey;
+            CCreditExtKey b58extkey;
             b58extkey.SetKey(extkey);
             std::cout << "extended private masterkey: " << b58extkey.ToString().c_str() << std::endl;
 
             CExtPubKey extpubkey;
             extpubkey = extkey.Neuter();
 
-            CDynamicExtPubKey b58extpubkey;
+            CCreditExtPubKey b58extpubkey;
             b58extpubkey.SetKey(extpubkey);
             std::cout << "extended public masterkey: " << b58extpubkey.ToString().c_str() << std::endl;
         });

@@ -53,22 +53,22 @@ READELF_CMD = os.getenv('READELF', '/usr/bin/readelf')
 CPPFILT_CMD = os.getenv('CPPFILT', '/usr/bin/c++filt')
 # Allowed NEEDED libraries
 ALLOWED_LIBRARIES = {
-# dynamicd and dynamic-qt
+# creditd and credit-qt
 'libgcc_s.so.1', # GCC base support
 'libc.so.6', # C library
 'libpthread.so.0', # threading
 'libanl.so.1', # DNS resolve
 'libm.so.6', # math library
 'librt.so.1', # real-time (clock)
-'ld-linux-x86-64.so.2', # 64-bit dynamic linker
-'ld-linux.so.2', # 32-bit dynamic linker
-# dynamic-qt only
+'ld-linux-x86-64.so.2', # 64-bit credit linker
+'ld-linux.so.2', # 32-bit credit linker
+# credit-qt only
 'libX11-xcb.so.1', # part of X11
 'libX11.so.6', # part of X11
 'libxcb.so.1', # part of X11
 'libfontconfig.so.1', # font support
 'libfreetype.so.6', # font parsing
-'libdl.so.2' # programming interface to dynamic linker
+'libdl.so.2' # programming interface to credit linker
 }
 
 class CPPFilt(object):
@@ -94,7 +94,7 @@ def read_symbols(executable, imports=True):
     Parse an ELF executable and return a list of (symbol,version) tuples
     for dynamic, imported symbols.
     '''
-    p = subprocess.Popen([READELF_CMD, '--dyn-syms', '-W', executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    p = subprocess.Popen([READELF_CMD, '--_ac-syms', '-W', executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     (stdout, stderr) = p.communicate()
     if p.returncode:
         raise IOError('Could not read symbols for %s: %s' % (executable, stderr.strip()))
@@ -159,5 +159,3 @@ if __name__ == '__main__':
                 retval = 1
 
     exit(retval)
-
-

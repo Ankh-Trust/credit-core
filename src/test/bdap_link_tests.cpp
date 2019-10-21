@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
@@ -11,7 +12,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include "bdap/linking.h"
 
 
@@ -36,7 +37,7 @@ BOOST_AUTO_TEST_CASE(bdap_link_test1)
     CreateSignatureProof(key, strTestFQDN, vchSignature);
     CPubKey pubKey = key.GetPubKey();
     CKeyID keyID = pubKey.GetID();
-    CDynamicAddress address = CDynamicAddress(keyID);
+    CCreditAddress address = CCreditAddress(keyID);
     BOOST_CHECK(SignatureProofIsValid(address, strTestFQDN, vchSignature) == true);
 
     std::cout << "Exit: bdap_link_test1\n";

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CHAIN_H
-#define DYNAMIC_CHAIN_H
+#ifndef CREDIT_CHAIN_H
+#define CREDIT_CHAIN_H
 
 #include "arith_uint256.h"
 #include "consensus/params.h"
@@ -509,4 +510,4 @@ public:
     CBlockIndex* FindEarliestAtLeast(int64_t nTime) const;
 };
 
-#endif // DYNAMIC_CHAIN_H
+#endif // CREDIT_CHAIN_H

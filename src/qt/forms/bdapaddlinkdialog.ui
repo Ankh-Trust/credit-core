@@ -102,8 +102,8 @@
           <string>Add Link</string>
          </property>
          <property name="icon">
-          <iconset resource="../dynamic.qrc">
-           <normaloff>:/icons/drk/add</normaloff>:/icons/drk/add</iconset>
+          <iconset resource="../credit.qrc">
+           <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
          </property>
         </widget>
        </item>
@@ -119,8 +119,8 @@
           <string>Cancel</string>
          </property>
          <property name="icon">
-          <iconset resource="../dynamic.qrc">
-           <normaloff>:/icons/drk/transaction_conflicted</normaloff>:/icons/drk/transaction_conflicted</iconset>
+          <iconset resource="../credit.qrc">
+           <normaloff>:/icons/transaction_conflicted</normaloff>:/icons/transaction_conflicted</iconset>
          </property>
         </widget>
        </item>
@@ -144,7 +144,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../dynamic.qrc"/>
+  <include location="../credit.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,11 +1,12 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_WARNINGS_H
-#define DYNAMIC_WARNINGS_H
+#ifndef CREDIT_WARNINGS_H
+#define CREDIT_WARNINGS_H
 
 #include <stdlib.h>
 #include <string>
@@ -19,4 +20,4 @@ std::string GetWarnings(const std::string& strFor);
 
 static const bool DEFAULT_TESTSAFEMODE = false;
 
-#endif //  DYNAMIC_WARNINGS_H
+#endif //  CREDIT_WARNINGS_H

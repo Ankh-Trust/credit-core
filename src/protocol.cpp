@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -42,14 +43,14 @@ const char* SENDCMPCT = "sendcmpct";
 const char* CMPCTBLOCK = "cmpctblock";
 const char* GETBLOCKTXN = "getblocktxn";
 const char* BLOCKTXN = "blocktxn";
-// Dynamic message types
+// Credit message types
 const char* TXLOCKREQUEST = "is";
 const char* TXLOCKVOTE = "txlvote";
 const char* SPORK = "spork";
 const char* GETSPORKS = "getsporks";
-const char* DYNODEPAYMENTVOTE = "dnw";
-const char* DYNODEPAYMENTBLOCK = "dnwb";
-const char* DYNODEPAYMENTSYNC = "dnget";
+const char* SERVICENODEPAYMENTVOTE = "dnw";
+const char* SERVICENODEPAYMENTBLOCK = "dnwb";
+const char* SERVICENODEPAYMENTSYNC = "dnget";
 const char* DNQUORUM = "dn quorum"; // not implemented
 const char* DNANNOUNCE = "dnb";
 const char* DNPING = "dnp";
@@ -76,13 +77,13 @@ static const char* ppszTypeName[] =
         NetMsgType::TX,
         NetMsgType::BLOCK,
         "filtered block", // Should never occur
-        // Dynamic message types
+        // Credit message types
         // NOTE: include non-implmented here, we must keep this list in sync with enum in protocol.h
         NetMsgType::TXLOCKREQUEST,
         NetMsgType::TXLOCKVOTE,
         NetMsgType::SPORK,
-        NetMsgType::DYNODEPAYMENTVOTE,
-        NetMsgType::DYNODEPAYMENTBLOCK,
+        NetMsgType::SERVICENODEPAYMENTVOTE,
+        NetMsgType::SERVICENODEPAYMENTBLOCK,
         NetMsgType::DNQUORUM, // not implemented
         NetMsgType::DNANNOUNCE,
         NetMsgType::DNPING,
@@ -123,15 +124,15 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::CMPCTBLOCK,
     NetMsgType::GETBLOCKTXN,
     NetMsgType::BLOCKTXN,
-    // Dynamic message types
+    // Credit message types
     // NOTE: do NOT include non-implmented here, we want them to be "Unknown command" in ProcessMessage()
     NetMsgType::TXLOCKREQUEST,
     NetMsgType::TXLOCKVOTE,
     NetMsgType::SPORK,
     NetMsgType::GETSPORKS,
-    NetMsgType::DYNODEPAYMENTVOTE,
-    // NetMsgType::DYNODEPAYMENTBLOCK, // there is no message for this, only inventory
-    NetMsgType::DYNODEPAYMENTSYNC,
+    NetMsgType::SERVICENODEPAYMENTVOTE,
+    // NetMsgType::SERVICENODEPAYMENTBLOCK, // there is no message for this, only inventory
+    NetMsgType::SERVICENODEPAYMENTSYNC,
     NetMsgType::DNANNOUNCE,
     NetMsgType::DNPING,
     NetMsgType::PSACCEPT,

@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_HASHRATEGRAPHWIDGET_H
-#define DYNAMIC_QT_HASHRATEGRAPHWIDGET_H
+#ifndef CREDIT_QT_HASHRATEGRAPHWIDGET_H
+#define CREDIT_QT_HASHRATEGRAPHWIDGET_H
 
 #include <QQueue>
 #include <QWidget>
@@ -62,4 +62,4 @@ protected:
     void paintEvent(QPaintEvent*);
 };
 
-#endif // DYNAMIC_QT_HASHRATEGRAPHWIDGET_H
+#endif // CREDIT_QT_HASHRATEGRAPHWIDGET_H

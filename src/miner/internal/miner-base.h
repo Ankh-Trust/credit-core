@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_INTERNAL_MINER_BASE_H
-#define DYNAMIC_INTERNAL_MINER_BASE_H
+#ifndef CREDIT_INTERNAL_MINER_BASE_H
+#define CREDIT_INTERNAL_MINER_BASE_H
 
 #include "arith_uint256.h"
 #include "miner/internal/miner-context.h"
@@ -56,4 +56,4 @@ private:
     std::shared_ptr<CReserveScript> _coinbase_script{nullptr};
 };
 
-#endif // DYNAMIC_INTERNAL_MINER_BASE_H
+#endif // CREDIT_INTERNAL_MINER_BASE_H

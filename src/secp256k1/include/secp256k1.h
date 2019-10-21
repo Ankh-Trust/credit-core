@@ -44,7 +44,7 @@ typedef struct secp256k1_context_struct secp256k1_context;
 
 /** Opaque data structure that holds rewriteable "scratch space"
  *
- *  The purpose of this structure is to replace dynamic memory allocations,
+ *  The purpose of this structure is to replace credit memory allocations,
  *  because we target architectures where this may not be available. It is
  *  essentially a resizable (within specified parameters) block of bytes,
  *  which is initially created either by memory allocation or TODO as a pointer

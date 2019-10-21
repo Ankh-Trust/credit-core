@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2015 The Bitcoin Core developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_HTTPSERVER_H
-#define DYNAMIC_HTTPSERVER_H
+#ifndef CREDIT_HTTPSERVER_H
+#define CREDIT_HTTPSERVER_H
 
 #include <functional>
 #include <stdint.h>
@@ -147,4 +148,4 @@ private:
     struct event* ev;
 };
 
-#endif // DYNAMIC_HTTPSERVER_H
+#endif // CREDIT_HTTPSERVER_H

@@ -8,7 +8,7 @@
 #include "serialize.h"
 #include "streams.h"
 
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include "test/test_random.h"
 
 #include <vector>

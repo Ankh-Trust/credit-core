@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_RPCREGISTER_H
-#define DYNAMIC_RPCREGISTER_H
+#ifndef CREDIT_RPCREGISTER_H
+#define CREDIT_RPCREGISTER_H
 
 /** These are in one header file to avoid creating tons of single-function
  * headers for everything under src/rpc/ */
@@ -20,8 +21,8 @@ void RegisterMiscRPCCommands(CRPCTable& tableRPC);
 void RegisterMiningRPCCommands(CRPCTable& tableRPC);
 /** Register raw transaction RPC commands */
 void RegisterRawTransactionRPCCommands(CRPCTable& tableRPC);
-/** Register dynode RPC commands */
-void RegisterDynodeRPCCommands(CRPCTable& tableRPC);
+/** Register servicenode RPC commands */
+void RegisterServiceNodeRPCCommands(CRPCTable& tableRPC);
 /** Register governance RPC commands */
 void RegisterGovernanceRPCCommands(CRPCTable& tableRPC);
 /** Register fluid RPC commands */
@@ -42,7 +43,7 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable& t)
     RegisterMiscRPCCommands(t);
     RegisterMiningRPCCommands(t);
     RegisterRawTransactionRPCCommands(t);
-    RegisterDynodeRPCCommands(t);
+    RegisterServiceNodeRPCCommands(t);
     RegisterGovernanceRPCCommands(t);
     RegisterFluidRPCCommands(t);
     RegisterDomainEntryRPCCommands(t);
@@ -51,4 +52,4 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable& t)
     RegisterRawBDAPAccountRPCCommands(t);
 }
 
-#endif // DYNAMIC_RPCREGISTER_H
+#endif // CREDIT_RPCREGISTER_H

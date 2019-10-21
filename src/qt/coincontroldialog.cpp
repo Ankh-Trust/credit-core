@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -9,7 +10,7 @@
 #include "ui_coincontroldialog.h"
 
 #include "addresstablemodel.h"
-#include "dynamicunits.h"
+#include "creditunits.h"
 #include "guiutil.h"
 #include "optionsmodel.h"
 #include "platformstyle.h"
@@ -55,9 +56,6 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle* _platformStyle, QWidge
                                                                                              platformStyle(_platformStyle)
 {
     ui->setupUi(this);
-
-    /* Open CSS when configured */
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
 
     // context menu actions
     QAction* copyAddressAction = new QAction(tr("Copy address"), this);
@@ -140,14 +138,15 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle* _platformStyle, QWidge
     ui->treeWidget->headerItem()->setText(COLUMN_CHECKBOX, QString());
 
     ui->treeWidget->setColumnWidth(COLUMN_CHECKBOX, 84);
-    ui->treeWidget->setColumnWidth(COLUMN_AMOUNT, 100);
-    ui->treeWidget->setColumnWidth(COLUMN_LABEL, 170);
-    ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 190);
-    ui->treeWidget->setColumnWidth(COLUMN_PRIVATESEND_ROUNDS, 88);
-    ui->treeWidget->setColumnWidth(COLUMN_DATE, 80);
-    ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 100);
+    ui->treeWidget->setColumnWidth(COLUMN_AMOUNT, 120);
+    ui->treeWidget->setColumnWidth(COLUMN_LABEL, 240);
+    ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 320);
+    ui->treeWidget->setColumnWidth(COLUMN_PRIVATESEND_ROUNDS, 84);
+    ui->treeWidget->setColumnWidth(COLUMN_DATE, 124);
+    ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 124);
+    ui->treeWidget->setColumnWidth(COLUMN_VOUT_INDEX, 84);
     ui->treeWidget->setColumnHidden(COLUMN_TXHASH, true);     // store transacton hash in this column, but don't show it
-    ui->treeWidget->setColumnHidden(COLUMN_VOUT_INDEX, true); // store vout index in this column, but don't show it
+    ui->treeWidget->setColumnHidden(COLUMN_VOUT_INDEX, false); // store vout index in this column, but don't show it
 
     // default view is sorted by amount desc
     sortView(COLUMN_AMOUNT, Qt::DescendingOrder);
@@ -212,7 +211,6 @@ void CoinControlDialog::buttonSelectAllClicked()
 void CoinControlDialog::buttonToggleLockClicked()
 {
     QTreeWidgetItem* item;
-    QString theme = GUIUtil::getThemeName();
     // Works in list-mode only
     if (ui->radioListMode->isChecked()) {
         ui->treeWidget->setEnabled(false);
@@ -226,7 +224,7 @@ void CoinControlDialog::buttonToggleLockClicked()
             } else {
                 model->lockCoin(outpt);
                 item->setDisabled(true);
-                item->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/" + theme + "/lock_closed"));
+                item->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/lock_closed"));
             }
             updateLabelLocked();
         }
@@ -235,7 +233,6 @@ void CoinControlDialog::buttonToggleLockClicked()
     } else {
         QMessageBox msgBox;
         msgBox.setObjectName("lockMessageBox");
-        msgBox.setStyleSheet(GUIUtil::loadStyleSheet());
         msgBox.setText(tr("Please switch to 'List mode' to use this function."));
         msgBox.exec();
     }
@@ -274,7 +271,7 @@ void CoinControlDialog::showMenu(const QPoint& point)
 // context menu action: copy amount
 void CoinControlDialog::copyAmount()
 {
-    GUIUtil::setClipboard(DynamicUnits::removeSpaces(contextMenuItem->text(COLUMN_AMOUNT)));
+    GUIUtil::setClipboard(CreditUnits::removeSpaces(contextMenuItem->text(COLUMN_AMOUNT)));
 }
 
 // context menu action: copy label
@@ -304,14 +301,13 @@ void CoinControlDialog::copyTransactionHash()
 // context menu action: lock coin
 void CoinControlDialog::lockCoin()
 {
-    QString theme = GUIUtil::getThemeName();
     if (contextMenuItem->checkState(COLUMN_CHECKBOX) == Qt::Checked)
         contextMenuItem->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
 
     COutPoint outpt(uint256S(contextMenuItem->text(COLUMN_TXHASH).toStdString()), contextMenuItem->text(COLUMN_VOUT_INDEX).toUInt());
     model->lockCoin(outpt);
     contextMenuItem->setDisabled(true);
-    contextMenuItem->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/" + theme + "/lock_closed"));
+    contextMenuItem->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/lock_closed"));
     updateLabelLocked();
 }
 
@@ -478,17 +474,17 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog)
         }
     }
 
-    CAmount nAmount = 0;
-    CAmount nPayFee = 0;
-    CAmount nAfterFee = 0;
-    CAmount nChange = 0;
-    unsigned int nBytes = 0;
-    unsigned int nBytesInputs = 0;
-    double dPriority = 0;
-    double dPriorityInputs = 0;
-    unsigned int nQuantity = 0;
-    int nQuantityUncompressed = 0;
-    bool fAllowFree = false;
+    CAmount nAmount               = 0;
+    CAmount nPayFee               = 0;
+    CAmount nAfterFee             = 0;
+    CAmount nChange               = 0;
+    unsigned int nBytes           = 0;
+    unsigned int nBytesInputs     = 0;
+    double dPriority              = 0;
+    double dPriorityInputs        = 0;
+    unsigned int nQuantity        = 0;
+    int nQuantityUncompressed     = 0;
+    bool fAllowFree               = false;
 
     std::vector<COutPoint> vCoinControl;
     std::vector<COutput> vOutputs;
@@ -594,7 +590,7 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog)
     }
 
     // actually update labels
-    int nDisplayUnit = DynamicUnits::DYN;
+    int nDisplayUnit = CreditUnits::_AC;
     if (model && model->getOptionsModel())
         nDisplayUnit = model->getOptionsModel()->getDisplayUnit();
 
@@ -614,12 +610,12 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog)
 
     // stats
     l1->setText(QString::number(nQuantity));                                 // Quantity
-    l2->setText(DynamicUnits::formatWithUnit(nDisplayUnit, nAmount));        // Amount
-    l3->setText(DynamicUnits::formatWithUnit(nDisplayUnit, nPayFee));        // Fee
-    l4->setText(DynamicUnits::formatWithUnit(nDisplayUnit, nAfterFee));      // After Fee
+    l2->setText(CreditUnits::formatWithUnit(nDisplayUnit, nAmount));        // Amount
+    l3->setText(CreditUnits::formatWithUnit(nDisplayUnit, nPayFee));        // Fee
+    l4->setText(CreditUnits::formatWithUnit(nDisplayUnit, nAfterFee));      // After Fee
     l5->setText(((nBytes > 0) ? ASYMP_UTF8 : "") + QString::number(nBytes)); // Bytes
     l7->setText(fDust ? tr("yes") : tr("no"));                               // Dust
-    l8->setText(DynamicUnits::formatWithUnit(nDisplayUnit, nChange));        // Change
+    l8->setText(CreditUnits::formatWithUnit(nDisplayUnit, nChange));        // Change
     if (nPayFee > 0 && (coinControl->nMinimumTotalFee < nPayFee)) {
         l3->setText(ASYMP_UTF8 + l3->text());
         l4->setText(ASYMP_UTF8 + l4->text());
@@ -628,7 +624,7 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog)
     }
 
     // turn labels "red"
-    l7->setStyleSheet((fDust) ? "color:red;" : "");
+    l7->setStyleSheet((fDust) ? "color: #66023c;" : "");
 
     QString toolTipDust = tr("This label turns red if any recipient receives an amount smaller than the current dust threshold.");
 
@@ -663,7 +659,6 @@ void CoinControlDialog::updateView()
         return;
 
     bool treeMode = ui->radioTreeMode->isChecked();
-    QString theme = GUIUtil::getThemeName();
 
     ui->treeWidget->clear();
     ui->treeWidget->setEnabled(false); // performance, otherwise updateLabels would be called for every checked checkbox
@@ -718,9 +713,9 @@ void CoinControlDialog::updateView()
             CTxDestination outputAddress;
             QString sAddress = "";
             if (ExtractDestination(out.tx->tx->vout[out.i].scriptPubKey, outputAddress)) {
-                sAddress = QString::fromStdString(CDynamicAddress(outputAddress).ToString());
+                sAddress = QString::fromStdString(CCreditAddress(outputAddress).ToString());
 
-                // if listMode or change => show dynamic address. In tree mode, address is not shown again for direct wallet address outputs
+                // if listMode or change => show credit address. In tree mode, address is not shown again for direct wallet address outputs
                 if (!treeMode || (!(sAddress == sWalletAddress)))
                     itemOutput->setText(COLUMN_ADDRESS, sAddress);
 
@@ -741,8 +736,8 @@ void CoinControlDialog::updateView()
             }
 
             // amount
-            itemOutput->setText(COLUMN_AMOUNT, DynamicUnits::format(nDisplayUnit, out.tx->tx->vout[out.i].nValue));
-            itemOutput->setToolTip(COLUMN_AMOUNT, DynamicUnits::format(nDisplayUnit, out.tx->tx->vout[out.i].nValue));
+            itemOutput->setText(COLUMN_AMOUNT, CreditUnits::format(nDisplayUnit, out.tx->tx->vout[out.i].nValue));
+            itemOutput->setToolTip(COLUMN_AMOUNT, CreditUnits::format(nDisplayUnit, out.tx->tx->vout[out.i].nValue));
             itemOutput->setData(COLUMN_AMOUNT, Qt::UserRole, QVariant((qlonglong)out.tx->tx->vout[out.i].nValue)); // padding so that sorting works correctly
 
             // date
@@ -778,7 +773,7 @@ void CoinControlDialog::updateView()
                 COutPoint outpt(txhash, out.i);
                 coinControl->UnSelect(outpt); // just to be sure
                 itemOutput->setDisabled(true);
-                itemOutput->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/" + theme + "/lock_closed"));
+                itemOutput->setIcon(COLUMN_CHECKBOX, QIcon(":/icons/lock_closed"));
             }
 
             // set checkbox
@@ -789,8 +784,8 @@ void CoinControlDialog::updateView()
         // amount
         if (treeMode) {
             itemWalletAddress->setText(COLUMN_CHECKBOX, "(" + QString::number(nChildren) + ")");
-            itemWalletAddress->setText(COLUMN_AMOUNT, DynamicUnits::format(nDisplayUnit, nSum));
-            itemWalletAddress->setToolTip(COLUMN_AMOUNT, DynamicUnits::format(nDisplayUnit, nSum));
+            itemWalletAddress->setText(COLUMN_AMOUNT, CreditUnits::format(nDisplayUnit, nSum));
+            itemWalletAddress->setToolTip(COLUMN_AMOUNT, CreditUnits::format(nDisplayUnit, nSum));
             itemWalletAddress->setData(COLUMN_AMOUNT, Qt::UserRole, QVariant((qlonglong)nSum));
         }
     }

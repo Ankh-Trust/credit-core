@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_IDENTITY_H
-#define DYNAMIC_BDAP_IDENTITY_H
+#ifndef CREDIT_BDAP_IDENTITY_H
+#define CREDIT_BDAP_IDENTITY_H
 
 #include "bdap.h"
 #include "domainentry.h"
@@ -148,4 +148,4 @@ public:
 
 };
 
-#endif // DYNAMIC_BDAP_DOMAINENTRY_H
+#endif // CREDIT_BDAP_DOMAINENTRY_H

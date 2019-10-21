@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_SCRIPT_SCRIPT_ERROR_H
-#define DYNAMIC_SCRIPT_SCRIPT_ERROR_H
+#ifndef CREDIT_SCRIPT_SCRIPT_ERROR_H
+#define CREDIT_SCRIPT_SCRIPT_ERROR_H
 
 typedef enum ScriptError_t {
     SCRIPT_ERR_OK = 0,
@@ -58,4 +58,4 @@ typedef enum ScriptError_t {
 
 const char* ScriptErrorString(const ScriptError error);
 
-#endif // DYNAMIC_SCRIPT_SCRIPT_ERROR_H
+#endif // CREDIT_SCRIPT_SCRIPT_ERROR_H

@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_BDAP_FEES_H
-#define DYNAMIC_BDAP_FEES_H
+#ifndef CREDIT_BDAP_FEES_H
+#define CREDIT_BDAP_FEES_H
 
 #include "amount.h"
 #include "bdap/bdap.h"
@@ -54,4 +54,4 @@ int64_t AddMonthsToBlockTime(const uint32_t& nBlockTime, const short nMonths);
 uint16_t MonthsFromBlockToExpire(const uint32_t& nBlockTime, const uint64_t& nExpireTime);
 bool ExtractAmountsFromTx(const CTransactionRef& ptx, CAmount& dataAmount, CAmount& opAmount);
 
-#endif // DYNAMIC_BDAP_FEES_H
+#endif // CREDIT_BDAP_FEES_H

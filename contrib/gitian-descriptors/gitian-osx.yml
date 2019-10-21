@@ -1,11 +1,11 @@
 ---
-name: "dynamic-osx-2.4.0.0"
+name: "credit-osx-1.0.0.0"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "ca-certificates"
 - "curl"
 - "g++"
@@ -29,8 +29,8 @@ packages:
 - "fonts-tuffy"
 reference_datetime: "2019-01-01 00:00:00"
 remotes:
-- "url": "https://github.com/duality-solutions/dynamic.git"
-  "dir": "dynamic"
+- "url": "https://github.com/duality-solutions/credit.git"
+  "dir": "credit"
 files:
 - "MacOSX10.11.sdk.tar.gz"
 script: |
@@ -77,7 +77,7 @@ script: |
   done
   export PATH=${WRAP_DIR}:${PATH}
 
-  cd dynamic
+  cd credit
   BASEPREFIX=`pwd`/depends
 
   mkdir -p ${BASEPREFIX}/SDKs
@@ -92,14 +92,14 @@ script: |
   ./autogen.sh
   ./configure --disable-tests --prefix=${BASEPREFIX}/`echo "${HOSTS}" | awk '{print $1;}'`
   make dist
-  SOURCEDIST=`echo dynamic-*.tar.gz`
+  SOURCEDIST=`echo credit-*.tar.gz`
   DISTNAME=`echo ${SOURCEDIST} | sed 's/.tar.*//'`
 
   # Correct tar file order
   mkdir -p temp
   pushd temp
   tar xf ../$SOURCEDIST
-  find dynamic-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
+  find credit-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
   popd
 
   ORIGPATH="$PATH"
@@ -129,7 +129,7 @@ script: |
     popd
 
     make deploy
-    ${WRAP_DIR}/dmg dmg Dynamic.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
+    ${WRAP_DIR}/dmg dmg Credit.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
 
     cd installed
     find . -name "lib*.la" -delete

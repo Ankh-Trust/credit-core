@@ -1,9 +1,10 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_QT_BDAPLINKTABLEMODEL_H
-#define DYNAMIC_QT_BDAPLINKTABLEMODEL_H
+#ifndef CREDIT_QT_BDAPLINKTABLEMODEL_H
+#define CREDIT_QT_BDAPLINKTABLEMODEL_H
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -39,7 +40,7 @@ public:
     void refreshPendingRequest();
     void refreshAll();
     void startAutoRefresh();
-    void stopAutoRefresh();    
+    void stopAutoRefresh();
 
     enum ColumnIndex {
         Requestor = 0,
@@ -77,12 +78,12 @@ private:
     QLabel* pendingRequestStatus;
 
     std::string searchCompleteRequestor;
-    std::string searchCompleteRecipient;  
+    std::string searchCompleteRecipient;
     std::string searchPARequestor;
-    std::string searchPARecipient;          
+    std::string searchPARecipient;
     std::string searchPRRequestor;
-    std::string searchPRRecipient;          
-    
+    std::string searchPRRecipient;
+
 };
 
-#endif // DYNAMIC_QT_BDAPLINKTABLEMODEL_H
+#endif // CREDIT_QT_BDAPLINKTABLEMODEL_H

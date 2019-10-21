@@ -1,8 +1,8 @@
 Format: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?rev=174
-Upstream-Name: Dynamic
+Upstream-Name: Credit
 Upstream-Contact: Satoshi Nakamoto <satoshin@gmx.com>
- irc://#dynamic@freenode.net
-Source: https://github.com/duality-solutions/dynamic
+ irc://#credit@freenode.net
+Source: https://github.com/duality-solutions/credit
 
 Files: *
 Copyright: 2015-2017, Duality Blockchain Solutions
@@ -64,7 +64,7 @@ Copyright: http://www.everaldo.com
 License: LGPL
 Comment: Icon Pack: Crystal SVG
 
-Files: src/qt/res/icons/dynamic.png, src/qt/res/icons/toolbar.png
+Files: src/qt/res/icons/credit.png, src/qt/res/icons/toolbar.png
 Copyright: Bitboy (optimized for 16x16 by Wladimir van der Laan)
 License: PUB-DOM
 Comment: Site: https://bitcointalk.org/?topic=1756.0

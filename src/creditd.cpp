@@ -1,0 +1,202 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
+// Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
+// Copyright (c) 2014-2019 The Dash Core Developers
+// Copyright (c) 2009-2019 The Bitcoin Developers
+// Copyright (c) 2009-2019 Satoshi Nakamoto
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include "chainparams.h"
+#include "clientversion.h"
+#include "compat.h"
+#include "httprpc.h"
+#include "httpserver.h"
+#include "init.h"
+#include "noui.h"
+#include "rpcserver.h"
+#include "scheduler.h"
+#include "util.h"
+#include "utilstrencodings.h"
+
+#include "servicenodeconfig.h"
+
+#include <stdio.h>
+
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
+
+
+/* Introduction text for doxygen: */
+
+/*! \mainpage Developer documentation
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the developer documentation of the reference client for an experimental new digital currency called Credit (https://www.duality.solutions/),
+ * which enables instant payments to anyone, anywhere in the world. Credit uses peer-to-peer technology to operate
+ * with no central authority: managing transactions and issuing money are carried out collectively by the network.
+ *
+ * The software is a community-driven open source project, released under the MIT license.
+ *
+ * \section Navigation
+ * Use the buttons <code>Namespaces</code>, <code>Classes</code> or <code>Files</code> at the top of the page to start navigating the code.
+ */
+
+void WaitForShutdown(boost::thread_group* threadGroup)
+{
+    bool fShutdown = ShutdownRequested() || MnemonicRestartRequested();
+    // Tell the main threads to shutdown.
+    while (!fShutdown) {
+        MilliSleep(200);
+        fShutdown = ShutdownRequested() || MnemonicRestartRequested();
+    }
+    if (threadGroup) {
+        Interrupt(*threadGroup);
+        threadGroup->join_all();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Start
+//
+bool AppInit(int argc, char* argv[])
+{
+    boost::thread_group threadGroup;
+    CScheduler scheduler;
+
+    bool fRet = false;
+
+    //
+    // Parameters
+    //
+    // If Qt is used, parameters/credit.conf are parsed in qt/credit.cpp's main()
+    ParseParameters(argc, argv);
+
+    // Process help and version before taking care about datadir
+    if (IsArgSet("-?") || IsArgSet("-h") || IsArgSet("-help") || IsArgSet("-version")) {
+        std::string strUsage = _("Credit Daemon") + " " + _("version") + " " + FormatFullVersion() + "\n";
+
+        if (IsArgSet("-version")) {
+            strUsage += FormatParagraph(LicenseInfo());
+        } else {
+            strUsage += "\n" + _("Usage:") + "\n" +
+                        "  creditd [options]                     " + _("Start Credit Daemon") + "\n";
+
+            strUsage += "\n" + HelpMessage(HMM_CREDITD);
+        }
+
+        fprintf(stdout, "%s", strUsage.c_str());
+        return true;
+    }
+
+    try {
+        bool datadirFromCmdLine = IsArgSet("-datadir");
+        if (datadirFromCmdLine && !boost::filesystem::is_directory(GetDataDir(false))) {
+            fprintf(stderr, "Error: Specified data directory \"%s\" does not exist.\n", GetArg("-datadir", "").c_str());
+            return false;
+        }
+        try {
+            ReadConfigFile(GetArg("-conf", CREDIT_CONF_FILENAME));
+        } catch (const std::exception& e) {
+            fprintf(stderr, "Error reading configuration file: %s\n", e.what());
+            return false;
+        }
+        if (!datadirFromCmdLine && !boost::filesystem::is_directory(GetDataDir(false))) {
+            fprintf(stderr, "Error: Specified data directory \"%s\" from config file does not exist.\n", GetArg("-datadir", "").c_str());
+            return EXIT_FAILURE;
+        }
+        // Check for -testnet or -regtest parameter (Params() calls are only valid after this clause)
+        try {
+            SelectParams(ChainNameFromCommandLine());
+        } catch (const std::exception& e) {
+            fprintf(stderr, "Error: %s\n", e.what());
+            return false;
+        }
+
+        // parse servicenode.conf
+        std::string strErr;
+        if (!servicenodeConfig.read(strErr)) {
+            fprintf(stderr, "Error reading ServiceNode configuration file: %s\n", strErr.c_str());
+            return false;
+        }
+
+        // Command-line RPC
+        bool fCommandLine = false;
+        for (int i = 1; i < argc; i++)
+            if (!IsSwitchChar(argv[i][0]) && !boost::algorithm::istarts_with(argv[i], "credit:"))
+                fCommandLine = true;
+
+        if (fCommandLine) {
+            fprintf(stderr, "Error: There is no RPC client functionality in creditd anymore. Use the credit-cli utility instead.\n");
+            exit(EXIT_FAILURE);
+        }
+        // -server defaults to true for bitcoind but not for the GUI so do this here
+        SoftSetBoolArg("-server", true);
+        // Set this early so that parameter interactions go to console
+        InitLogging();
+        InitParameterInteraction();
+        if (!AppInitBasicSetup()) {
+            // InitError will have been called with detailed error, which ends up on console
+            exit(EXIT_FAILURE);
+        }
+        if (!AppInitParameterInteraction()) {
+            // InitError will have been called with detailed error, which ends up on console
+            exit(EXIT_FAILURE);
+        }
+        if (!AppInitSanityChecks()) {
+            // InitError will have been called with detailed error, which ends up on console
+            exit(EXIT_FAILURE);
+        }
+        if (GetBoolArg("-daemon", false)) {
+#if HAVE_DECL_DAEMON
+#if defined(MAC_OSX)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+            fprintf(stdout, "Credit server starting\n");
+
+            // Daemonize
+            if (daemon(1, 0)) { // don't chdir (1), do close FDs (0)
+                fprintf(stderr, "Error: daemon() failed: %s\n", strerror(errno));
+                return false;
+            }
+#if defined(MAC_OSX)
+#pragma GCC diagnostic pop
+#endif
+#else
+            fprintf(stderr, "Error: -daemon is not supported on this operating system\n");
+            return false;
+#endif // HAVE_DECL_DAEMON
+        }
+
+        fRet = AppInitMain(threadGroup, scheduler);
+    } catch (const std::exception& e) {
+        PrintExceptionContinue(&e, "AppInit()");
+    } catch (...) {
+        PrintExceptionContinue(NULL, "AppInit()");
+    }
+
+    if (!fRet) {
+        Interrupt(threadGroup);
+        // threadGroup.join_all(); was left out intentionally here, because we didn't re-test all of
+        // the startup-failure cases to make sure they don't result in a hang due to some
+        // thread-blocking-waiting-for-another-thread-during-startup case
+    } else {
+        WaitForShutdown(&threadGroup);
+    }
+    Shutdown();
+
+    return fRet;
+}
+
+int main(int argc, char* argv[])
+{
+    SetupEnvironment();
+
+    // Connect creditd signal handlers
+    noui_connect();
+
+    return (AppInit(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE);
+}

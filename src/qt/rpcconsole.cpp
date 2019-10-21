@@ -1,11 +1,12 @@
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "rpcconsole.h"
@@ -86,8 +87,8 @@ Q_SIGNALS:
     void reply(int category, const QString& command);
 };
 
-/** Class for handling RPC timers      
- * (used for e.g. re-locking the wallet after a timeout)      
+/** Class for handling RPC timers
+ * (used for e.g. re-locking the wallet after a timeout)
  */
 class QtRPCTimerBase : public QObject, public RPCTimerBase
 {
@@ -366,9 +367,9 @@ RPCConsole::RPCConsole(QWidget* parent) : QDialog(parent),
 #endif
 
     // Needed on Mac also
-    ui->clearButton->setIcon(QIcon(":/icons/drk/remove"));
-    ui->fontBiggerButton->setIcon(QIcon(":/icons/drk/fontbigger"));
-    ui->fontSmallerButton->setIcon(QIcon(":/icons/drk/fontsmaller"));
+    ui->clearButton->setIcon(QIcon(":/icons/remove"));
+    ui->fontBiggerButton->setIcon(QIcon(":/icons/fontbigger"));
+    ui->fontSmallerButton->setIcon(QIcon(":/icons/fontsmaller"));
 
     // Install event filter for up and down arrow
     ui->lineEdit->installEventFilter(this);
@@ -516,8 +517,8 @@ void RPCConsole::setClientModel(ClientModel* model)
         setNumBlocks(model->getNumBlocks(), model->getLastBlockDate(), model->getVerificationProgress(NULL), false);
         connect(model, SIGNAL(numBlocksChanged(int, QDateTime, double, bool)), this, SLOT(setNumBlocks(int, QDateTime, double, bool)));
 
-        setDynodeCount(model->getDynodeCountString());
-        connect(model, SIGNAL(strDynodesChanged(QString)), this, SLOT(setDynodeCount(QString)));
+        setServiceNodeCount(model->getServiceNodeCountString());
+        connect(model, SIGNAL(strServiceNodesChanged(QString)), this, SLOT(setServiceNodeCount(QString)));
 
         updateTrafficStats(model->getTotalBytesRecv(), model->getTotalBytesSent());
         connect(model, SIGNAL(bytesChanged(quint64, quint64)), this, SLOT(updateTrafficStats(quint64, quint64)));
@@ -741,7 +742,7 @@ void RPCConsole::buildParameterlist(QString arg)
     // Append repair parameter to command line.
     args.append(arg);
 
-    // Send command-line arguments to DynamicGUI::handleRestart()
+    // Send command-line arguments to CreditGUI::handleRestart()
     Q_EMIT handleRestart(args);
 }
 
@@ -755,7 +756,7 @@ void RPCConsole::clear(bool clearHistory)
     ui->lineEdit->clear();
     ui->lineEdit->setFocus();
 
-    QString iconPath = ":/icons/drk/";
+    QString iconPath = ":/icons/";
     QString iconName = "";
 
     // Add smoothly scaled icon images.
@@ -776,8 +777,8 @@ void RPCConsole::clear(bool clearHistory)
             "td.time { color: #808080; font-size: %2; padding-top: 3px; } "
             "td.message { font-family: %1; font-size: %2; white-space:pre-wrap; } "
             "td.cmd-request { color: #006060; } "
-            "td.cmd-error { color: red; } "
-            ".secwarning { color: red; }"
+            "td.cmd-error { color: #66023c; } "
+            ".secwarning { color: #66023c; }"
             "b { color: #006060; } ")
             .arg(fixedFontInfo.family(), QString("%1pt").arg(consoleFontSize)));
 
@@ -834,9 +835,9 @@ void RPCConsole::setNumBlocks(int count, const QDateTime& blockDate, double nVer
     }
 }
 
-void RPCConsole::setDynodeCount(const QString& strDynodes)
+void RPCConsole::setServiceNodeCount(const QString& strServiceNodes)
 {
-    ui->dynodeCount->setText(strDynodes);
+    ui->servicenodeCount->setText(strServiceNodes);
 }
 
 void RPCConsole::on_lineEdit_returnPressed()

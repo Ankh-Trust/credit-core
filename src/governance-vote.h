@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -14,7 +15,7 @@
 class CGovernanceVote;
 class CConnman;
 
-// INTENTION OF DYNODES REGARDING ITEM
+// INTENTION OF SERVICENODES REGARDING ITEM
 enum vote_outcome_enum_t {
     VOTE_OUTCOME_NONE = 0,
     VOTE_OUTCOME_YES = 1,
@@ -50,7 +51,7 @@ public:
 };
 
 //
-// CGovernanceVote - Allow a dynode node to vote and broadcast throughout the network
+// CGovernanceVote - Allow a servicenode node to vote and broadcast throughout the network
 //
 
 class CGovernanceVote
@@ -63,7 +64,7 @@ private:
     bool fValid;     //if the vote is currently valid / counted
     bool fSynced;    //if we've sent this to our peers
     int nVoteSignal; // see VOTE_ACTIONS above
-    COutPoint dynodeOutpoint;
+    COutPoint servicenodeOutpoint;
     uint256 nParentHash;
     int nVoteOutcome; // see VOTE_OUTCOMES above
     int64_t nTime;
@@ -75,7 +76,7 @@ private:
 
 public:
     CGovernanceVote();
-    CGovernanceVote(const COutPoint& outpointDynodeIn, const uint256& nParentHashIn, vote_signal_enum_t eVoteSignalIn, vote_outcome_enum_t eVoteOutcomeIn);
+    CGovernanceVote(const COutPoint& outpointServiceNodeIn, const uint256& nParentHashIn, vote_signal_enum_t eVoteSignalIn, vote_outcome_enum_t eVoteOutcomeIn);
 
     bool IsValid() const { return fValid; }
 
@@ -97,8 +98,8 @@ public:
 
     void SetSignature(const std::vector<unsigned char>& vchSigIn) { vchSig = vchSigIn; }
 
-    bool Sign(const CKey& keyDynode, const CPubKey& pubKeyDynode);
-    bool CheckSignature(const CPubKey& pubKeyDynode) const;
+    bool Sign(const CKey& keyServiceNode, const CPubKey& pubKeyServiceNode);
+    bool CheckSignature(const CPubKey& pubKeyServiceNode) const;
     bool IsValid(bool fSignatureCheck) const;
     void Relay(CConnman& connman) const;
 
@@ -107,7 +108,7 @@ public:
         return CGovernanceVoting::ConvertOutcomeToString(GetOutcome());
     }
 
-    const COutPoint& GetDynodeOutpoint() const { return dynodeOutpoint; }
+    const COutPoint& GetServiceNodeOutpoint() const { return servicenodeOutpoint; }
 
     /**
     *   GetHash()
@@ -131,14 +132,14 @@ public:
             CTxIn txin{};
             if (ser_action.ForRead()) {
                 READWRITE(txin);
-                dynodeOutpoint = txin.prevout;
+                servicenodeOutpoint = txin.prevout;
             } else {
-                txin = CTxIn(dynodeOutpoint);
+                txin = CTxIn(servicenodeOutpoint);
                 READWRITE(txin);
             }
         } else {
             // using new format directly
-            READWRITE(dynodeOutpoint);
+            READWRITE(servicenodeOutpoint);
         }
         READWRITE(nParentHash);
         READWRITE(nVoteOutcome);

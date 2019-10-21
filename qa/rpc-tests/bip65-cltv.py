@@ -7,10 +7,10 @@
 # Test the CHECKLOCKTIMEVERIFY (BIP65) soft-fork logic
 #
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
-class BIP65Test(DynamicTestFramework):
+class BIP65Test(CreditTestFramework):
 
     def setup_network(self):
         self.nodes = []

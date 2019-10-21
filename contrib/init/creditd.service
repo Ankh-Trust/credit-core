@@ -1,0 +1,22 @@
+[Unit]
+Description=Credit's distributed currency daemon
+After=network.target
+
+[Service]
+User=credit
+Group=credit
+
+Type=forking
+PIDFile=/var/lib/creditd/creditd.pid
+ExecStart=/usr/bin/creditd -daemon -pid=/var/lib/creditd/creditd.pid \
+-conf=/etc/credit/credit.conf -datadir=/var/lib/creditd -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

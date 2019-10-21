@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -6,7 +7,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "addressbookpage.h"
@@ -14,7 +15,7 @@
 
 #include "addresstablemodel.h"
 #include "csvmodelwriter.h"
-#include "dynamicgui.h"
+#include "creditgui.h"
 #include "editaddressdialog.h"
 #include "guiutil.h"
 #include "platformstyle.h"
@@ -30,7 +31,6 @@ AddressBookPage::AddressBookPage(const PlatformStyle* platformStyle, Mode _mode,
                                                                                                                mode(_mode),
                                                                                                                tab(_tab)
 {
-    QString theme = GUIUtil::getThemeName();
     ui->setupUi(this);
 
 #ifdef Q_OS_MAC
@@ -69,12 +69,15 @@ AddressBookPage::AddressBookPage(const PlatformStyle* platformStyle, Mode _mode,
     }
     switch (tab) {
     case SendingTab:
-        ui->labelExplanation->setText(tr("These are your Dynamic addresses for sending payments. Always check the amount and the receiving address before sending coins."));
+        ui->labelExplanation->setText(tr("These are your Credit addresses for sending payments. Always check the amount and the receiving address before sending coins."));
         ui->deleteAddress->setVisible(true);
+        ui->newAddress->setVisible(true);
+
         break;
     case ReceivingTab:
-        ui->labelExplanation->setText(tr("These are your Dynamic addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
+        ui->labelExplanation->setText(tr("These are your Credit addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
         ui->deleteAddress->setVisible(false);
+        ui->newAddress->setVisible(false);
         break;
     }
 
@@ -132,6 +135,9 @@ void AddressBookPage::setModel(AddressTableModel* _model)
         proxyModel->setFilterFixedString(AddressTableModel::Send);
         break;
     }
+
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, proxyModel, &QSortFilterProxyModel::setFilterWildcard);
+
     ui->tableView->setModel(proxyModel);
     ui->tableView->sortByColumn(0, Qt::AscendingOrder);
 

@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -91,10 +92,10 @@ UniValue importprivkey(const JSONRPCRequest& request)
 
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 3)
         throw std::runtime_error(
-            "importprivkey \"dynamicprivkey\" ( \"label\" ) ( rescan )\n"
+            "importprivkey \"creditprivkey\" ( \"label\" ) ( rescan )\n"
             "\nAdds a private key (as returned by dumpprivkey) to your wallet.\n"
             "\nArguments:\n"
-            "1. \"dynamicprivkey\"   (string, required) The private key (see dumpprivkey)\n"
+            "1. \"creditprivkey\"   (string, required) The private key (see dumpprivkey)\n"
             "2. \"label\"            (string, optional, default=\"\") An optional label\n"
             "3. rescan               (boolean, optional, default=true) Rescan the wallet for transactions\n"
             "\nNote: This call can take minutes to complete if rescan is true.\n"
@@ -125,7 +126,7 @@ UniValue importprivkey(const JSONRPCRequest& request)
     if (fRescan && fPruneMode)
         throw JSONRPCError(RPC_WALLET_ERROR, "Rescan is disabled in pruned mode");
 
-    CDynamicSecret vchSecret;
+    CCreditSecret vchSecret;
     bool fGood = vchSecret.SetString(strSecret);
 
     if (!fGood)
@@ -146,7 +147,7 @@ UniValue importprivkey(const JSONRPCRequest& request)
         if (pwalletMain->HaveKey(vchAddress)) {
             isskip = true;
         } else {
-            
+
             pwalletMain->mapKeyMetadata[vchAddress].nCreateTime = 1;
 
             if (!pwalletMain->AddKeyPubKey(key, pubkey))
@@ -202,7 +203,7 @@ UniValue importstealthaddress(const JSONRPCRequest& request)
     if (request.params.size() > 3)
         prefix_number = request.params[3].get_int();
 
-    CDynamicSecret vchScanSecret, vchSpendSecret;
+    CCreditSecret vchScanSecret, vchSpendSecret;
     bool fGood = vchScanSecret.SetString(strScanKey);
 
     if (!fGood)
@@ -260,7 +261,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
 {
     if (!EnsureWalletIsAvailable(request.fHelp))
         return NullUniValue;
-    
+
     if (request.fHelp || request.params.size() < 4 || request.params.size() > 5)
         throw std::runtime_error(
             "importbdapkeys \"account id\" \"wallet privkey\" \"link privkey\" \"DHT privkey\" \"rescan\"\n"
@@ -286,7 +287,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
     EnsureWalletIsUnlocked();
- 
+
     std::string vchObjectID = request.params[0].get_str();
     std::string strWalletPrivKey = request.params[1].get_str();
     std::string strLinkPrivKey = request.params[2].get_str();
@@ -308,7 +309,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_WALLET_ERROR, "Rescan is disabled in pruned mode");
 
     // Wallet address
-    CDynamicSecret vchWalletSecret;
+    CCreditSecret vchWalletSecret;
     bool fGood = vchWalletSecret.SetString(strWalletPrivKey);
     if (!fGood) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid wallet private key encoding");
     CKey keyWallet = vchWalletSecret.GetKey();
@@ -319,7 +320,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
     // TODO (BDAP): Check if wallet address matches BDAP entry
 
     // Link address
-    CDynamicSecret vchLinkSecret;
+    CCreditSecret vchLinkSecret;
     fGood = vchLinkSecret.SetString(strLinkPrivKey);
     if (!fGood) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid link private key encoding");
     CKey keyLink = vchLinkSecret.GetKey();
@@ -328,7 +329,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
     assert(keyLink.VerifyPubKey(pubkeyLink));
     CKeyID vchLinkAddress = pubkeyLink.GetID();
     // TODO (BDAP): Check if link address matches BDAP entry
-    
+
     // DHT key
     std::array<char, ED25519_PRIVATE_SEED_BYTE_LENGTH> arrDHTPrivSeedKey;
     libtorrent::aux::from_hex(strDHTPrivKey, arrDHTPrivSeedKey.data());
@@ -339,7 +340,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
     // Add keys to local wallet database
     {
         pwalletMain->MarkDirty();
-        
+
         if (!pwalletMain->HaveDHTKey(dhtKeyID)) {
             pwalletMain->SetAddressBook(privDHTKey.GetID(), vchObjectID, "bdap-dht-key");
             if (!pwalletMain->AddDHTKey(privDHTKey, vchDHTPubKey)) {
@@ -355,7 +356,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
         // TODO (BDAP): What is nCreateTime used for?
         pwalletMain->mapKeyMetadata[vchWalletAddress].nCreateTime = 1;
         pwalletMain->mapKeyMetadata[vchLinkAddress].nCreateTime = 1;
-        
+
         if (!pwalletMain->HaveKey(vchWalletAddress)) {
             pwalletMain->SetAddressBook(vchWalletAddress, vchObjectID, "bdap-wallet");
             if (!pwalletMain->AddKeyPubKey(keyWallet, pubkeyWallet))
@@ -379,7 +380,7 @@ UniValue importbdapkeys(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
-void ImportAddress(const CDynamicAddress& address, const std::string& strLabel);
+void ImportAddress(const CCreditAddress& address, const std::string& strLabel);
 void ImportScript(const CScript& script, const std::string& strLabel, bool isRedeemScript)
 {
     if (!isRedeemScript && ::IsMine(*pwalletMain, script) == ISMINE_SPENDABLE)
@@ -393,7 +394,7 @@ void ImportScript(const CScript& script, const std::string& strLabel, bool isRed
     if (isRedeemScript) {
         if (!pwalletMain->HaveCScript(script) && !pwalletMain->AddCScript(script))
             throw JSONRPCError(RPC_WALLET_ERROR, "Error adding p2sh redeemScript to wallet");
-        ImportAddress(CDynamicAddress(CScriptID(script)), strLabel);
+        ImportAddress(CCreditAddress(CScriptID(script)), strLabel);
     } else {
         CTxDestination destination;
         if (ExtractDestination(script, destination)) {
@@ -402,7 +403,7 @@ void ImportScript(const CScript& script, const std::string& strLabel, bool isRed
     }
 }
 
-void ImportAddress(const CDynamicAddress& address, const std::string& strLabel)
+void ImportAddress(const CCreditAddress& address, const std::string& strLabel)
 {
     CScript script = GetScriptForDestination(address.Get());
     ImportScript(script, strLabel, false);
@@ -455,7 +456,7 @@ UniValue importaddress(const JSONRPCRequest& request)
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
-    CDynamicAddress address(request.params[0].get_str());
+    CCreditAddress address(request.params[0].get_str());
     if (address.IsValid()) {
         if (fP2SH)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Cannot use the p2sh flag with an address - use a script instead");
@@ -464,7 +465,7 @@ UniValue importaddress(const JSONRPCRequest& request)
         std::vector<unsigned char> data(ParseHex(request.params[0].get_str()));
         ImportScript(CScript(data.begin(), data.end()), strLabel, fP2SH);
     } else {
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Dynamic address or script");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Credit address or script");
     }
 
     if (fRescan) {
@@ -607,7 +608,7 @@ UniValue importpubkey(const JSONRPCRequest& request)
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
-    ImportAddress(CDynamicAddress(pubKey.GetID()), strLabel);
+    ImportAddress(CCreditAddress(pubKey.GetID()), strLabel);
     ImportScript(GetScriptForRawPubKey(pubKey), strLabel, false);
 
     if (fRescan) {
@@ -673,7 +674,7 @@ UniValue importwallet(const JSONRPCRequest& request)
         boost::split(vstr, line, boost::is_any_of(" "));
         if (vstr.size() < 2)
             continue;
-        CDynamicSecret vchSecret;
+        CCreditSecret vchSecret;
         if (!vchSecret.SetString(vstr[0]))
             continue;
         CKey key = vchSecret.GetKey();
@@ -681,7 +682,7 @@ UniValue importwallet(const JSONRPCRequest& request)
         assert(key.VerifyPubKey(pubkey));
         CKeyID keyid = pubkey.GetID();
         if (pwalletMain->HaveKey(keyid)) {
-            LogPrintf("Skipping import of %s (key already present)\n", CDynamicAddress(keyid).ToString());
+            LogPrintf("Skipping import of %s (key already present)\n", CCreditAddress(keyid).ToString());
             continue;
         }
         neednotRescan=false;
@@ -700,7 +701,7 @@ UniValue importwallet(const JSONRPCRequest& request)
                 fLabel = true;
             }
         }
-        LogPrintf("Importing %s...\n", CDynamicAddress(keyid).ToString());
+        LogPrintf("Importing %s...\n", CCreditAddress(keyid).ToString());
         if (!pwalletMain->AddKeyPubKey(key, pubkey)) {
             fGood = false;
             continue;
@@ -721,7 +722,7 @@ UniValue importwallet(const JSONRPCRequest& request)
     pwalletMain->ScanForWalletTransactions(pindex);
     pwalletMain->MarkDirty();
     }
-   
+
     if (!fGood)
         throw JSONRPCError(RPC_WALLET_ERROR, "Error adding some keys to wallet");
 
@@ -784,7 +785,7 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
             boost::split(vstr, line, boost::is_any_of(","));
             if (vstr.size() < 2)
                 continue;
-            CDynamicSecret vchSecret;
+            CCreditSecret vchSecret;
             if (!vchSecret.SetString(vstr[1]))
                 continue;
             CKey key = vchSecret.GetKey();
@@ -792,10 +793,10 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
             assert(key.VerifyPubKey(pubkey));
             CKeyID keyid = pubkey.GetID();
             if (pwalletMain->HaveKey(keyid)) {
-                LogPrintf("Skipping import of %s (key already present)\n", CDynamicAddress(keyid).ToString());
+                LogPrintf("Skipping import of %s (key already present)\n", CCreditAddress(keyid).ToString());
                 continue;
             }
-            LogPrintf("Importing %s...\n", CDynamicAddress(keyid).ToString());
+            LogPrintf("Importing %s...\n", CCreditAddress(keyid).ToString());
             if (!pwalletMain->AddKeyPubKey(key, pubkey)) {
                 fGood = false;
                 continue;
@@ -816,7 +817,7 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
             pwalletMain->ShowProgress("", std::max(1, std::min(99, int(i * 100 / data.size()))));
             if (!data[vKeys[i]].isStr())
                 continue;
-            CDynamicSecret vchSecret;
+            CCreditSecret vchSecret;
             if (!vchSecret.SetString(data[vKeys[i]].get_str()))
                 continue;
             CKey key = vchSecret.GetKey();
@@ -824,10 +825,10 @@ UniValue importelectrumwallet(const JSONRPCRequest& request)
             assert(key.VerifyPubKey(pubkey));
             CKeyID keyid = pubkey.GetID();
             if (pwalletMain->HaveKey(keyid)) {
-                LogPrintf("Skipping import of %s (key already present)\n", CDynamicAddress(keyid).ToString());
+                LogPrintf("Skipping import of %s (key already present)\n", CCreditAddress(keyid).ToString());
                 continue;
             }
-            LogPrintf("Importing %s...\n", CDynamicAddress(keyid).ToString());
+            LogPrintf("Importing %s...\n", CCreditAddress(keyid).ToString());
             if (!pwalletMain->AddKeyPubKey(key, pubkey)) {
                 fGood = false;
                 continue;
@@ -862,7 +863,7 @@ UniValue importmnemonic(const JSONRPCRequest& request)
     if (!EnsureWalletIsAvailable(request.fHelp)) {
         return NullUniValue;
     }
-    
+
     LOCK2(cs_main, pwalletMain->cs_wallet);
     UniValue entry(UniValue::VOBJ);
     if (request.fHelp || request.params.size() > 6 || request.params.size() == 0)
@@ -940,7 +941,7 @@ UniValue importmnemonic(const JSONRPCRequest& request)
     pwalletMain = pwallet;
     pwalletMain->ShowProgress("", 100); // hide progress dialog in GUI
     StartMnemonicRestart();
-    entry.push_back(Pair("Done", "Stopping daemon... Please restart dynamic..."));
+    entry.push_back(Pair("Done", "Stopping daemon... Please restart credit..."));
 
     //cleanup
     ForceRemoveArg("-mnemonic");
@@ -959,11 +960,11 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
 
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
-            "dumpprivkey \"dynamicaddress\"\n"
-            "\nReveals the private key corresponding to 'dynamicaddress'.\n"
+            "dumpprivkey \"creditaddress\"\n"
+            "\nReveals the private key corresponding to 'creditaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"dynamicaddress\"   (string, required) The dynamic address for the private key\n"
+            "1. \"creditaddress\"   (string, required) The credit address for the private key\n"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
             "\nExamples:\n" +
@@ -985,28 +986,28 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
 
         UniValue result(UniValue::VOBJ);
 
-        result.push_back(Pair("scan_private_key", CDynamicSecret(sxAddr.scan_secret).ToString()));
+        result.push_back(Pair("scan_private_key", CCreditSecret(sxAddr.scan_secret).ToString()));
 
         CKey vchSpendSecret;
         if (!pwalletMain->GetKey(sxAddr.spend_secret_id, vchSpendSecret))
-            throw JSONRPCError(RPC_WALLET_ERROR, "Private key for spend address " + CDynamicAddress(sxAddr.spend_secret_id).ToString() + " is not known");
+            throw JSONRPCError(RPC_WALLET_ERROR, "Private key for spend address " + CCreditAddress(sxAddr.spend_secret_id).ToString() + " is not known");
 
-        result.push_back(Pair("spend_private_key", CDynamicSecret(vchSpendSecret).ToString()));
+        result.push_back(Pair("spend_private_key", CCreditSecret(vchSpendSecret).ToString()));
         result.push_back(Pair("prefix_number_bits", (int)sxAddr.prefix_number_bits));
         result.push_back(Pair("prefix_bitfield", (int)sxAddr.prefix_bitfield));
 
         return result;
     } else {
-        CDynamicAddress address;
+        CCreditAddress address;
         if (!address.SetString(strAddress))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Dynamic address");
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Credit address");
         CKeyID keyID;
         if (!address.GetKeyID(keyID))
             throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");
         CKey vchSecret;
         if (!pwalletMain->GetKey(keyID, vchSecret))
             throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + strAddress + " is not known");
-        return CDynamicSecret(vchSecret).ToString();
+        return CCreditSecret(vchSecret).ToString();
     }
     throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Unknown address type: " + strAddress + " Must be a standard or stealth address.");
 }
@@ -1015,7 +1016,7 @@ UniValue dumpbdapkeys(const JSONRPCRequest& request)
 {
     if (!EnsureWalletIsAvailable(request.fHelp))
         return NullUniValue;
-    
+
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
             "dumpbdapkeys \"account id\"\n"
@@ -1054,23 +1055,23 @@ UniValue dumpbdapkeys(const JSONRPCRequest& request)
 
     // Get wallet address private key from wallet db.
     CKeyID walletKeyID;
-    CDynamicAddress address = entry.GetWalletAddress();
+    CCreditAddress address = entry.GetWalletAddress();
     if (!address.GetKeyID(walletKeyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key " + address.ToString());
     CKey vchWalletSecret;
     if (!pwalletMain->GetKey(walletKeyID, vchWalletSecret))
         throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + address.ToString() + " is not known");
-    std::string strWalletPrivKey = CDynamicSecret(vchWalletSecret).ToString();
+    std::string strWalletPrivKey = CCreditSecret(vchWalletSecret).ToString();
 
     // Get link address private key from wallet db.
     CKeyID linkKeyID;
-    CDynamicAddress linkAddress = entry.GetLinkAddress();
+    CCreditAddress linkAddress = entry.GetLinkAddress();
     if (!linkAddress.GetKeyID(linkKeyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Link address does not refer to a key" + linkAddress.ToString());
     CKey vchLinkSecret;
     if (!pwalletMain->GetKey(linkKeyID, vchLinkSecret))
         throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + linkAddress.ToString() + " is not known");
-    std::string strLinkPrivKey = CDynamicSecret(vchLinkSecret).ToString();
+    std::string strLinkPrivKey = CCreditSecret(vchLinkSecret).ToString();
 
     // Get DHT private key from wallet db.
     CKeyEd25519 keyDHT;
@@ -1171,14 +1172,14 @@ UniValue dumpwallet(const JSONRPCRequest& request)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by Dynamic %s\n", CLIENT_BUILD);
+    file << strprintf("# Wallet dump created by Credit %s\n", CLIENT_BUILD);
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()));
     file << strprintf("# * Best block at time of backup was %i (%s),\n", chainActive.Height(), chainActive.Tip()->GetBlockHash().ToString());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(chainActive.Tip()->GetBlockTime()));
     file << "\n";
 
     UniValue obj(UniValue::VOBJ);
-    obj.push_back(Pair("dynamicversion", CLIENT_BUILD));
+    obj.push_back(Pair("creditversion", CLIENT_BUILD));
     obj.push_back(Pair("lastblockheight", chainActive.Height()));
     obj.push_back(Pair("lastblockhash", chainActive.Tip()->GetBlockHash().ToString()));
     obj.push_back(Pair("lastblocktime", EncodeDumpTime(chainActive.Tip()->GetBlockTime())));
@@ -1201,7 +1202,7 @@ UniValue dumpwallet(const JSONRPCRequest& request)
         CExtKey masterKey;
         masterKey.SetMaster(&vchSeed[0], vchSeed.size());
 
-        CDynamicExtKey b58extkey;
+        CCreditExtKey b58extkey;
         b58extkey.SetKey(masterKey);
 
         file << "# extended private masterkey: " << b58extkey.ToString() << "\n";
@@ -1209,7 +1210,7 @@ UniValue dumpwallet(const JSONRPCRequest& request)
         CExtPubKey masterPubkey;
         masterPubkey = masterKey.Neuter();
 
-        CDynamicExtPubKey b58extpubkey;
+        CCreditExtPubKey b58extpubkey;
         b58extpubkey.SetKey(masterPubkey);
         file << "# extended public masterkey: " << b58extpubkey.ToString() << "\n\n";
 
@@ -1228,10 +1229,10 @@ UniValue dumpwallet(const JSONRPCRequest& request)
     for (std::vector<std::pair<int64_t, CKeyID> >::const_iterator it = vKeyBirth.begin(); it != vKeyBirth.end(); it++) {
         const CKeyID& keyid = it->second;
         std::string strTime = EncodeDumpTime(it->first);
-        std::string strAddr = CDynamicAddress(keyid).ToString();
+        std::string strAddr = CCreditAddress(keyid).ToString();
         CKey key;
         if (pwalletMain->GetKey(keyid, key)) {
-            file << strprintf("%s %s ", CDynamicSecret(key).ToString(), strTime);
+            file << strprintf("%s %s ", CCreditSecret(key).ToString(), strTime);
             if (pwalletMain->mapAddressBook.count(keyid)) {
                 file << strprintf("label=%s", EncodeDumpString(pwalletMain->mapAddressBook[keyid].name));
             } else if (setKeyPool.count(keyid)) {
@@ -1280,10 +1281,10 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
 
         // Parse the output.
         CScript script;
-        CDynamicAddress address;
+        CCreditAddress address;
 
         if (!isScript) {
-            address = CDynamicAddress(output);
+            address = CCreditAddress(output);
             script = GetScriptForDestination(address.Get());
         } else {
             if (!IsHex(output)) {
@@ -1342,7 +1343,7 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
                 throw JSONRPCError(RPC_WALLET_ERROR, "Error adding p2sh redeemScript to wallet");
             }
 
-            CDynamicAddress redeemAddress = CDynamicAddress(CScriptID(redeemScript));
+            CCreditAddress redeemAddress = CCreditAddress(CScriptID(redeemScript));
             CScript redeemDestination = GetScriptForDestination(redeemAddress.Get());
 
             if (::IsMine(*pwalletMain, redeemDestination) == ISMINE_SPENDABLE) {
@@ -1365,7 +1366,7 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
                 for (size_t i = 0; i < keys.size(); i++) {
                     const std::string& privkey = keys[i].get_str();
 
-                    CDynamicSecret vchSecret;
+                    CCreditSecret vchSecret;
                     bool fGood = vchSecret.SetString(privkey);
 
                     if (!fGood) {
@@ -1416,7 +1417,7 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
                     throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Pubkey is not a valid public key");
                 }
 
-                CDynamicAddress pubKeyAddress = CDynamicAddress(pubKey.GetID());
+                CCreditAddress pubKeyAddress = CCreditAddress(pubKey.GetID());
 
                 // Consistency check.
                 if (!isScript && !(pubKeyAddress.Get() == address.Get())) {
@@ -1425,11 +1426,11 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
 
                 // Consistency check.
                 if (isScript) {
-                    CDynamicAddress scriptAddress;
+                    CCreditAddress scriptAddress;
                     CTxDestination destination;
 
                     if (ExtractDestination(script, destination)) {
-                        scriptAddress = CDynamicAddress(destination);
+                        scriptAddress = CCreditAddress(destination);
                         if (!(scriptAddress.Get() == pubKeyAddress.Get())) {
                             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Consistency check failed");
                         }
@@ -1474,7 +1475,7 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
                 const std::string& strPrivkey = keys[0].get_str();
 
                 // Checks.
-                CDynamicSecret vchSecret;
+                CCreditSecret vchSecret;
                 bool fGood = vchSecret.SetString(strPrivkey);
 
                 if (!fGood) {
@@ -1489,7 +1490,7 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
                 CPubKey pubKey = key.GetPubKey();
                 assert(key.VerifyPubKey(pubKey));
 
-                CDynamicAddress pubKeyAddress = CDynamicAddress(pubKey.GetID());
+                CCreditAddress pubKeyAddress = CCreditAddress(pubKey.GetID());
 
                 // Consistency check.
                 if (!isScript && !(pubKeyAddress.Get() == address.Get())) {
@@ -1498,11 +1499,11 @@ UniValue ProcessImport(const UniValue& data, const int64_t timestamp)
 
                 // Consistency check.
                 if (isScript) {
-                    CDynamicAddress scriptAddress;
+                    CCreditAddress scriptAddress;
                     CTxDestination destination;
 
                     if (ExtractDestination(script, destination)) {
-                        scriptAddress = CDynamicAddress(destination);
+                        scriptAddress = CCreditAddress(destination);
                         if (!(scriptAddress.Get() == pubKeyAddress.Get())) {
                             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Consistency check failed");
                         }

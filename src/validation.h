@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,11 +6,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_VALIDATION_H
-#define DYNAMIC_VALIDATION_H
+#ifndef CREDIT_VALIDATION_H
+#define CREDIT_VALIDATION_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dynamic-config.h"
+#include "config/credit-config.h"
 #endif
 
 #include "amount.h"
@@ -157,12 +158,12 @@ static const unsigned int MAX_BLOCKS_TO_ANNOUNCE = 12;
 /** Maximum number of unconnecting headers announcements before DoS score */
 static const int MAX_UNCONNECTING_HEADERS = 10;
 
-//Dynamic Constants
+//Credit Constants
 static const CAmount BLOCKCHAIN_INIT_REWARD = COIN * 0;
-static const CAmount PHASE_1_POW_REWARD = COIN * 1;
-static const CAmount PHASE_1_DYNODE_PAYMENT = COIN * 0.382;
-static const CAmount PHASE_2_DYNODE_PAYMENT = COIN * 1.618;
-static const CAmount INITIAL_SUPERBLOCK_PAYMENT = 11500000 * COIN;
+static const CAmount PHASE_1_POW_REWARD = COIN * 0.0260;
+static const CAmount PHASE_1_SERVICENODE_PAYMENT = COIN * 0.1100;
+static const CAmount PHASE_2_SERVICENODE_PAYMENT = COIN * 0.1100;
+static const CAmount INITIAL_SUPERBLOCK_PAYMENT = 8000000 * COIN;
 
 static const bool DEFAULT_PEERBLOOMFILTERS = true;
 
@@ -237,11 +238,11 @@ static const unsigned int DEFAULT_CHECKLEVEL = 3;
 // Add 20% for Orphan block rate = 1590MB
 static const uint64_t MIN_DISK_SPACE_FOR_BLOCK_FILES = 1590 * 1024 * 1024;
 
-/** 
+/**
  * Process an incoming block. This only returns after the best known valid
  * block is made active. Note that it does not, however, guarantee that the
  * specific block passed to it has been checked for validity!
- * 
+ *
  * @param[out]  state   This may be set to an Error state if any error occurred processing it, including during validation/connection/etc of otherwise unrelated blocks during reorganisation; or it may be set to an Invalid state if pblock is itself invalid (but this is not guaranteed even when the block is checked). If you want to *possibly* get feedback on whether pblock is valid, you must also install a CValidationInterface (see validationinterface.h) - this will have its BlockChecked method called whenever *any* block completes validation.
  * @param[in]   pfrom   The node which we are receiving the block from; it is added to mapBlockSource and may be penalised if the block is invalid.
  * @param[in]   pblock  The block we want to process.
@@ -357,7 +358,7 @@ ThresholdState VersionBitsTipState(const Consensus::Params& params, Consensus::D
 /** Get the block height at which the BIP9 deployment switched into the state for the block building on the current tip. */
 int VersionBitsTipStateSinceHeight(const Consensus::Params& params, Consensus::DeploymentPos pos);
 
-/** 
+/**
  * Count ECDSA signature operations the old-fashioned (pre-0.6) way
  * @return number of sigops this transaction's outputs will produce when spent
  * @see CTransaction::FetchInputs
@@ -366,7 +367,7 @@ unsigned int GetLegacySigOpCount(const CTransaction& tx);
 
 /**
  * Count ECDSA signature operations in pay-to-script-hash inputs.
- * 
+ *
  * @param[in] mapInputs Map of previous transactions that have outputs we're spending
  * @return maximum number of sigops required to validate this transaction's inputs
  * @see CTransaction::FetchInputs
@@ -388,11 +389,11 @@ void UpdateCoins(const CTransaction& tx, CCoinsViewCache& inputs, int nHeight);
 
 /** Context-independent validity checks */
 bool CheckTransaction(const CTransaction& tx, CValidationState& state);
-/** 
+/**
  * Validate the usage of BDAP credits to makes sure they are not recirculated
- * with standard DYN (trapped as fuel credit) and used to fund the appropriate BDAP operation.
+ * with standard 0AC (trapped as fuel credit) and used to fund the appropriate BDAP operation.
 */
-bool CheckBDAPTxCreditUsage(const CTransaction& tx, const std::vector<Coin>& vBdapCoins, 
+bool CheckBDAPTxDynamicUsage(const CTransaction& tx, const std::vector<Coin>& vBdapCoins,
 							const CAmount& nStandardIn, const CAmount& nCreditsIn, const CAmount& nStandardOut, const CAmount& nCreditsOut, const CAmount& nDataBurned);
 
 namespace Consensus
@@ -447,7 +448,7 @@ bool CheckSequenceLocks(const CTransaction& tx, int flags, LockPoints* lp = NULL
 
 /**
  * Closure representing one script verification
- * Note that this stores references to the spending transaction 
+ * Note that this stores references to the spending transaction
  */
 class CScriptCheck
 {
@@ -551,7 +552,7 @@ extern VersionBitsCache versionbitscache;
 /**
  * Determine what nVersion a new block should use.
  */
-int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params, bool fAssumeDynodeIsUpgraded = false);
+int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params, bool fAssumeServiceNodeIsUpgraded = false);
 
 /**
  * Return true if hash can be found in chainActive at nBlockHeight height.
@@ -593,4 +594,4 @@ public:
         : OpType(op_str), nValue(value), vParameters(params) {}
 };
 
-#endif // DYNAMIC_VALIDATION_H
+#endif // CREDIT_VALIDATION_H

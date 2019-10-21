@@ -65,12 +65,12 @@ bool CDomainEntry::UnserializeFromData(const std::vector<unsigned char>& vchData
     return true;
 }
 
-CDynamicAddress CDomainEntry::GetWalletAddress() const {
-    return CDynamicAddress(stringFromVch(WalletAddress));
+CCreditAddress CDomainEntry::GetWalletAddress() const {
+    return CCreditAddress(stringFromVch(WalletAddress));
 }
 
-CDynamicAddress CDomainEntry::GetLinkAddress() const {
-    return CDynamicAddress(stringFromVch(LinkAddress));
+CCreditAddress CDomainEntry::GetLinkAddress() const {
+    return CCreditAddress(stringFromVch(LinkAddress));
 }
 
 std::string CDomainEntry::DHTPubKeyString() const {
@@ -111,7 +111,7 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
         if (!regex_search(strDomainComponent, sMatch, regexValidName) || std::string(sMatch[0]) != strDomainComponent) {
             errorMessage = "Invalid BDAP domain name. Must follow the domain name spec of 2 to " + std::to_string(MAX_OBJECT_NAME_LENGTH) + " characters with no preceding or trailing dashes.";
             return false;
-        }  
+        }
     }
     else
     {
@@ -130,7 +130,7 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
         if (!regex_search(strOrganizationalUnit, sMatch, regexValidName) || std::string(sMatch[0]) != strOrganizationalUnit) {
             errorMessage = "Invalid BDAP organizational unit. Must follow the domain name spec of 2 to " + std::to_string(MAX_OBJECT_NAME_LENGTH) + " characters with no preceding or trailing dashes.";
             return false;
-        }  
+        }
     }
     else
     {
@@ -149,7 +149,7 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
         if (!regex_search(strObjectID, sMatch, regexValidName) || std::string(sMatch[0]) != strObjectID) {
             errorMessage = "Invalid BDAP object name. Must follow the domain name spec of 2 to " + std::to_string(MAX_OBJECT_NAME_LENGTH) + " characters with no preceding or trailing dashes.";
             return false;
-        }  
+        }
     }
     else
     {
@@ -161,34 +161,34 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
     }
 
     // check object common name component
-    if (CommonName.size() > MAX_COMMON_NAME_LENGTH) 
+    if (CommonName.size() > MAX_COMMON_NAME_LENGTH)
     {
         errorMessage = "Invalid BDAP common name. Can not have more than " + std::to_string(MAX_COMMON_NAME_LENGTH) + " characters.";
         return false;
     }
 
     // check object organization name component
-    if (OrganizationName.size() > MAX_ORG_NAME_LENGTH) 
+    if (OrganizationName.size() > MAX_ORG_NAME_LENGTH)
     {
         errorMessage = "Invalid BDAP organization name. Can not have more than " + std::to_string(MAX_ORG_NAME_LENGTH) + " characters.";
         return false;
     }
 
-    if (WalletAddress.size() > MAX_WALLET_ADDRESS_LENGTH) 
+    if (WalletAddress.size() > MAX_WALLET_ADDRESS_LENGTH)
     {
         errorMessage = "Invalid BDAP wallet address. Can not have more than " + std::to_string(MAX_WALLET_ADDRESS_LENGTH) + " characters.";
         return false;
     }
     else {
         std::string strWalletAddress = stringFromVch(WalletAddress);
-        CDynamicAddress entryAddress(strWalletAddress);
+        CCreditAddress entryAddress(strWalletAddress);
         if (!entryAddress.IsValid()) {
             errorMessage = "Invalid BDAP wallet address. Wallet address failed IsValid check.";
             return false;
         }
     }
-    
-    if (LinkAddress.size() > MAX_WALLET_ADDRESS_LENGTH) 
+
+    if (LinkAddress.size() > MAX_WALLET_ADDRESS_LENGTH)
     {
         errorMessage = "Invalid BDAP link address. Can not have more than " + std::to_string(MAX_WALLET_ADDRESS_LENGTH) + " characters.";
         return false;
@@ -198,7 +198,7 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
             std::string strLinkAddress = stringFromVch(LinkAddress);
             CTxDestination destLink = DecodeDestination(strLinkAddress);
             if (destLink.type() == typeid(CKeyID)) {
-                CDynamicAddress entryLinkAddress(strLinkAddress);
+                CCreditAddress entryLinkAddress(strLinkAddress);
                 if (!entryLinkAddress.IsValid()) {
                     errorMessage = "Invalid BDAP public link address. Link wallet address failed IsValid check.";
                     return false;
@@ -214,7 +214,7 @@ bool CDomainEntry::ValidateValues(std::string& errorMessage)
         }
     }
 
-    if (DHTPublicKey.size() > MAX_KEY_LENGTH) 
+    if (DHTPublicKey.size() > MAX_KEY_LENGTH)
     {
         errorMessage = "Invalid BDAP encryption public key. Can not have more than " + std::to_string(MAX_KEY_LENGTH) + " characters.";
         return false;
@@ -299,7 +299,7 @@ std::string CDomainEntry::GenerateOID() const
                             }
                             nTxOrdinal++;
                         }
-                    } 
+                    }
                 }
             }
         }

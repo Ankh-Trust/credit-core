@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -5,8 +6,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_TXMEMPOOL_H
-#define DYNAMIC_TXMEMPOOL_H
+#ifndef CREDIT_TXMEMPOOL_H
+#define CREDIT_TXMEMPOOL_H
 
 #include <map>
 #include <memory>
@@ -706,7 +707,7 @@ public:
     size_t DynamicMemoryUsage() const;
     // returns share of the used memory to maximum allowed memory
     double UsedMemoryShare() const;
-    
+
     boost::signals2::signal<void(CTransactionRef)> NotifyEntryAdded;
     boost::signals2::signal<void(CTransactionRef, MemPoolRemovalReason)> NotifyEntryRemoved;
 
@@ -749,7 +750,7 @@ private:
     void removeUnchecked(txiter entry, MemPoolRemovalReason reason = MemPoolRemovalReason::UNKNOWN);
 };
 
-/** 
+/**
  * CCoinsView that brings transactions from a memorypool into view.
  * It does not check for spendings by memory pool transactions.
  */
@@ -775,4 +776,4 @@ struct TxCoinAgePriorityCompare {
     }
 };
 
-#endif // DYNAMIC_TXMEMPOOL_H
+#endif // CREDIT_TXMEMPOOL_H

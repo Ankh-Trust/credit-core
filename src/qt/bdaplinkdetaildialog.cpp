@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -62,7 +63,7 @@ void BdapLinkDetailDialog::populateValues(LinkActions accountType, const std::st
     std::string acceptexpired = "N/A";
 
     UniValue result = UniValue(UniValue::VOBJ);
- 
+
     if (resultinput.size() == 0) {
         return; //do not use for now
     } //if resultinput.size() = 0

@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_HDCHAIN_H
-#define DYNAMIC_HDCHAIN_H
+#ifndef CREDIT_HDCHAIN_H
+#define CREDIT_HDCHAIN_H
 
 #include "key.h"
 #include "sync.h"
@@ -151,4 +152,4 @@ public:
     std::string GetKeyPath() const;
 };
 
-#endif // DYNAMIC_HDCHAIN_H
+#endif // CREDIT_HDCHAIN_H

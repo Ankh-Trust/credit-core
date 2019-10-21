@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_CONSENSUS_VALIDATION_H
-#define DYNAMIC_CONSENSUS_VALIDATION_H
+#ifndef CREDIT_CONSENSUS_VALIDATION_H
+#define CREDIT_CONSENSUS_VALIDATION_H
 
 #include <string>
 
@@ -90,4 +90,4 @@ public:
     std::string GetDebugMessage() const { return strDebugMessage; }
 };
 
-#endif // DYNAMIC_CONSENSUS_VALIDATION_H
+#endif // CREDIT_CONSENSUS_VALIDATION_H

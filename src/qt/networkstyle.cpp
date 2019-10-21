@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -64,11 +65,9 @@ NetworkStyle::NetworkStyle(const QString& _appName, const int iconColorHueShift,
 {
     // Allow for separate UI settings for testnets
     QApplication::setApplicationName(appName);
-    // Grab theme from settings
-    QString theme = GUIUtil::getThemeName();
     // load pixmap
-    QPixmap appIconPixmap(":/icons/dynamic");
-    QPixmap splashImagePixmap(":/images/" + theme + "/splash");
+    QPixmap appIconPixmap(":/icons/credit");
+    QPixmap splashImagePixmap(":/icons/splash");
 
     if (iconColorHueShift != 0 && iconColorSaturationReduction != 0) {
         // generate QImage from QPixmap

@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "addrman.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include <string>
 #include <boost/test/unit_test.hpp>
 #include "hash.h"
@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE(caddrdb_read)
 
     CService addr1, addr2, addr3;
     Lookup("250.7.1.1", addr1, 8333, false);
-    Lookup("250.7.2.2", addr2, 33300, false);
-    Lookup("250.7.3.3", addr3, 33300, false);
+    Lookup("250.7.2.2", addr2, 33600, false);
+    Lookup("250.7.3.3", addr3, 33600, false);
 
     // Add three addresses to new table.
     CService source;

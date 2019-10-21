@@ -1,3 +1,4 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2009-2019 Satoshi Nakamoto
@@ -12,7 +13,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include "test/test_dynamic.h"
+#include "test/test_credit.h"
 #include "bdap/linking.h"
 #include "bdap/utils.h"
 #include "dht/ed25519.h"
@@ -94,7 +95,7 @@ BOOST_AUTO_TEST_CASE(bdap_vgp_message_test1)
     privWalletKey.MakeNewKey(true);
     CPubKey pubWalletKey = privWalletKey.GetPubKey();
     CKeyID keyWalletID = pubWalletKey.GetID();
-    CDynamicAddress walletAddress = CDynamicAddress(keyWalletID);
+    CCreditAddress walletAddress = CCreditAddress(keyWalletID);
     CharString vchWalletAddress = vchFromString(walletAddress.ToString());
     senderDomainEntry.WalletAddress = vchWalletAddress;
 
@@ -103,7 +104,7 @@ BOOST_AUTO_TEST_CASE(bdap_vgp_message_test1)
     recprivWalletKey.MakeNewKey(true);
     CPubKey recpubWalletKey = recprivWalletKey.GetPubKey();
     CKeyID reckeyWalletID = recpubWalletKey.GetID();
-    CDynamicAddress recwalletAddress = CDynamicAddress(reckeyWalletID);
+    CCreditAddress recwalletAddress = CCreditAddress(reckeyWalletID);
     CharString recvchWalletAddress = vchFromString(recwalletAddress.ToString());
     receiverDomainEntry.WalletAddress = recvchWalletAddress;
 
@@ -126,8 +127,8 @@ BOOST_AUTO_TEST_CASE(bdap_vgp_message_test1)
     CKeyEd25519 linkacceptKey;
     CharString linkacceptpubkey = linkacceptKey.GetPubKey();
 
-    CLinkRequest linkRequest; 
-    CLinkAccept linkAccept; 
+    CLinkRequest linkRequest;
+    CLinkAccept linkAccept;
 
     //Key exchange - Shared pub keys for linkrequest and link accept
     std::vector<unsigned char> linkRequestSharedPubKey = GetLinkSharedPubKey(linkrequestKey,receiverDomainEntry.DHTPublicKey);
@@ -164,7 +165,7 @@ BOOST_AUTO_TEST_CASE(bdap_vgp_message_test1)
     //LINK ACCEPT AND CLINK
     uint256 linkID = GetLinkID(linkAccept);
 
-    //MIMIC GetSecretSharedKey logic 
+    //MIMIC GetSecretSharedKey logic
     CKeyEd25519 sharedKey1(linkRequestSharedPubKey);
     CKeyEd25519 sharedKey2(linkAcceptSharedPubKey);
     CKeyEd25519 sharedKey3;
@@ -219,7 +220,7 @@ BOOST_AUTO_TEST_CASE(bdap_vgp_message_test1)
     bcastprivWalletKey.MakeNewKey(true);
     CPubKey bcastpubWalletKey = bcastprivWalletKey.GetPubKey();
     CKeyID bcastkeyWalletID = bcastpubWalletKey.GetID();
-    CDynamicAddress bcastwalletAddress = CDynamicAddress(bcastkeyWalletID);
+    CCreditAddress bcastwalletAddress = CCreditAddress(bcastkeyWalletID);
     CharString bcastvchWalletAddress = vchFromString(bcastwalletAddress.ToString());
 
     std::vector<unsigned char> bcastvchWalletPubKey(bcastpubWalletKey.begin(), bcastpubWalletKey.end());

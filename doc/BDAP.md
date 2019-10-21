@@ -2,13 +2,13 @@
 
 ## Abstract
 
-[BDAP (Blockchain Directory Access Protocol)](https://duality.solutions/bdap) gives programmable access control and direct communication with users on the network, adding a layer of resource hierarchy and providing a distributed database with account linking, making it possible to develop core information systems using the blockchain technology of [Dynamic](https://github.com/duality-solutions/dynamic) and [Sequence](https://github.com/duality-solutions/sequence). This design allows user controlled nodes to securely connect, privately share data without a third-party intermediary, and to scale the database up indefinitely.
+[BDAP (Blockchain Directory Access Protocol)](https://duality.solutions/bdap) gives programmable access control and direct communication with users on the network, adding a layer of resource hierarchy and providing a distributed database with account linking, making it possible to develop core information systems using the blockchain technology of [Credit](https://github.com/duality-solutions/credit) and [Sequence](https://github.com/duality-solutions/sequence). This design allows user controlled nodes to securely connect, privately share data without a third-party intermediary, and to scale the database up indefinitely.
 
 BDAP enables the creation of applications across the spectrum of industry, drastically reducing the costs involved with core information systems. Removing the requirement for the majority of administration roles and the need for trusted third parties. Rendering current centralized database systems such as [LDAP (Lightweight Directory Access Protocol)](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) a thing of the past.
 
 ## Technical Information
 
-[BDAP](https://duality.solutions/bdap) is used to create and amend entries on a [libtorrent](https://github.com/arvidn/libtorrent) based DHT (Distributed Hash Table), and utilizes the blockchain of [Dynamic](https://github.com/duality-solutions/dynamic) to provide decentralization and security. 
+[BDAP](https://duality.solutions/bdap) is used to create and amend entries on a [libtorrent](https://github.com/arvidn/libtorrent) based DHT (Distributed Hash Table), and utilizes the blockchain of [Credit](https://github.com/duality-solutions/credit) to provide decentralization and security. 
 
 ### BDAP Development Kit (BDK)
 
@@ -116,8 +116,8 @@ Needs content.
 
 ### BDAP Code
 
-All of the code for [BDAP](https://duality.solutions/bdap) can be found in the [/src/bdap/](https://github.com/duality-solutions/Dynamic/tree/master/src/bdap) directory of [Dynamic](https://github.com/duality-solutions/dynamic).
+All of the code for [BDAP](https://duality.solutions/bdap) can be found in the [/src/bdap/](https://github.com/duality-solutions/Credit/tree/master/src/bdap) directory of [Credit](https://github.com/duality-solutions/credit).
 
 ### DHT Code
 
-All of the code for the DHT can be found in the [/src/dht/](https://github.com/duality-solutions/Dynamic/tree/master/src/dht) directory of [Dynamic](https://github.com/duality-solutions/dynamic).
+All of the code for the DHT can be found in the [/src/dht/](https://github.com/duality-solutions/Credit/tree/master/src/dht) directory of [Credit](https://github.com/duality-solutions/credit).

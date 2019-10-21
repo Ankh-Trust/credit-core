@@ -7,7 +7,7 @@
 # Test node handling
 #
 
-from test_framework.test_framework import DynamicTestFramework
+from test_framework.test_framework import CreditTestFramework
 from test_framework.util import *
 
 try:
@@ -19,7 +19,7 @@ try:
 except ImportError:
     import urlparse
 
-class NodeHandlingTest (DynamicTestFramework):
+class NodeHandlingTest (CreditTestFramework):
     def run_test(self):
         ###########################
         # setban/listbanned tests #

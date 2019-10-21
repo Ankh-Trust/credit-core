@@ -1,10 +1,11 @@
+// Copyright (c) 2019-2019 The Ankh Core Developers
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DYNAMIC_GOVERNANCE_EXCEPTIONS_H
-#define DYNAMIC_GOVERNANCE_EXCEPTIONS_H
+#ifndef CREDIT_GOVERNANCE_EXCEPTIONS_H
+#define CREDIT_GOVERNANCE_EXCEPTIONS_H
 
 #include <exception>
 #include <iostream>
@@ -98,4 +99,4 @@ public:
     }
 };
 
-#endif // DYNAMIC_GOVERNANCE_EXCEPTIONS_H
+#endif // CREDIT_GOVERNANCE_EXCEPTIONS_H
