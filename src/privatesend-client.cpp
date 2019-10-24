@@ -1034,7 +1034,7 @@ bool CPrivateSendClientSession::JoinExistingQueue(CAmount nBalanceNeedsAnonymize
             continue;
 
         // skip next dn payments winners
-        if (dnpayments.IsScheduled(infoDn, 0)) {
+        if (snpayments.IsScheduled(infoDn, 0)) {
             LogPrintf("CPrivateSendClientSession::JoinExistingQueue -- skipping winner, servicenode=%s\n", infoDn.outpoint.ToStringShort());
             continue;
         }
@@ -1115,7 +1115,7 @@ bool CPrivateSendClientSession::StartNewQueue(CAmount nValueMin, CAmount nBalanc
         privateSendClient.AddUsedServiceNode(infoDn.outpoint);
 
         // skip next dn payments winners
-        if (dnpayments.IsScheduled(infoDn, 0)) {
+        if (snpayments.IsScheduled(infoDn, 0)) {
             LogPrintf("CPrivateSendClientSession::StartNewQueue -- skipping winner, servicenode=%s\n", infoDn.outpoint.ToStringShort());
             nTries++;
             continue;

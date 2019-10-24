@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Duality Blockchain Solutions Developers 
+// Copyright (c) 2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,8 +18,8 @@
 #include "core_io.h" // needed for ScriptToAsmStr
 #include "servicenodeman.h"
 #include "hash.h"
-#include "rpcprotocol.h"
-#include "rpcserver.h"
+#include "rpc/protocol.h"
+#include "rpc/server.h"
 #include "spork.h"
 #include "primitives/transaction.h"
 #include "wallet/wallet.h"
@@ -32,7 +32,7 @@
 
 #ifdef ENABLE_WALLET
 
-extern void SendLinkingTransaction(const CScript& bdapDataScript, const CScript& bdapOPScript, const CScript& stealthScript, 
+extern void SendLinkingTransaction(const CScript& bdapDataScript, const CScript& bdapOPScript, const CScript& stealthScript,
                                     CWalletTx& wtxNew, const CAmount& nOneTimeFee, const CAmount& nDepositFee, const bool fUseInstantSend);
 
 
@@ -66,7 +66,7 @@ static bool BuildJsonLinkRequestInfo(const CLinkRequest& link, const CDomainEntr
     }
     oLink.push_back(Pair("expires_on", expired_time));
     oLink.push_back(Pair("expired", expired));
-    
+
     return true;
 }
 
@@ -99,7 +99,7 @@ static bool BuildJsonLinkAcceptInfo(const CLinkAccept& link, const CDomainEntry&
     }
     oLink.push_back(Pair("expires_on", expired_time));
     oLink.push_back(Pair("expired", expired));
-    
+
     return true;
 }
 
@@ -142,7 +142,7 @@ static UniValue SendLinkRequest(const JSONRPCRequest& request)
     std::string strRecipientFQDN = request.params[2].get_str() + "@" + DEFAULT_PUBLIC_OU + "." + DEFAULT_PUBLIC_DOMAIN;
     ToLowerCase(strRecipientFQDN);
     CharString vchRecipientFQDN = vchFromString(strRecipientFQDN);
-    
+
     std::string strLinkMessage = request.params[3].get_str();
 
     // get link request
@@ -194,7 +194,7 @@ static UniValue SendLinkRequest(const JSONRPCRequest& request)
     CKey key;
     if (pwalletMain && !pwalletMain->GetKey(keyID, key))
         throw std::runtime_error("BDAP_SEND_LINK_RPC_ERROR: ERRCODE: 4007 - Could not get " + strRequestorFQDN + _("'s private key ") + addressRequestor.ToString());
-    
+
     if (!CreateSignatureProof(key, strRecipientFQDN, txLink.SignatureProof))
         throw std::runtime_error("BDAP_SEND_LINK_RPC_ERROR: ERRCODE: 4008 - Error signing " + strRequestorFQDN + _("'s signature proof."));
 
@@ -205,7 +205,7 @@ static UniValue SendLinkRequest(const JSONRPCRequest& request)
 
     // Create BDAP operation script
     CScript scriptPubKey;
-    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_LINK_REQUEST) 
+    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_LINK_REQUEST)
                  << vchDHTPubKey << vchSharedPubKey << txLink.nExpireTime << OP_2DROP << OP_2DROP << OP_DROP;
 
     // Create OP Script with destination address
@@ -343,7 +343,7 @@ static UniValue SendLinkAccept(const JSONRPCRequest& request)
     CKeyID vchDHTPubKeyID = GetIdFromCharVector(vchDHTPubKey);
     if (!pwalletMain->GetDHTKey(vchDHTPubKeyID, privAcceptDHTKey))
         throw std::runtime_error("BDAP_SEND_LINK_RPC_ERROR: Unable to retrieve DHT Key");
- 
+
     txLinkAccept.RecipientPubKey = vchDHTPubKey;
 
     pwalletMain->SetAddressBook(privAcceptDHTKey.GetID(), strAcceptorFQDN, "bdap-dht-key");
@@ -382,7 +382,7 @@ static UniValue SendLinkAccept(const JSONRPCRequest& request)
 
     // Create BDAP operation script
     CScript scriptPubKey;
-    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_LINK_ACCEPT) 
+    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_LINK_ACCEPT)
                  << vchDHTPubKey << vchSharedPubKey << txLinkAccept.nExpireTime << OP_2DROP << OP_2DROP << OP_DROP;
 
     // Create OP Script with destination address
@@ -665,7 +665,7 @@ static UniValue ListPendingLinkAccepts(const JSONRPCRequest& request)
         strToAccountFQDN = request.params[3].get_str() + "@" + DEFAULT_PUBLIC_OU + "." + DEFAULT_PUBLIC_DOMAIN;
         ToLowerCase(strToAccountFQDN);
     }
-    
+
     if (!pLinkManager)
         throw std::runtime_error("BDAP_LINK_LIST_PENDING_ACCEPT_RPC_ERROR: ERRCODE: 4200 - Link manager map is null.");
 
@@ -796,7 +796,7 @@ static UniValue DeleteLink(const JSONRPCRequest& request)
             CDomainEntry entryRequestor, entryRecipient;
             if (GetDomainEntry(link.RequestorFullObjectPath, entryRequestor) && GetDomainEntry(link.RecipientFullObjectPath, entryRecipient)) {
                 // Create BDAP operation script
-                scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_LINK_ACCEPT) 
+                scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_LINK_ACCEPT)
                              << link.RecipientPubKey << link.SharedAcceptPubKey << OP_2DROP << OP_2DROP;
                 scriptDest = GetScriptForDestination(entryRequestor.GetLinkAddress().Get());
                 scriptPubKey += scriptDest;
@@ -805,13 +805,13 @@ static UniValue DeleteLink(const JSONRPCRequest& request)
                     throw std::runtime_error("BDAP_DELETE_LINK_RPC_ERROR: ERRCODE: 4231 - " + _("Failed to build BDAP link JSON object"));
             }
         }
-        else 
+        else
         {
             // create delete request tx
             CDomainEntry entryRequestor, entryRecipient;
             if (GetDomainEntry(link.RecipientFullObjectPath, entryRecipient) && GetDomainEntry(link.RequestorFullObjectPath, entryRequestor)) {
                 // Create BDAP operation script
-                scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_LINK_REQUEST) 
+                scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_LINK_REQUEST)
                              << link.RequestorPubKey << link.SharedRequestPubKey << OP_2DROP << OP_2DROP;
                 scriptDest = GetScriptForDestination(entryRecipient.GetLinkAddress().Get());
                 scriptPubKey += scriptDest;
@@ -820,7 +820,7 @@ static UniValue DeleteLink(const JSONRPCRequest& request)
                     throw std::runtime_error("BDAP_DELETE_LINK_RPC_ERROR: ERRCODE: 4233 - " + _("Failed to build BDAP link JSON object"));
             }
         }
-        
+
     }
     else {
         throw std::runtime_error("BDAP_DELETE_LINK_RPC_ERROR: ERRCODE: 4234 - Can not find link request or link accept in database.");
@@ -973,9 +973,13 @@ static UniValue DeniedLinkList(const JSONRPCRequest& request)
     std::string strOperationType = "denylink";
     int64_t iSequence = 0;
     CDataRecord record;
-    if (!DHT::SubmitGetRecord(0, getKey.GetDHTPubKey(), getKey.GetDHTPrivSeed(), strOperationType, iSequence, record))
-        throw std::runtime_error(strprintf("%s: ERRCODE: 5604 - Failed to get record\n", __func__));
-
+    if (!DHT::SubmitGetRecord(0, getKey.GetDHTPubKey(), getKey.GetDHTPrivSeed(), strOperationType, iSequence, record)) {
+        // return empty JSON
+        UniValue oDeniedLink(UniValue::VOBJ);
+        oLink.push_back(Pair("denied_list", oDeniedLink));
+        return oLink;
+    }
+    
     UniValue oDeniedLink(UniValue::VOBJ);
     CLinkDenyList denyList(record.RawData());
     int timestamp = 0;
@@ -1250,7 +1254,7 @@ static UniValue GetMessages(const JSONRPCRequest& request)
     return oMessages;
 }
 
-UniValue link(const JSONRPCRequest& request) 
+UniValue link(const JSONRPCRequest& request)
 {
     std::string strCommand;
     if (request.params.size() >= 1) {

@@ -16,8 +16,8 @@
 #include "net_processing.h"
 #include "pubkey.h"
 #include "random.h"
-#include "rpcserver.h"
-#include "rpcregister.h"
+#include "rpc/server.h"
+#include "rpc/register.h"
 #include "txdb.h"
 #include "txmempool.h"
 #include "ui_interface.h"
@@ -157,7 +157,7 @@ TestChain100Setup::CreateAndProcessBlock(const std::vector<CMutableTransaction>&
 
     std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(block);
     ProcessNewBlock(chainparams, shared_pblock, true, NULL);
-    
+
     CBlock result = block;
     return result;
 }

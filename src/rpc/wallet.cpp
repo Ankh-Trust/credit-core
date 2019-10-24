@@ -6,10 +6,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "wallet.h"
+
 #include "amount.h"
 #include "base58.h"
 #include "chain.h"
-#include "coincontrol.h"
 #include "consensus/validation.h"
 #include "core_io.h"
 #include "init.h"
@@ -19,13 +20,13 @@
 #include "netbase.h"
 #include "policy/rbf.h"
 #include "privatesend-client.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "timedata.h"
 #include "util.h"
 #include "utilmoneystr.h"
 #include "validation.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "wallet/coincontrol.h"
+#include "wallet/walletdb.h"
 
 #include <univalue.h>
 
@@ -131,6 +132,10 @@ UniValue getnewaddress(const JSONRPCRequest& request)
     if (request.params.size() > 0)
         strAccount = AccountFromValue(request.params[0]);
 
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+
     if (!pwalletMain->IsLocked(true))
         pwalletMain->TopUpKeyPoolCombo();
 
@@ -170,6 +175,10 @@ UniValue getnewed25519address(const JSONRPCRequest& request)
     std::string strAccount;
     if (request.params.size() > 0)
         strAccount = AccountFromValue(request.params[0]);
+
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
 
     if (!pwalletMain->IsLocked(true))
         pwalletMain->TopUpKeyPoolCombo(); //TopUpEdKeyPool();
@@ -211,6 +220,10 @@ static UniValue getnewstealthaddress(const JSONRPCRequest &request)
     EnsureWalletIsUnlocked();
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
+
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
 
     CPubKey walletPubKey;
     CStealthAddress sxAddr;
@@ -508,7 +521,7 @@ void SendBDAPTransaction(const CScript& bdapDataScript, const CScript& bdapOPScr
 void SendLinkingTransaction(const CScript& bdapDataScript, const CScript& bdapOPScript, const CScript& stealthScript,
                                 CWalletTx& wtxNew, const CAmount& nOneTimeFee, const CAmount& nDepositFee, const bool fUseInstantSend)
 {
-    CAmount curBalance = pwalletMain->GetBalance();
+    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
 
     // Check amount
     if (nOneTimeFee <= 0)
@@ -1127,10 +1140,9 @@ UniValue getbalance(const JSONRPCRequest& request)
             std::list<COutputEntry> listSent;
             wtx.GetAmounts(listReceived, listSent, allFee, strSentAccount, filter);
             if ((wtx.GetDepthInMainChain() >= nMinDepth) || (fAddLocked && wtx.IsLockedByInstantSend())) {
-                BOOST_FOREACH (const COutputEntry& r, listReceived)
-                    nBalance += r.amount;
+                 for (const COutputEntry& r : listReceived)                    nBalance += r.amount;
             }
-            BOOST_FOREACH (const COutputEntry& s, listSent)
+            for (const COutputEntry& s : listSent)
                 nBalance -= s.amount;
             nBalance -= allFee;
         }
@@ -2246,6 +2258,10 @@ UniValue keypoolrefill(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected valid size.");
         kpSize = (unsigned int)request.params[0].get_int();
     }
+
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
 
     EnsureWalletIsUnlocked();
     pwalletMain->TopUpKeyPoolCombo(kpSize);

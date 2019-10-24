@@ -14,7 +14,7 @@
 #include "ntp.h"
 #include "policy/policy.h"
 #include "protocol.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "sync.h"
 #include "timedata.h"
 #include "ui_interface.h"

@@ -10,7 +10,7 @@
 #define CREDIT_RPCSERVER_H
 
 #include "amount.h"
-#include "rpcprotocol.h"
+#include "rpc/protocol.h"
 #include "uint256.h"
 
 #include <univalue.h>

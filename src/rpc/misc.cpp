@@ -12,7 +12,7 @@
 #include "init.h"
 #include "net.h"
 #include "netbase.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "spork.h"
 #include "timedata.h"
 #include "txmempool.h"
@@ -125,7 +125,7 @@ UniValue debug(const JSONRPCRequest& request)
         throw std::runtime_error(
             "debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool"
             "|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|"
-            "credit|privatesend|instantsend|servicenode|spork|keepass|dnpayments|gobject|dht|bdap|validation|stealth|)\n"
+            "credit|privatesend|instantsend|servicenode|spork|keepass|snpayments|gobject|dht|bdap|validation|stealth|)\n"
             "Change debug category on the fly. Specify single category or use a plus to specify many.\n"
             "\nExamples:\n" +
             HelpExampleCli("debug", "credit") + HelpExampleRpc("debug", "credit+net"));

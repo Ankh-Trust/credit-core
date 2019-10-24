@@ -1,23 +1,22 @@
 // Copyright (c) 2017-2019 Duality Blockchain Solutions Developers
 
-#include "fluid.h"
-
 #include "bdap/domainentrydb.h"
 #include "bdap/utils.h"
 #include "chain.h"
 #include "core_io.h"
 #include "servicenode-sync.h"
-#include "banaccount.h"
-#include "fluiddb.h"
-#include "fluidservicenode.h"
-#include "fluidmining.h"
-#include "fluidmint.h"
-#include "fluidsovereign.h"
+#include "fluid/banaccount.h"
+#include "fluid/fluid.h"
+#include "fluid/fluiddb.h"
+#include "fluid/fluiddynode.h"
+#include "fluid/fluidmining.h"
+#include "fluid/fluidmint.h"
+#include "fluid/fluidsovereign.h"
 #include "init.h"
 #include "keepass.h"
 #include "net.h"
 #include "netbase.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "spork.h"
 #include "timedata.h"
 #include "util.h"
@@ -91,7 +90,7 @@ UniValue maketoken(const JSONRPCRequest& request)
             "\nArguments:\n"
             "1. \"string\"         (string, required) String that has to be converted to hex.\n"
             "\nExamples:\n" +
-            HelpExampleCli("maketoken", "300000 1558389600 DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd") + 
+            HelpExampleCli("maketoken", "300000 1558389600 DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd") +
             HelpExampleRpc("maketoken", "300000 1558389600 DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd"));
     }
 
@@ -116,7 +115,7 @@ UniValue banaccountstoken(const JSONRPCRequest& request)
             "1. \"timestamp\"         (int, required) Fluid transaction timestamp.\n"
             "2. \"account_fqdn1\"     (string, required) The BDAP account fully qualified domain name.\n"
             "\nExamples:\n" +
-            HelpExampleCli("banaccountstoken", "1558389600 \"badaccount@public.bdap.io\" \"banme@public.bdap.io\"") + 
+            HelpExampleCli("banaccountstoken", "1558389600 \"badaccount@public.bdap.io\" \"banme@public.bdap.io\"") +
             HelpExampleRpc("banaccountstoken", "1558389600 \"badaccount@public.bdap.io\" \"banme@public.bdap.io\""));
     }
 
@@ -153,7 +152,7 @@ UniValue gettime(const JSONRPCRequest& request)
             "gettime\n"
             "\nReturns the current Epoch time (https://www.epochconverter.com).\n"
             "\nExamples:\n" +
-            HelpExampleCli("gettime", "\"1535543210\"") + 
+            HelpExampleCli("gettime", "\"1535543210\"") +
             HelpExampleRpc("gettime", "\"1535543210\""));
     }
     return GetTime();
@@ -170,7 +169,7 @@ UniValue burncredit(const JSONRPCRequest& request)
             "1. \"amount\"         (numeric, required) The amount of coins to be burned.\n"
             "2. \"address\"        (string, optional)  The address to burn funds. You must have the address private key in the wallet file.\n"
             "\nExamples:\n" +
-            HelpExampleCli("burncredit", "\"123.456\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\"") + 
+            HelpExampleCli("burncredit", "\"123.456\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\"") +
             HelpExampleRpc("burncredit", "\"123.456\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\""));
 
     if (!EnsureWalletIsAvailable(request.fHelp))
@@ -217,7 +216,7 @@ UniValue sendfluidtransaction(const JSONRPCRequest& request)
             "1. \"opcode\"  (string, required) The Fluid operation to be executed.\n"
             "2. \"hexstring\" (string, required) The token for that opearation.\n"
             "\nExamples:\n" +
-            HelpExampleCli("sendfluidtransaction", "\"OP_MINT\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") + 
+            HelpExampleCli("sendfluidtransaction", "\"OP_MINT\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") +
             HelpExampleRpc("sendfluidtransaction", "\"OP_MINT\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\""));
 
     if (!EnsureWalletIsAvailable(request.fHelp))
@@ -259,7 +258,7 @@ UniValue signtoken(const JSONRPCRequest& request)
             "1. \"address\"         (string, required) The Credit Address which will be used to sign.\n"
             "2. \"tokenkey\"         (string, required) The token which has to be initially signed\n"
             "\nExamples:\n" +
-            HelpExampleCli("signtoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") + 
+            HelpExampleCli("signtoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") +
             HelpExampleRpc("signtoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\""));
 
     std::string result;
@@ -296,7 +295,7 @@ UniValue verifyquorum(const JSONRPCRequest& request)
             "\nArguments:\n"
             "1. \"tokenkey\"         (string, required) The token which has to be initially signed\n"
             "\nExamples:\n" +
-            HelpExampleCli("verifyquorum", "\"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") + 
+            HelpExampleCli("verifyquorum", "\"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") +
             HelpExampleRpc("verifyquorum", "\"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\""));
 
     std::string message;
@@ -317,7 +316,7 @@ UniValue consenttoken(const JSONRPCRequest& request)
             "1. \"address\"         (string, required) The Credit Address which will be used to give consent.\n"
             "2. \"tokenkey\"         (string, required) The token which has to be been signed by one party\n"
             "\nExamples:\n" +
-            HelpExampleCli("consenttoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") + 
+            HelpExampleCli("consenttoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\"") +
             HelpExampleRpc("consenttoken", "\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" \"3130303030303030303030303a3a313439393336353333363a3a445148697036443655376d46335761795a32747337794478737a71687779367a5a6a20494f42447a557167773\""));
 
     std::string result;
@@ -357,7 +356,7 @@ UniValue getfluidhistoryraw(const JSONRPCRequest& request)
             "  \"fluid_command\"     (string) The operation code and raw fluid script command\n"
             "}, ...\n"
             "\nExamples\n" +
-            HelpExampleCli("getfluidhistoryraw", "") + 
+            HelpExampleCli("getfluidhistoryraw", "") +
             HelpExampleRpc("getfluidhistoryraw", ""));
 
     UniValue ret(UniValue::VOBJ);
@@ -480,7 +479,7 @@ UniValue getfluidhistory(const JSONRPCRequest& request)
             "  }, ...\n"
             "]\n"
             "\nExamples\n" +
-            HelpExampleCli("getfluidhistory", "") + 
+            HelpExampleCli("getfluidhistory", "") +
             HelpExampleRpc("getfluidhistory", ""));
 
     UniValue ret(UniValue::VOBJ);
@@ -642,7 +641,7 @@ UniValue getfluidsovereigns(const JSONRPCRequest& request)
             "  \"sovereign address\"     (string) A sovereign address with permission to co-sign a fluid command\n"
             "}, ...\n"
             "\nExamples\n" +
-            HelpExampleCli("getfluidsovereigns", "") + 
+            HelpExampleCli("getfluidsovereigns", "") +
             HelpExampleRpc("getfluidsovereigns", ""));
 
     UniValue ret(UniValue::VOBJ);
@@ -682,7 +681,7 @@ UniValue readfluidtoken(const JSONRPCRequest& request)
             "  \"sovereign address\"     (string) A sovereign address with permission to co-sign a fluid command\n"
             "}, ...\n"
             "\nExamples\n" +
-            HelpExampleCli("readfluidtoken", "tokenkey") + 
+            HelpExampleCli("readfluidtoken", "tokenkey") +
             HelpExampleRpc("readfluidtoken", "tokenkey"));
 
     UniValue ret(UniValue::VOBJ);
@@ -753,7 +752,7 @@ UniValue readfluidtoken(const JSONRPCRequest& request)
                     ret.push_back(Pair("signature_1", vecSplitAddress[1]));
                     ret.push_back(Pair("signature_2", vecSplitAddress[2]));
                     ret.push_back(Pair("signature_3", vecSplitAddress[3]));
-                } 
+                }
             }
             else {
                 if (vecSplitAddress.size() == 2) {
@@ -769,7 +768,7 @@ UniValue readfluidtoken(const JSONRPCRequest& request)
                     ret.push_back(Pair("signature_3", vecSplitAddress[3]));
                 }
             }
-            
+
         }
     } else {
         throw std::runtime_error("READ_FLUID_TOKEN_RPC_ERROR: ERRCODE: 4105 - " + _("Fluid token is not hex"));

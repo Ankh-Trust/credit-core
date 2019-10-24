@@ -940,11 +940,11 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
     }
 
     case MSG_SERVICENODE_PAYMENT_VOTE:
-        return dnpayments.mapServiceNodePaymentVotes.count(inv.hash);
+        return snpayments.mapServiceNodePaymentVotes.count(inv.hash);
 
     case MSG_SERVICENODE_PAYMENT_BLOCK: {
         BlockMap::iterator mi = mapBlockIndex.find(inv.hash);
-        return mi != mapBlockIndex.end() && dnpayments.mapServiceNodeBlocks.find(mi->second->nHeight) != dnpayments.mapServiceNodeBlocks.end();
+        return mi != mapBlockIndex.end() && snpayments.mapServiceNodeBlocks.find(mi->second->nHeight) != snpayments.mapServiceNodeBlocks.end();
     }
 
     case MSG_SERVICENODE_ANNOUNCE:
@@ -1171,8 +1171,8 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
                 }
 
                 if (!push && inv.type == MSG_SERVICENODE_PAYMENT_VOTE) {
-                    if (dnpayments.HasVerifiedPaymentVote(inv.hash)) {
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTVOTE, dnpayments.mapServiceNodePaymentVotes[inv.hash]));
+                    if (snpayments.HasVerifiedPaymentVote(inv.hash)) {
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTVOTE, snpayments.mapServiceNodePaymentVotes[inv.hash]));
                         push = true;
                     }
                 }
@@ -1180,12 +1180,12 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
                 if (!push && inv.type == MSG_SERVICENODE_PAYMENT_BLOCK) {
                     BlockMap::iterator mi = mapBlockIndex.find(inv.hash);
                     LOCK(cs_mapServiceNodeBlocks);
-                    if (mi != mapBlockIndex.end() && dnpayments.mapServiceNodeBlocks.count(mi->second->nHeight)) {
-                        BOOST_FOREACH (CServiceNodePayee& payee, dnpayments.mapServiceNodeBlocks[mi->second->nHeight].vecPayees) {
+                    if (mi != mapBlockIndex.end() && snpayments.mapServiceNodeBlocks.count(mi->second->nHeight)) {
+                        BOOST_FOREACH (CServiceNodePayee& payee, snpayments.mapServiceNodeBlocks[mi->second->nHeight].vecPayees) {
                             std::vector<uint256> vecVoteHashes = payee.GetVoteHashes();
                             BOOST_FOREACH (uint256& hash, vecVoteHashes) {
-                                if (dnpayments.HasVerifiedPaymentVote(hash)) {
-                                    connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTVOTE, dnpayments.mapServiceNodePaymentVotes[hash]));
+                                if (snpayments.HasVerifiedPaymentVote(hash)) {
+                                    connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTVOTE, snpayments.mapServiceNodePaymentVotes[hash]));
                                 }
                             }
                         }
@@ -2820,7 +2820,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
 #endif // ENABLE_WALLET
             privateSendServer.ProcessMessage(pfrom, strCommand, vRecv, connman);
             dnodeman.ProcessMessage(pfrom, strCommand, vRecv, connman);
-            dnpayments.ProcessMessage(pfrom, strCommand, vRecv, connman);
+            snpayments.ProcessMessage(pfrom, strCommand, vRecv, connman);
             instantsend.ProcessMessage(pfrom, strCommand, vRecv, connman);
             sporkManager.ProcessSpork(pfrom, strCommand, vRecv, connman);
             servicenodeSync.ProcessMessage(pfrom, strCommand, vRecv);

@@ -87,17 +87,6 @@ CREDIT_CORE_H = \
   bdap/stealth.h \
   bdap/utils.h \
   bdap/vgpmessage.h \
-  bip39_chinese_simplified.h \
-  bip39_chinese_traditional.h \
-  bip39_english.h \
-  bip39_french.h \
-  bip39_german.h \
-  bip39_italian.h \
-  bip39_japanese.h \
-  bip39_korean.h \
-  bip39_russian.h \
-  bip39_spanish.h \
-  bip39_ukrainian.h \
   bip39.h \
   blockencodings.h \
   bloom.h \
@@ -198,10 +187,11 @@ CREDIT_CORE_H = \
   random.h \
   reverselock.h \
   reverse_iterator.h \
-  rpcclient.h \
-  rpcprotocol.h \
-  rpcregister.h \
-  rpcserver.h \
+  rpc/client.h \
+  rpc/protocol.h \
+  rpc/register.h \
+  rpc/server.h \
+	rpc/wallet.h \
   scheduler.h \
   script/sigcache.h \
   script/sign.h \
@@ -233,10 +223,20 @@ CREDIT_CORE_H = \
   wallet/coincontrol.h \
   wallet/crypter.h \
   wallet/db.h \
-  wallet/rpcwallet.h \
   wallet/wallet.h \
   wallet/wallet_ismine.h \
   wallet/walletdb.h \
+	wordlists/bip39_chinese_simplified.h \
+  wordlists/bip39_chinese_traditional.h \
+  wordlists/bip39_english.h \
+  wordlists/bip39_french.h \
+  wordlists/bip39_german.h \
+  wordlists/bip39_italian.h \
+  wordlists/bip39_japanese.h \
+  wordlists/bip39_korean.h \
+  wordlists/bip39_russian.h \
+  wordlists/bip39_spanish.h \
+  wordlists/bip39_ukrainian.h \
   warnings.h \
   zmq/zmqabstractnotifier.h \
   zmq/zmqconfig.h\
@@ -268,9 +268,6 @@ libcredit_server_a_SOURCES = \
   bdap/linkingdb.cpp \
   bdap/linkmanager.cpp \
   bdap/linkstorage.cpp \
-  bdap/rpcdomainentry.cpp \
-  bdap/rpclinking.cpp \
-  bdap/rpcrawbdap.cpp \
   bdap/utils.cpp \
   bdap/vgpmessage.cpp \
   dbwrapper.cpp \
@@ -281,7 +278,6 @@ libcredit_server_a_SOURCES = \
   dht/limits.cpp \
   dht/mutable.cpp \
   dht/mutabledb.cpp \
-  dht/rpcdht.cpp \
   dht/session.cpp \
   dht/sessionevents.cpp \
   dht/settings.cpp \
@@ -297,7 +293,6 @@ libcredit_server_a_SOURCES = \
   fluid/fluidservicenode.cpp \
   fluid/fluidmining.cpp \
   fluid/fluidmint.cpp \
-  fluid/rpcfluid.cpp \
   fluid/fluidsovereign.cpp \
   fluid/operations.cpp \
   governance.cpp \
@@ -332,14 +327,19 @@ libcredit_server_a_SOURCES = \
   privatesend-server.cpp \
   psnotificationinterface.cpp \
   rest.cpp \
-  rpcblockchain.cpp \
-  rpcservicenode.cpp \
-  rpcgovernance.cpp \
-  rpcmining.cpp \
-  rpcmisc.cpp \
-  rpcnet.cpp \
-  rpcrawtransaction.cpp \
-  rpcserver.cpp \
+  rpc/blockchain.cpp \
+  rpc/dht.cpp \
+  rpc/domainentry.cpp \
+  rpc/dynode.cpp \
+  rpc/fluid.cpp \
+  rpc/governance.cpp \
+  rpc/linking.cpp \
+  rpc/mining.cpp \
+  rpc/misc.cpp \
+  rpc/net.cpp \
+  rpc/rawbdap.cpp \
+  rpc/rawtransaction.cpp \
+  rpc/server.cpp \
   script/sigcache.cpp \
   sendalert.cpp \
   spork.cpp \
@@ -375,10 +375,10 @@ libcredit_wallet_a_SOURCES = \
   policy/rbf.cpp \
   privatesend-client.cpp \
   privatesend-util.cpp \
+	rpc/wallet.cpp \
+  rpc/walletdump.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
-  wallet/rpcdump.cpp \
-  wallet/rpcwallet.cpp \
   wallet/wallet.cpp \
   wallet/wallet_ismine.cpp \
   wallet/walletdb.cpp \
@@ -493,7 +493,7 @@ libcredit_util_a_SOURCES = \
   compat/glibcxx_sanity.cpp \
   compat/strnlen.cpp \
   random.cpp \
-  rpcprotocol.cpp \
+  rpc/protocol.cpp \
   support/cleanse.cpp \
   support/lockedpool.cpp \
   sync.cpp \
@@ -513,7 +513,7 @@ endif
 libcredit_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(CREDIT_INCLUDES)
 libcredit_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libcredit_cli_a_SOURCES = \
-  rpcclient.cpp \
+  rpc/client.cpp \
   $(CREDIT_CORE_H)
 
 nodist_libcredit_util_a_SOURCES = $(srcdir)/obj/build.h

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Duality Blockchain Solutions Developers 
+// Copyright (c) 2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,8 +8,8 @@
 #include "bdap/utils.h"
 #include "core_io.h" // needed for ScriptToAsmStr
 #include "servicenodeman.h"
-#include "rpcprotocol.h"
-#include "rpcserver.h"
+#include "rpc/protocol.h"
+#include "rpc/server.h"
 #include "primitives/transaction.h"
 #include "spork.h"
 #include "wallet/wallet.h"
@@ -62,8 +62,8 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
     txDomainEntry.WalletAddress = vchFromString(walletAddress.ToString());
 
     txDomainEntry.DHTPublicKey = vchDHTPubKey;
-    CKeyID vchDHTPubKeyID = GetIdFromCharVector(vchDHTPubKey); 
-    pwalletMain->SetAddressBook(vchDHTPubKeyID, strObjectID, "bdap-dht-key"); 
+    CKeyID vchDHTPubKeyID = GetIdFromCharVector(vchDHTPubKey);
+    pwalletMain->SetAddressBook(vchDHTPubKeyID, strObjectID, "bdap-dht-key");
 
     //pwalletMain->SetAddressBook(keyLinkID, strObjectID, "bdap-link");
 
@@ -85,7 +85,7 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
     std::string strMonths = std::to_string(nMonths) + "Month";
     std::vector<unsigned char> vchMonths = vchFromString(strMonths);
     std::vector<unsigned char> vchFullObjectPath = txDomainEntry.vchFullObjectPath();
-    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY) 
+    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_NEW) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY)
                  << vchFullObjectPath << txDomainEntry.DHTPublicKey << vchMonths << OP_2DROP << OP_2DROP << OP_DROP;
 
     CScript scriptDestination;
@@ -118,7 +118,7 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
     UniValue oName(UniValue::VOBJ);
     if(!BuildBDAPJson(txDomainEntry, oName))
         throw std::runtime_error("BDAP_ADD_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3507 - " + _("Failed to read from BDAP JSON object"));
-    
+
     if (LogAcceptCategory("bdap")) {
         // make sure we can deserialize the transaction from the scriptData and get a valid CDomainEntry class
         LogPrint("bdap", "DomainEntry Scripts:\nscriptData = %s\n", ScriptToAsmStr(scriptData, true));
@@ -126,8 +126,8 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
         const CTransactionRef testTx = MakeTransactionRef((CTransaction)wtx);
         CDomainEntry testDomainEntry(testTx); //loads the class from a transaction
 
-        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n", 
-            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName), 
+        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n",
+            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName),
             stringFromVch(testDomainEntry.OrganizationalUnit), stringFromVch(testDomainEntry.DHTPublicKey));
     }
     std::string strPubKeyHash = GetHashFromCharVector(vchDHTPubKey).ToString();
@@ -138,7 +138,7 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
     return oName;
 }
 
-UniValue adduser(const JSONRPCRequest& request) 
+UniValue adduser(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3)
         throw std::runtime_error(
@@ -171,8 +171,12 @@ UniValue adduser(const JSONRPCRequest& request)
             "  },...n \n"
             "\nExamples\n" +
            HelpExampleCli("adduser", "Alice \"Wonderland, Alice\"") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("adduser", "Alice \"Wonderland, Alice\""));
+
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
 
     if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");
@@ -185,7 +189,7 @@ UniValue adduser(const JSONRPCRequest& request)
     return AddDomainEntry(request, bdapType);
 }
 
-UniValue getusers(const JSONRPCRequest& request) 
+UniValue getusers(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() > 3 || request.params.size() == 2)
         throw std::runtime_error(
@@ -204,7 +208,7 @@ UniValue getusers(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("getusers", "") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("getusers", ""));
 
     int nRecordsPerPage = 100;
@@ -226,13 +230,13 @@ UniValue getusers(const JSONRPCRequest& request)
             {
                 throw std::runtime_error("Error: parameters must be positive integers");
                 return NullUniValue;
-            }       
+            }
         } catch (std::exception& e) {
             throw std::runtime_error("Error: parameters must be positive integers");
             return NullUniValue;
         }
     }
-    
+
     // only return entries from the default public domain OU
     std::string strObjectLocation = DEFAULT_PUBLIC_OU + "." + DEFAULT_PUBLIC_DOMAIN;
     CharString vchObjectLocation(strObjectLocation.begin(), strObjectLocation.end());
@@ -244,7 +248,7 @@ UniValue getusers(const JSONRPCRequest& request)
     return oDomainEntryList;
 }
 
-UniValue getgroups(const JSONRPCRequest& request) 
+UniValue getgroups(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() > 3 || request.params.size() == 2)
         throw std::runtime_error(
@@ -263,7 +267,7 @@ UniValue getgroups(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("getgroups", "") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("getgroups", ""));
 
     int nRecordsPerPage = 100;
@@ -285,13 +289,13 @@ UniValue getgroups(const JSONRPCRequest& request)
             {
                 throw std::runtime_error("Error: parameters must be positive integers");
                 return NullUniValue;
-            }       
+            }
         } catch (std::exception& e) {
             throw std::runtime_error("Error: parameters must be positive integers");
             return NullUniValue;
         }
     }
-    
+
     // only return entries from the default public domain OU
     std::string strObjectLocation = DEFAULT_PUBLIC_OU + "." + DEFAULT_PUBLIC_DOMAIN;
     CharString vchObjectLocation(strObjectLocation.begin(), strObjectLocation.end());
@@ -303,7 +307,7 @@ UniValue getgroups(const JSONRPCRequest& request)
     return oDomainEntryList;
 }
 
-UniValue getuserinfo(const JSONRPCRequest& request) 
+UniValue getuserinfo(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -334,7 +338,7 @@ UniValue getuserinfo(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("getuserinfo", "Alice") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("getuserinfo", "Alice"));
 
     CharString vchObjectID = vchFromValue(request.params[0]);
@@ -344,7 +348,7 @@ UniValue getuserinfo(const JSONRPCRequest& request)
     directory.DomainComponent = vchDefaultDomainName;
     directory.OrganizationalUnit = vchDefaultPublicOU;
     directory.ObjectID = vchObjectID;
-    
+
     UniValue oDomainEntryInfo(UniValue::VOBJ);
     if (CheckDomainEntryDB()) {
         if (!pDomainEntryDB->GetDomainEntryInfo(directory.vchFullObjectPath(), oDomainEntryInfo)) {
@@ -358,7 +362,7 @@ UniValue getuserinfo(const JSONRPCRequest& request)
     return oDomainEntryInfo;
 }
 
-UniValue getgroupinfo(const JSONRPCRequest& request) 
+UniValue getgroupinfo(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -389,7 +393,7 @@ UniValue getgroupinfo(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("getgroupinfo", "Duality") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("getgroupinfo", "Duality"));
 
     CharString vchObjectID = vchFromValue(request.params[0]);
@@ -399,7 +403,7 @@ UniValue getgroupinfo(const JSONRPCRequest& request)
     directory.DomainComponent = vchDefaultDomainName;
     directory.OrganizationalUnit = vchDefaultPublicOU;
     directory.ObjectID = vchObjectID;
-    
+
     UniValue oDomainEntryInfo(UniValue::VOBJ);
     if (CheckDomainEntryDB()) {
         if (!pDomainEntryDB->GetDomainEntryInfo(directory.vchFullObjectPath(), oDomainEntryInfo)) {
@@ -413,14 +417,14 @@ UniValue getgroupinfo(const JSONRPCRequest& request)
     return oDomainEntryInfo;
 }
 
-static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType bdapType) 
+static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType bdapType)
 {
     EnsureWalletIsUnlocked();
 
     // Format object and domain names to lower case.
     CharString vchObjectID = vchFromValue(request.params[0]);
     ToLowerCase(vchObjectID);
-    
+
     CDomainEntry txPreviousEntry;
     txPreviousEntry.DomainComponent = vchDefaultDomainName;
     txPreviousEntry.OrganizationalUnit = vchDefaultPublicOU;
@@ -449,13 +453,13 @@ static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
 
     CharString data;
     txUpdatedEntry.Serialize(data);
-    
+
     // Create BDAP operation script
     CScript scriptPubKey;
     std::string strMonths = std::to_string(nMonths) + "Month";
     std::vector<unsigned char> vchMonths = vchFromString(strMonths);
     std::vector<unsigned char> vchFullObjectPath = txUpdatedEntry.vchFullObjectPath();
-    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_MODIFY) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY) 
+    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_MODIFY) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY)
                  << vchFullObjectPath << txUpdatedEntry.DHTPublicKey << vchMonths << OP_2DROP << OP_2DROP << OP_DROP;
 
     CCreditAddress walletAddress(stringFromVch(txUpdatedEntry.WalletAddress));
@@ -489,7 +493,7 @@ static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
     UniValue oName(UniValue::VOBJ);
     if(!BuildBDAPJson(txUpdatedEntry, oName))
         throw std::runtime_error("BDAP_UPDATE_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3704 - " + _("Failed to read from BDAP JSON object"));
-    
+
     if (LogAcceptCategory("bdap")) {
         // make sure we can deserialize the transaction from the scriptData and get a valid CDomainEntry class
         LogPrint("bdap", "DomainEntry Scripts:\nscriptData = %s\n", ScriptToAsmStr(scriptData, true));
@@ -497,15 +501,15 @@ static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
         const CTransactionRef testTx = MakeTransactionRef((CTransaction)wtx);
         CDomainEntry testDomainEntry(testTx); //loads the class from a transaction
 
-        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n", 
-            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName), 
+        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n",
+            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName),
             stringFromVch(testDomainEntry.OrganizationalUnit), stringFromVch(testDomainEntry.DHTPublicKey));
     }
 
     return oName;
 }
 
-UniValue updateuser(const JSONRPCRequest& request) 
+UniValue updateuser(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3)
         throw std::runtime_error(
@@ -538,7 +542,7 @@ UniValue updateuser(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("updateuser", "Alice \"Updated, Alice\" 365" ) +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("updateuser", "Alice \"Updated, Alice\" 365"));
 
     if (!servicenodeSync.IsBlockchainSynced()) {
@@ -552,7 +556,7 @@ UniValue updateuser(const JSONRPCRequest& request)
     return UpdateDomainEntry(request, bdapType);
 }
 
-UniValue updategroup(const JSONRPCRequest& request) 
+UniValue updategroup(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3)
         throw std::runtime_error(
@@ -585,7 +589,7 @@ UniValue updategroup(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("updategroup", "Duality \"Updated, Duality Blockchain Solutions Group\" 700" ) +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("updategroup", "Duality \"Updated, Duality Blockchain Solutions Group\" 700"));
 
     if (!servicenodeSync.IsBlockchainSynced()) {
@@ -599,7 +603,7 @@ UniValue updategroup(const JSONRPCRequest& request)
     return UpdateDomainEntry(request, bdapType);
 }
 
-static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType bdapType) 
+static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType bdapType)
 {
 
     EnsureWalletIsUnlocked();
@@ -607,13 +611,13 @@ static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
     // Format object and domain names to lower case.
     CharString vchObjectID = vchFromValue(request.params[0]);
     ToLowerCase(vchObjectID);
-    
+
     CDomainEntry txSearchEntry;
     txSearchEntry.DomainComponent = vchDefaultDomainName;
     txSearchEntry.OrganizationalUnit = vchDefaultPublicOU;
     txSearchEntry.ObjectID = vchObjectID;
     CDomainEntry txDeletedEntry = txSearchEntry;
-    
+
     // Check if name already exists
     if (!GetDomainEntry(txSearchEntry.vchFullObjectPath(), txSearchEntry))
         throw std::runtime_error("BDAP_DELETE_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3700 - " + txSearchEntry.GetFullObjectPath() + _(" does not exists.  Can not delete."));
@@ -622,15 +626,15 @@ static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
     COutPoint outpoint = COutPoint(txSearchEntry.txHash, nIn);
     if(pwalletMain->IsMine(CTxIn(outpoint)) != ISMINE_SPENDABLE)
         throw std::runtime_error("BDAP_DELETE_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3701 - You do not own the " + txSearchEntry.GetFullObjectPath() + _(" entry.  Can not delete."));
-    
+
     txDeletedEntry.WalletAddress = txSearchEntry.WalletAddress;
     txDeletedEntry.CommonName = txSearchEntry.CommonName;
     txDeletedEntry.nObjectType = GetObjectTypeInt(bdapType);
-    
+
     // Create BDAP operation script
     CScript scriptPubKey;
     std::vector<unsigned char> vchFullObjectPath = txDeletedEntry.vchFullObjectPath();
-    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY) 
+    scriptPubKey << CScript::EncodeOP_N(OP_BDAP_DELETE) << CScript::EncodeOP_N(OP_BDAP_ACCOUNT_ENTRY)
                  << vchFullObjectPath << txDeletedEntry.DHTPublicKey << OP_2DROP << OP_2DROP;
 
     CCreditAddress walletAddress(stringFromVch(txDeletedEntry.WalletAddress));
@@ -657,7 +661,7 @@ static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
     UniValue oName(UniValue::VOBJ);
     if(!BuildBDAPJson(txDeletedEntry, oName))
         throw std::runtime_error("BDAP_DELETE_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3703 - " + _("Failed to read from BDAP JSON object"));
-    
+
     if (LogAcceptCategory("bdap")) {
         // make sure we can deserialize the transaction from the scriptData and get a valid CDomainEntry class
         LogPrint("bdap", "DomainEntry Scripts:\nscriptData = %s\n", ScriptToAsmStr(scriptData, true));
@@ -665,15 +669,15 @@ static UniValue DeleteDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
         const CTransactionRef testTx = MakeTransactionRef((CTransaction)wtx);
         CDomainEntry testDomainEntry(testTx); //loads the class from a transaction
 
-        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n", 
-            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName), 
+        LogPrint("bdap", "CDomainEntry Values:\nnVersion = %u\nFullObjectPath = %s\nCommonName = %s\nOrganizationalUnit = %s\nDHTPublicKey = %s\n",
+            testDomainEntry.nVersion, testDomainEntry.GetFullObjectPath(), stringFromVch(testDomainEntry.CommonName),
             stringFromVch(testDomainEntry.OrganizationalUnit), stringFromVch(testDomainEntry.DHTPublicKey));
     }
 
     return oName;
 }
 
-UniValue deleteuser(const JSONRPCRequest& request) 
+UniValue deleteuser(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -704,7 +708,7 @@ UniValue deleteuser(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("deleteuser", "Alice" ) +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("deleteuser", "Alice"));
 
     if (!servicenodeSync.IsBlockchainSynced()) {
@@ -718,7 +722,7 @@ UniValue deleteuser(const JSONRPCRequest& request)
     return DeleteDomainEntry(request, bdapType);
 }
 
-UniValue deletegroup(const JSONRPCRequest& request) 
+UniValue deletegroup(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
@@ -749,7 +753,7 @@ UniValue deletegroup(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("deletegroup", "GroupName" ) +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("deletegroup", "GroupName"));
 
     if (!servicenodeSync.IsBlockchainSynced()) {
@@ -780,7 +784,7 @@ UniValue makekeypair(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("deletegroup", "GroupName" ) +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("deletegroup", "GroupName"));
 
     std::string strPrefix = "";
@@ -805,7 +809,7 @@ UniValue makekeypair(const JSONRPCRequest& request)
     CPrivKey vchPrivKeyC = key.GetPrivKey();
     CKeyID keyIDC = key.GetPubKey().GetID();
     CKey vchSecretC = CKey();
-    vchSecretC.SetPrivKey(vchPrivKeyC, true);    
+    vchSecretC.SetPrivKey(vchPrivKeyC, true);
     result.push_back(Pair("private_key", HexStr<CPrivKey::iterator>(vchPrivKeyC.begin(), vchPrivKeyC.end())));
     result.push_back(Pair("public_key", HexStr(key.GetPubKey())));
     result.push_back(Pair("address", CCreditAddress(keyIDC).ToString()));
@@ -821,11 +825,11 @@ UniValue makekeypair(const JSONRPCRequest& request)
     result.push_back(Pair("public_key_uncompressed", HexStr(key.GetPubKey())));
     result.push_back(Pair("address_uncompressed", CCreditAddress(keyID).ToString()));
     result.push_back(Pair("address_private_key_uncompressed", CCreditSecret(vchSecret).ToString()));
- 
+
     return result;
 }
 
-UniValue addgroup(const JSONRPCRequest& request) 
+UniValue addgroup(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2 || request.params.size() > 3)
         throw std::runtime_error(
@@ -858,8 +862,12 @@ UniValue addgroup(const JSONRPCRequest& request)
             "  }\n"
             "\nExamples\n" +
            HelpExampleCli("addgroup", "Duality \"Duality Blockchain Solutions Group\"") +
-           "\nAs a JSON-RPC call\n" + 
+           "\nAs a JSON-RPC call\n" +
            HelpExampleRpc("addgroup", "Duality \"Duality Blockchain Solutions Group\""));
+
+    //Check to see if wallet needs upgrading
+    if(pwalletMain->WalletNeedsUpgrading())
+        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
 
     if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");
@@ -898,12 +906,12 @@ UniValue mybdapaccounts(const JSONRPCRequest& request)
 
     std::string accountType {""};
 
-    if (request.params.size() == 1) 
+    if (request.params.size() == 1)
         accountType = request.params[0].get_str();
 
     if (!((accountType == "users") || (accountType == "groups") || (accountType == "")))
         throw std::runtime_error("MY_BDAP_ACCOUNTS_RPC_ERROR: ERRCODE: 3801 - " + _("Unkown account type"));
-  
+
     std::vector<std::vector<unsigned char>> vvchDHTPubKeys;
     if (!pwalletMain->GetDHTPubKeys(vvchDHTPubKeys))
         return NullUniValue;
@@ -985,7 +993,7 @@ UniValue makecredits(const JSONRPCRequest& request)
     std::vector<unsigned char> vchMoveSource = vchFromString(std::string("_AC"));
     std::vector<unsigned char> vchMoveDestination = vchFromString(std::string("BDAP"));
     CScript scriptColorCoins;
-    scriptColorCoins << CScript::EncodeOP_N(OP_BDAP_MOVE) << CScript::EncodeOP_N(OP_BDAP_ASSET) 
+    scriptColorCoins << CScript::EncodeOP_N(OP_BDAP_MOVE) << CScript::EncodeOP_N(OP_BDAP_ASSET)
                         << vchMoveSource << vchMoveDestination << OP_2DROP << OP_2DROP;
 
     scriptColorCoins += scriptDestination;
@@ -1047,7 +1055,7 @@ UniValue getcredits(const JSONRPCRequest& request)
             if (vvch.size() > 1)
                 strPubKey = stringFromVch(vvch[1]);
             nTotalDeposits += credit.first.nValue;
-        } else if (strOpType == "bdap_new_link_request" || strOpType == "bdap_new_link_accept" || 
+        } else if (strOpType == "bdap_new_link_request" || strOpType == "bdap_new_link_accept" ||
                     strOpType == "bdap_delete_link_request" || strOpType == "bdap_delete_link_accept") {
             strType = "link deposit";
             if (vvch.size() > 0)

@@ -132,7 +132,7 @@ DEBUGGING TESTING OPTIONS
 * "-limitdescendantcount=[n]" ("Do not accept transactions if any ancestor would have [n] or more in-mempool descendants")
 * "-limitdescendantsize=[n]" ("Do not accept transactions if any ancestor would have more than [n] kilobytes of in-mempool descendants.")
 
-debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, qt, rand, reindex, rpc, selectcoins, tor, zmq, Credit (or specifically: privatesend, instantsend, servicenode, spork, keepass, dnpayments, gobject)"
+debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, qt, rand, reindex, rpc, selectcoins, tor, zmq, Credit (or specifically: privatesend, instantsend, servicenode, spork, keepass, snpayments, gobject)"
 
 * "-debug=[category]" ("Output debugging information (supplying [category] is optional)") +
         ("If [category] is not supplied or if [category] = 1, output all debugging information.") + ("[category] can be:")

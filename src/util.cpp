@@ -275,14 +275,14 @@ bool LogAcceptCategory(const char* category)
                 // "credit" is a composite category enabling all Credit-related debug output
                 //addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool"
                 //"|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|"
-                //"credit|privatesend|instantsend|servicenode|spork|keepass|dnpayments|gobject|dht|bdap|validation|stealth|
+                //"credit|privatesend|instantsend|servicenode|spork|keepass|snpayments|gobject|dht|bdap|validation|stealth|
                 if (ptrCategory->count(std::string("credit"))) {
                     ptrCategory->insert(std::string("privatesend"));
                     ptrCategory->insert(std::string("instantsend"));
                     ptrCategory->insert(std::string("servicenode"));
                     ptrCategory->insert(std::string("spork"));
                     ptrCategory->insert(std::string("keepass"));
-                    ptrCategory->insert(std::string("dnpayments"));
+                    ptrCategory->insert(std::string("snpayments"));
                     ptrCategory->insert(std::string("gobject"));
                     ptrCategory->insert(std::string("dht"));
                     ptrCategory->insert(std::string("bdap"));

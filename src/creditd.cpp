@@ -13,7 +13,7 @@
 #include "httpserver.h"
 #include "init.h"
 #include "noui.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "scheduler.h"
 #include "util.h"
 #include "utilstrencodings.h"

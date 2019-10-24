@@ -225,7 +225,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
             } else if (nRequestedServiceNodeAttempt < 6) {
                 //sync payment votes
                 if (pnode->nVersion == 70900) {
-                    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, dnpayments.GetStorageLimit())); //sync payment votes
+                    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit())); //sync payment votes
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC)); //sync payment votes
                 }
@@ -304,7 +304,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                     continue;
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "servicenode-list-sync");
 
-                if (pnode->nVersion < dnpayments.GetMinServiceNodePaymentsProto())
+                if (pnode->nVersion < snpayments.GetMinServiceNodePaymentsProto())
                     continue;
                 nRequestedServiceNodeAttempt++;
 
@@ -317,7 +317,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
             // DNW : SYNC SERVICENODE PAYMENT VOTES FROM OTHER CONNECTED CLIENTS
 
             if (nRequestedServiceNodeAssets == SERVICENODE_SYNC_DNW) {
-                LogPrint("dnpayments", "CServiceNodeSync::ProcessTick -- nTick %d nRequestedServiceNodeAssets %d nTimeLastBumped %lld GetTime() %lld diff %lld\n", nTick, nRequestedServiceNodeAssets, nTimeLastBumped, GetTime(), GetTime() - nTimeLastBumped);
+                LogPrint("snpayments", "CServiceNodeSync::ProcessTick -- nTick %d nRequestedServiceNodeAssets %d nTimeLastBumped %lld GetTime() %lld diff %lld\n", nTick, nRequestedServiceNodeAssets, nTimeLastBumped, GetTime(), GetTime() - nTimeLastBumped);
                 // check for timeout first
                 // This might take a lot longer than SERVICENODE_SYNC_TIMEOUT_SECONDS due to new blocks,
                 // but that should be OK and it should timeout eventually.
@@ -335,9 +335,9 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                     return;
                 }
                 // check for data
-                // if dnpayments already has enough blocks and votes, switch to the next asset
+                // if snpayments already has enough blocks and votes, switch to the next asset
                 // try to fetch data from at least two peers though
-                if (nRequestedServiceNodeAttempt > 1 && dnpayments.IsEnoughData()) {
+                if (nRequestedServiceNodeAttempt > 1 && snpayments.IsEnoughData()) {
                     LogPrint("servicenode", "CServiceNodeSync::ProcessTick -- nTick %d nRequestedServiceNodeAssets %d -- found enough data\n", nTick, nRequestedServiceNodeAssets);
                     SwitchToNextAsset(connman);
                     connman.ReleaseNodeVector(vNodesCopy);
@@ -355,17 +355,17 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                     continue;
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "servicenode-payment-sync");
 
-                if (pnode->nVersion < dnpayments.GetMinServiceNodePaymentsProto())
+                if (pnode->nVersion < snpayments.GetMinServiceNodePaymentsProto())
                     continue;
                 nRequestedServiceNodeAttempt++;
 
                 // ask node for all payment votes it has (new nodes will only return votes for future payments)
                 if (pnode->nVersion == 70900) {
-                    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, dnpayments.GetStorageLimit()));
+                    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit()));
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC));
                 } // ask node for missing pieces only (old nodes will not be asked)
-                dnpayments.RequestLowDataPaymentBlocks(pnode, connman);
+                snpayments.RequestLowDataPaymentBlocks(pnode, connman);
 
                 connman.ReleaseNodeVector(vNodesCopy);
                 return; //this will cause each peer to get one request each six seconds for the various assets we need

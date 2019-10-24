@@ -33,17 +33,17 @@
 // https://github.com/trezor/trezor-crypto
 
 #include "bip39.h"
-#include "bip39_english.h"
-#include "bip39_chinese_simplified.h"
-#include "bip39_chinese_traditional.h"
-#include "bip39_french.h"
-//#include "bip39_german.h"  //exclude for now, but include later
-#include "bip39_italian.h"
-#include "bip39_japanese.h"
-#include "bip39_korean.h"
-#include "bip39_russian.h"
-#include "bip39_spanish.h"
-#include "bip39_ukrainian.h"
+#include "wordlists/bip39_english.h"
+#include "wordlists/bip39_chinese_simplified.h"
+#include "wordlists/bip39_chinese_traditional.h"
+#include "wordlists/bip39_french.h"
+//#include "wordlists/bip39_german.h"  //exclude for now, but include later
+#include "wordlists/bip39_italian.h"
+#include "wordlists/bip39_japanese.h"
+#include "wordlists/bip39_korean.h"
+#include "wordlists/bip39_russian.h"
+#include "wordlists/bip39_spanish.h"
+#include "wordlists/bip39_ukrainian.h"
 #include "crypto/sha256.h"
 #include "random.h"
 

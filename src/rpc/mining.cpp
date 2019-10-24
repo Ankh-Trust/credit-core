@@ -22,7 +22,7 @@
 #include "miner/miner.h"
 #include "net.h"
 #include "pow.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "spork.h"
 #include "txmempool.h"
 #include "util.h"
@@ -337,6 +337,12 @@ UniValue setgenerate(const JSONRPCRequest& request)
     ForceSetArg("-genproclimit-gpu", nGenProcLimitGPU);
 
     if (fGenerate) {
+        #ifdef ENABLE_WALLET
+            //Check to see if wallet needs upgrading
+            if(pwalletMain->WalletNeedsUpgrading())
+                throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        #endif //ENABLE_WALLET
+
         InitMiners(Params(), *g_connman);
         SetCPUMinerThreads(nGenProcLimitCPU);
         SetGPUMinerThreads(nGenProcLimitGPU);
@@ -660,7 +666,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
     }
 
     CScript payee;
-    if (sporkManager.IsSporkActive(SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT) && !servicenodeSync.IsWinnersListSynced() && !dnpayments.GetBlockPayee(chainActive.Height() + 1, payee))
+    if (sporkManager.IsSporkActive(SPORK_8_SERVICENODE_PAYMENT_ENFORCEMENT) && !servicenodeSync.IsWinnersListSynced() && !snpayments.GetBlockPayee(chainActive.Height() + 1, payee))
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Credit is downloading ServiceNode winners...");
 
     // next block is a superblock and we need governance info to correctly construct it

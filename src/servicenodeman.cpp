@@ -378,7 +378,7 @@ int CServiceNodeMan::CountServiceNodes(int nProtocolVersion)
 {
     LOCK(cs);
     int nCount = 0;
-    nProtocolVersion = nProtocolVersion == -1 ? dnpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
+    nProtocolVersion = nProtocolVersion == -1 ? snpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
 
     for (auto& dnpair : mapServiceNodes) {
         if (dnpair.second.nProtocolVersion < nProtocolVersion)
@@ -393,7 +393,7 @@ int CServiceNodeMan::CountEnabled(int nProtocolVersion)
 {
     LOCK(cs);
     int nCount = 0;
-    nProtocolVersion = nProtocolVersion == -1 ? dnpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
+    nProtocolVersion = nProtocolVersion == -1 ? snpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
 
     for (auto& dnpair : mapServiceNodes) {
         if (dnpair.second.nProtocolVersion < nProtocolVersion || !dnpair.second.IsEnabled())
@@ -544,11 +544,11 @@ bool CServiceNodeMan::GetNextServiceNodeInQueueForPayment(int nBlockHeight, bool
             continue;
 
         // //check protocol version
-        if (dnpair.second.nProtocolVersion < dnpayments.GetMinServiceNodePaymentsProto())
+        if (dnpair.second.nProtocolVersion < snpayments.GetMinServiceNodePaymentsProto())
             continue;
 
         //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
-        if (dnpayments.IsScheduled(dnpair.second, nBlockHeight))
+        if (snpayments.IsScheduled(dnpair.second, nBlockHeight))
             continue;
 
         //it's too new, wait for a cycle
@@ -604,7 +604,7 @@ servicenode_info_t CServiceNodeMan::FindRandomNotInVec(const std::vector<COutPoi
 {
     LOCK(cs);
 
-    nProtocolVersion = nProtocolVersion == -1 ? dnpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
+    nProtocolVersion = nProtocolVersion == -1 ? snpayments.GetMinServiceNodePaymentsProto() : nProtocolVersion;
 
     int nCountEnabled = CountEnabled(nProtocolVersion);
     int nCountNotExcluded = nCountEnabled - vecToExclude.size();
@@ -1649,9 +1649,9 @@ void CServiceNodeMan::UpdateLastPaid(const CBlockIndex* pindex)
         return;
 
     static int nLastRunBlockHeight = 0;
-    // Scan at least LAST_PAID_SCAN_BLOCKS but no more than dnpayments.GetStorageLimit()
+    // Scan at least LAST_PAID_SCAN_BLOCKS but no more than snpayments.GetStorageLimit()
     int nMaxBlocksToScanBack = std::max(LAST_PAID_SCAN_BLOCKS, nCachedBlockHeight - nLastRunBlockHeight);
-    nMaxBlocksToScanBack = std::min(nMaxBlocksToScanBack, dnpayments.GetStorageLimit());
+    nMaxBlocksToScanBack = std::min(nMaxBlocksToScanBack, snpayments.GetStorageLimit());
 
     LogPrint("servicenode", "CServiceNodeMan::UpdateLastPaid -- nCachedBlockHeight=%d, nLastRunBlockHeight=%d, nMaxBlocksToScanBack=%d\n",
         nCachedBlockHeight, nLastRunBlockHeight, nMaxBlocksToScanBack);

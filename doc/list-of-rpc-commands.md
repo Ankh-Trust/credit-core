@@ -36,7 +36,7 @@ Blockchain
 
 Control
 -------
-* debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|credit|privatesend|instantsend|servicenode|spork|keepass|dnpayments|gobject )
+* debug ( 0|1|addrman|alert|bench|coindb|db|lock|rand|rpc|selectcoins|mempool|mempoolrej|net|proxy|prune|http|libevent|tor|zmq|credit|privatesend|instantsend|servicenode|spork|keepass|snpayments|gobject )
 * getinfo
 * getmemoryinfo
 * help ( "command" )

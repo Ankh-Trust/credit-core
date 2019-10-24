@@ -18,8 +18,8 @@ class CServiceNodeBlockPayees;
 class CServiceNodePayments;
 class CServiceNodePaymentVote;
 
-static const int DNPAYMENTS_SIGNATURES_REQUIRED = 10;
-static const int DNPAYMENTS_SIGNATURES_TOTAL = 20;
+static const int snpayments_SIGNATURES_REQUIRED = 10;
+static const int snpayments_SIGNATURES_TOTAL = 20;
 
 //! minimum peer version that can receive and send servicenode payment messages,
 //  vote for servicenode and be elected as a payment winner
@@ -32,7 +32,7 @@ extern CCriticalSection cs_vecPayees;
 extern CCriticalSection cs_mapServiceNodeBlocks;
 extern CCriticalSection cs_mapServiceNodePayeeVotes;
 
-extern CServiceNodePayments dnpayments;
+extern CServiceNodePayments snpayments;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string& strErrorRet);

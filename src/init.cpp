@@ -56,8 +56,8 @@
 #include "consensus/validation.h"
 #include "privatesend-server.h"
 #include "psnotificationinterface.h"
-#include "rpcregister.h"
-#include "rpcserver.h"
+#include "rpc/register.h"
+#include "rpc/server.h"
 #include "scheduler.h"
 #include "script/sigcache.h"
 #include "script/standard.h"
@@ -316,8 +316,8 @@ void PrepareShutdown()
         // STORE DATA CACHES INTO SERIALIZED DAT FILES
         CFlatDB<CServiceNodeMan> flatdb1("dncache.dat", "magicServiceNodeCache");
         flatdb1.Dump(dnodeman);
-        CFlatDB<CServiceNodePayments> flatdb2("dnpayments.dat", "magicServiceNodePaymentsCache");
-        flatdb2.Dump(dnpayments);
+        CFlatDB<CServiceNodePayments> flatdb2("snpayments.dat", "magicServiceNodePaymentsCache");
+        flatdb2.Dump(snpayments);
         CFlatDB<CGovernanceManager> flatdb3("governance.dat", "magicGovernanceCache");
         flatdb3.Dump(governance);
         CFlatDB<CNetFulfilledRequestManager> flatdb4("netfulfilled.dat", "magicFulfilledCache");
@@ -615,7 +615,7 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-limitdescendantsize=<n>", strprintf("Do not accept transactions if any ancestor would have more than <n> kilobytes of in-mempool descendants (default: %u).", DEFAULT_DESCENDANT_SIZE_LIMIT));
     }
     std::string debugCategories = "addrman, alert, bench, cmpctblock, coindb, db, http, leveldb, libevent, lock, mempool, mempoolrej, net, proxy, prune, rand, reindex, rpc, selectcoins, tor, zmq, "
-                                  "credit (or specifically: gobject, instantsend, keepass, servicenode, dnpayments, dnsync, privatesend, spork)"; // Don't translate these and qt below
+                                  "credit (or specifically: gobject, instantsend, keepass, servicenode, snpayments, dnsync, privatesend, spork)"; // Don't translate these and qt below
     if (mode == HMM_CREDIT_QT)
         debugCategories += ", qt";
     strUsage += HelpMessageOpt("-debug=<category>", strprintf(_("Output debugging information (default: %u, supplying <category> is optional)"), 0) + ". " +
@@ -2019,10 +2019,10 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         }
 
         if (dnodeman.size()) {
-            strDBName = "dnpayments.dat";
+            strDBName = "snpayments.dat";
             uiInterface.InitMessage(_("Loading ServiceNode payment cache..."));
             CFlatDB<CServiceNodePayments> flatdb2(strDBName, "magicServiceNodePaymentsCache");
-            if (!flatdb2.Load(dnpayments)) {
+            if (!flatdb2.Load(snpayments)) {
                 return InitError(_("Failed to load ServiceNode payments cache from") + "\n" + (pathDB / strDBName).string());
             }
 
@@ -2070,7 +2070,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         scheduler.scheduleEvery(boost::bind(&CServiceNodeMan::DoMaintenance, boost::ref(dnodeman), boost::ref(*g_connman)), 1);
         scheduler.scheduleEvery(boost::bind(&CActiveServiceNode::DoMaintenance, boost::ref(activeServiceNode), boost::ref(*g_connman)), SERVICENODE_MIN_DNP_SECONDS);
 
-        scheduler.scheduleEvery(boost::bind(&CServiceNodePayments::DoMaintenance, boost::ref(dnpayments)), 60);
+        scheduler.scheduleEvery(boost::bind(&CServiceNodePayments::DoMaintenance, boost::ref(snpayments)), 60);
         scheduler.scheduleEvery(boost::bind(&CGovernanceManager::DoMaintenance, boost::ref(governance), boost::ref(*g_connman)), 60 * 5);
 
         scheduler.scheduleEvery(boost::bind(&CInstantSend::DoMaintenance, boost::ref(instantsend)), 60);

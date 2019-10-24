@@ -253,7 +253,7 @@ void CInstantSend::Vote(CTxLockCandidate& txLockCandidate, CConnman& connman)
         int nLockInputHeight = nPrevoutHeight + Params().GetConsensus().nInstantSendConfirmationsRequired - 2;
 
         int nRank;
-        int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, dnpayments.GetMinServiceNodePaymentsProto());
+        int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, snpayments.GetMinServiceNodePaymentsProto());
         if (!dnodeman.GetServiceNodeRank(activeServiceNode.outpoint, nRank, nLockInputHeight, nMinRequiredProtocol)) {
             LogPrint("instantsend", "CInstantSend::Vote -- Can't calculate rank for servicenode %s\n", activeServiceNode.outpoint.ToStringShort());
             continue;
@@ -1064,7 +1064,7 @@ bool CTxLockVote::IsValid(CNode* pnode, CConnman& connman) const
     int nLockInputHeight = coin.nHeight + Params().GetConsensus().nInstantSendConfirmationsRequired - 2;
 
     int nRank;
-    int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, dnpayments.GetMinServiceNodePaymentsProto());
+    int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, snpayments.GetMinServiceNodePaymentsProto());
     if (!dnodeman.GetServiceNodeRank(outpointServiceNode, nRank, nLockInputHeight, nMinRequiredProtocol)) {
         //can be caused by past versions trying to vote with an invalid protocol
         LogPrint("instantsend", "CTxLockVote::IsValid -- Can't calculate rank for servicenode %s\n", outpointServiceNode.ToStringShort());

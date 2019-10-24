@@ -56,7 +56,7 @@ void CPSNotificationInterface::UpdatedBlockTip(const CBlockIndex* pindexNew, con
     privateSendClient.UpdatedBlockTip(pindexNew);
 #endif // ENABLE_WALLET
     instantsend.UpdatedBlockTip(pindexNew);
-    dnpayments.UpdatedBlockTip(pindexNew, connman);
+    snpayments.UpdatedBlockTip(pindexNew, connman);
     governance.UpdatedBlockTip(pindexNew, connman);
 }
 
