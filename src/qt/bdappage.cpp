@@ -167,7 +167,7 @@ void BdapPage::addGroup()
     //Check to see if wallet needs upgrading
     if (model->getWallet()->WalletNeedsUpgrading()) {
         QMessageBox::critical(this, QObject::tr("Older wallet version detected"),
-                QObject::tr("Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue."));
+                QObject::tr("Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue."));
         return;
     }
 
@@ -277,7 +277,7 @@ void BdapPage::addUser()
     //Check to see if wallet needs upgrading
     if (model->getWallet()->WalletNeedsUpgrading()) {
         QMessageBox::critical(this, QObject::tr("Older wallet version detected"),
-                QObject::tr("Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue."));
+                QObject::tr("Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue."));
         return;
     }
 
@@ -305,7 +305,7 @@ void BdapPage::addLink()
     //Check to see if wallet needs upgrading
     if (model->getWallet()->WalletNeedsUpgrading()) {
         QMessageBox::critical(this, QObject::tr("Older wallet version detected"),
-                QObject::tr("Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue."));
+                QObject::tr("Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue."));
         return;
     }
 

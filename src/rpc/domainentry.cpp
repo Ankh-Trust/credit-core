@@ -176,7 +176,7 @@ UniValue adduser(const JSONRPCRequest& request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");
@@ -867,7 +867,7 @@ UniValue addgroup(const JSONRPCRequest& request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw std::runtime_error("Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     if (!servicenodeSync.IsBlockchainSynced()) {
         throw std::runtime_error("Error: Cannot create BDAP Objects while wallet is not synced.");

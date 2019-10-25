@@ -134,7 +134,7 @@ UniValue getnewaddress(const JSONRPCRequest& request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     if (!pwalletMain->IsLocked(true))
         pwalletMain->TopUpKeyPoolCombo();
@@ -178,7 +178,7 @@ UniValue getnewed25519address(const JSONRPCRequest& request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     if (!pwalletMain->IsLocked(true))
         pwalletMain->TopUpKeyPoolCombo(); //TopUpEdKeyPool();
@@ -223,7 +223,7 @@ static UniValue getnewstealthaddress(const JSONRPCRequest &request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     CPubKey walletPubKey;
     CStealthAddress sxAddr;
@@ -2261,7 +2261,7 @@ UniValue keypoolrefill(const JSONRPCRequest& request)
 
     //Check to see if wallet needs upgrading
     if(pwalletMain->WalletNeedsUpgrading())
-        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+        throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
 
     EnsureWalletIsUnlocked();
     pwalletMain->TopUpKeyPoolCombo(kpSize);

@@ -141,7 +141,7 @@ void ReceiveCoinsDialog::on_receiveButton_clicked()
     //Check to see if wallet needs upgrading
     if (model->getWallet()->WalletNeedsUpgrading()) {
         QMessageBox::critical(this, tr("Older wallet version detected"),
-                tr("Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue."));
+                tr("Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue."));
         return;
     }
 

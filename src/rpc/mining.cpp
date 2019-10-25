@@ -340,7 +340,7 @@ UniValue setgenerate(const JSONRPCRequest& request)
         #ifdef ENABLE_WALLET
             //Check to see if wallet needs upgrading
             if(pwalletMain->WalletNeedsUpgrading())
-                throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 2.4.  Please unlock your wallet to continue.");
+                throw JSONRPCError(RPC_WALLET_NEEDS_UPGRADING, "Error: Your wallet has not been fully upgraded to version 1.0.  Please unlock your wallet to continue.");
         #endif //ENABLE_WALLET
 
         InitMiners(Params(), *g_connman);
