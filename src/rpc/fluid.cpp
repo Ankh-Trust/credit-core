@@ -8,7 +8,7 @@
 #include "fluid/banaccount.h"
 #include "fluid/fluid.h"
 #include "fluid/fluiddb.h"
-#include "fluid/fluiddynode.h"
+#include "fluid/fluidservicenode.h"
 #include "fluid/fluidmining.h"
 #include "fluid/fluidmint.h"
 #include "fluid/fluidsovereign.h"

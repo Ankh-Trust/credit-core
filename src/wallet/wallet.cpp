@@ -2907,7 +2907,7 @@ CAmount CWallet::GetBDAPCredits() const
         std::vector<std::vector<unsigned char>> vvch;
         credit.first.GetBDAPOpCodes(opCode1, opCode2, vvch);
         std::string strOpType = GetBDAPOpTypeString(opCode1, opCode2);
-        const CDynamicAddress address = GetScriptAddress(credit.first.scriptPubKey);
+        const CCreditAddress address = GetScriptAddress(credit.first.scriptPubKey);
         if (strOpType == "bdap_move_asset") {
             if (vvch.size() > 1) {
                 std::string strMoveDestination = stringFromVch(vvch[1]);

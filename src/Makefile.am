@@ -330,7 +330,7 @@ libcredit_server_a_SOURCES = \
   rpc/blockchain.cpp \
   rpc/dht.cpp \
   rpc/domainentry.cpp \
-  rpc/dynode.cpp \
+  rpc/servicenode.cpp \
   rpc/fluid.cpp \
   rpc/governance.cpp \
   rpc/linking.cpp \
