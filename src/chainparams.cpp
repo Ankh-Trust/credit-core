@@ -115,8 +115,8 @@ public:
     {
         strNetworkID = "main";
         consensus.nRewardsStart = 5;               // PoW Rewards begin on block 5
-        consensus.nServiceNodePaymentsStartBlock = 43200;  // ServiceNode Payments begin on block 10273
-        consensus.nMinCountServiceNodesPaymentStart = 15;  // ServiceNode Payments begin once 15 ServiceNodes exist or more.
+        consensus.nServiceNodePaymentsStartBlock = 64000;  // ServiceNode Payments begin on block 64000
+        consensus.nMinCountServiceNodesPaymentStart = 5;  // ServiceNode Payments begin once 5 ServiceNodes exist or more.
 
         consensus.nInstantSendConfirmationsRequired = 11;
         consensus.nInstantSendKeepLock = 24;
