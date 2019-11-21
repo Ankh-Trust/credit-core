@@ -237,7 +237,7 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 60 * 60; // fulfilled requests expire in 1 hour
 
-        vSporkAddresses = {"Cbz7mL3cQBcmBdhHoCTVYmbLjaVoJvRRHV"};
+        vSporkAddresses = {"CJRBs6AwoRqYsfoyMKMCaVziDdHVFrCKE1"};
         nMinSporkKeys = 1;
 
         checkpointData = (CCheckpointData){
