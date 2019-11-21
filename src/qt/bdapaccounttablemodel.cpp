@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -127,8 +126,7 @@ public:
                 // "common_name", "object_full_path"
                 if (keyName == "common_name") getName = result[i].getValues()[j].get_str();
                 if (keyName == "object_full_path") getPath = result[i].getValues()[j].get_str();
-                //if (keyName == "expires_on") getExpirationDate = std::to_string(result[i].getValues()[j].get_int64());
-                if (keyName == "expires_on") getExpirationDate = DateTimeStrFormat("%Y-%m-%d", result[i].getValues()[j].get_int64());
+                if (keyName == "expires_on") getExpirationDate = FormatISO8601Date(result[i].getValues()[j].get_int64());
 
             }
 

@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -952,7 +951,9 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (tx.nVersion == BDAP_TX_VERSION && !sporkManager.IsSporkActive(SPORK_30_ACTIVATE_BDAP))
         return state.DoS(0, false, REJECT_NONSTANDARD, "inactive-spork-bdap-tx");
 
+    bool fIsBDAP = false;
     if (tx.nVersion == BDAP_TX_VERSION) {
+        fIsBDAP = true;
         CScript scriptBDAPOp;
         std::vector<std::vector<unsigned char>> vvch;
         int op1, op2;
@@ -1107,7 +1108,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 
     // Rather not work on nonstandard transactions (unless -testnet/-regtest)
     std::string reason;
-    if (fRequireStandard && !IsStandardTx(tx, reason) && !fluidTransaction)
+    if (fRequireStandard && !fIsBDAP && !IsStandardTx(tx, reason) && !fluidTransaction)
         return state.DoS(0, false, REJECT_NONSTANDARD, reason);
 
     // Only accept nLockTime-using transactions that can be mined in the next

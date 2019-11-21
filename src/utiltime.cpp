@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -16,6 +15,8 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread.hpp>
+
+#include <ctime>
 
 static int64_t nMockTime = 0; //! For unit testing
 
@@ -107,4 +108,26 @@ std::string DurationToDHMS(int64_t nDurationTime)
     if (hours)
         return strprintf("%02dh:%02dm:%02ds", hours, minutes, seconds);
     return strprintf("%02dm:%02ds", minutes, seconds);
+}
+
+std::string FormatISO8601DateTime(int64_t nTime) {
+    struct tm ts;
+    time_t time_val = nTime;
+#ifdef _MSC_VER
+    gmtime_s(&ts, &time_val);
+#else
+    gmtime_r(&time_val, &ts);
+#endif
+    return strprintf("%04i-%02i-%02iT%02i:%02i:%02iZ", ts.tm_year + 1900, ts.tm_mon + 1, ts.tm_mday, ts.tm_hour, ts.tm_min, ts.tm_sec);
+}
+
+std::string FormatISO8601Date(int64_t nTime) {
+    struct tm ts;
+    time_t time_val = nTime;
+#ifdef _MSC_VER
+    gmtime_s(&ts, &time_val);
+#else
+    gmtime_r(&time_val, &ts);
+#endif
+    return strprintf("%04i-%02i-%02i", ts.tm_year + 1900, ts.tm_mon + 1, ts.tm_mday);
 }

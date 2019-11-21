@@ -1,5 +1,5 @@
 ---
-name: "credit-arm-1.0.1.0"
+name: "credit-arm-1.0.2.0"
 enable_cache: true
 suites:
 - "trusty"
