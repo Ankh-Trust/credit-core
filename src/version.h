@@ -13,7 +13,7 @@
  * network protocol versioning
  */
 
-static const int PROTOCOL_VERSION = 71000;
+static const int PROTOCOL_VERSION = 71100;
 
 //! initial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
@@ -41,6 +41,6 @@ static const int NO_BLOOM_VERSION = 60800;
 static const int SENDHEADERS_VERSION = 60800;
 
 //! short-id-based block download starts with this version
-static const int SHORT_IDS_BLOCKS_VERSION = 71000;
+static const int SHORT_IDS_BLOCKS_VERSION = 71100;
 
 #endif // CREDIT_VERSION_H
