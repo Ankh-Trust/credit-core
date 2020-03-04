@@ -19,7 +19,7 @@ bool bdapFeesPopup(QWidget *parentDialog, const opcodetype& opCodeAction, const 
     CAmount totalAmount;
     //CreditUnits::Unit u;
     bool displayMonths = false;
-    CAmount currBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
+    CAmount currBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPCreditAmount();
 
     //only display months for BDAP objects/transactions that include it. may need to expand in the future
     if ( (opCodeAction == OP_BDAP_NEW && opCodeObject == OP_BDAP_ACCOUNT_ENTRY) && ( inputAccountType == BDAP::ObjectType::BDAP_USER || inputAccountType == BDAP::ObjectType::BDAP_GROUP ) )
@@ -36,7 +36,7 @@ bool bdapFeesPopup(QWidget *parentDialog, const opcodetype& opCodeAction, const 
     if (totalAmount > currBalance)
     {
       QString strErrorMessage = "";
-      strErrorMessage.append(QObject::tr("Insufficient funds for BDAP transaction. %1 required.") .arg(DynamicUnits::formatHtmlWithUnit(unit, totalAmount)));
+      strErrorMessage.append(QObject::tr("Insufficient funds for BDAP transaction. %1 required.") .arg(CreditUnits::formatHtmlWithUnit(unit, totalAmount)));
       QMessageBox::critical(parentDialog, QObject::tr("BDAP Transaction"), strErrorMessage);
       return false;
     }
