@@ -2957,7 +2957,7 @@ Servicenodeは入力を混合し、3人のユーザー全員に指示します�
         <translation>から</translation>
     </message>
 </context>
-+<context>
+<context>
     <name>ServicenodeList</name>
     <message>
         <source>Form</source>
