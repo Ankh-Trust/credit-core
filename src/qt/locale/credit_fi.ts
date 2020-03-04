@@ -4377,7 +4377,7 @@ esimerkiksi: alertnotify=echo %%s | mail -s "Credit Hälytys" admin@foo.com
     </message>
     <message>
         <source>Loading fulfilled requests cache...</source>
-        <translation>Ladataan täytettyjä pyyntöjä välimuistiin ...</translation>>
+        <translation>Ladataan täytettyjä pyyntöjä välimuistiin ...</translation>
     </message>
     <message>
         <source>Lock is already in place.</source>
