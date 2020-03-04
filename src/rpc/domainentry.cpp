@@ -108,9 +108,9 @@ static UniValue AddDomainEntry(const JSONRPCRequest& request, BDAP::ObjectType b
     if (!txDomainEntry.ValidateValues(strMessage))
         throw std::runtime_error("BDAP_ADD_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3508 - " + strMessage);
 
-    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
+    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPCreditAmount();
     if (monthlyFee + oneTimeFee + depositFee > curBalance)
-        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strprintf("Insufficient funds for BDAP transaction. %s DYN required.", FormatMoney(monthlyFee + oneTimeFee + depositFee)));
+        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strprintf("Insufficient funds for BDAP transaction. %s 0AC required.", FormatMoney(monthlyFee + oneTimeFee + depositFee)));
 
     bool fUseInstantSend = false;
     //if (dnodeman.EnoughActiveForInstandSend() && sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED))
@@ -490,9 +490,9 @@ static UniValue UpdateDomainEntry(const JSONRPCRequest& request, BDAP::ObjectTyp
     if (!txUpdatedEntry.ValidateValues(strMessage))
         throw std::runtime_error("BDAP_UPDATE_PUBLIC_ENTRY_RPC_ERROR: ERRCODE: 3705 - " + strMessage);
 
-    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
+    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPCreditAmount();
     if (monthlyFee + oneTimeFee + depositFee > curBalance)
-        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strprintf("Insufficient funds for BDAP transaction. %s DYN required.", FormatMoney(monthlyFee + oneTimeFee + depositFee)));
+        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, strprintf("Insufficient funds for BDAP transaction. %s 0AC required.", FormatMoney(monthlyFee + oneTimeFee + depositFee)));
 
     bool fUseInstantSend = false;
     //if (dnodeman.EnoughActiveForInstandSend() && sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED))
