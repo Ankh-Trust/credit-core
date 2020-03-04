@@ -148,7 +148,7 @@ public:
 
     /// Check all ServiceNode and remove inactive
     void CheckAndRemove(CConnman& connman);
-    /// This is dummy overload to be used for dumping/loading dncache.dat
+    /// This is dummy overload to be used for dumping/loading sncache.dat
     void CheckAndRemove() {}
 
     /// Clear ServiceNode vector

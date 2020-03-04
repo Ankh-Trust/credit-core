@@ -314,7 +314,7 @@ void PrepareShutdown()
 
     if (!fLiteMode && !fRPCInWarmup) {
         // STORE DATA CACHES INTO SERIALIZED DAT FILES
-        CFlatDB<CServiceNodeMan> flatdb1("dncache.dat", "magicServiceNodeCache");
+        CFlatDB<CServiceNodeMan> flatdb1("sncache.dat", "magicServiceNodeCache");
         flatdb1.Dump(dnodeman);
         CFlatDB<CServiceNodePayments> flatdb2("snpayments.dat", "magicServiceNodePaymentsCache");
         flatdb2.Dump(snpayments);
@@ -2011,7 +2011,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         boost::filesystem::path pathDB = GetDataDir();
         std::string strDBName;
 
-        strDBName = "dncache.dat";
+        strDBName = "sncache.dat";
         uiInterface.InitMessage(_("Loading ServiceNode cache..."));
         CFlatDB<CServiceNodeMan> flatdb1(strDBName, "magicServiceNodeCache");
         if (!flatdb1.Load(dnodeman)) {
