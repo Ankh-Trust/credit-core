@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -25,8 +24,8 @@ static const int snpayments_SIGNATURES_TOTAL = 20;
 //  vote for servicenode and be elected as a payment winner
 // V1 - Last protocol version before update
 // V2 - Newest protocol version
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 70900;
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71000;
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 71000;
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71100;  // Only Service Nodes >= v1.0.2.0 will get paid after Spork 10 activation
 
 extern CCriticalSection cs_vecPayees;
 extern CCriticalSection cs_mapServiceNodeBlocks;

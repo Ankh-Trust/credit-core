@@ -624,6 +624,11 @@ QLabel* BdapPage::getUserStatus()
     return ui->labelUserStatus;
 }
 
+QLabel* BdapPage::getNumRecordsFound()
+{
+    return ui->labelNumRecordsFound;
+}
+
 QLabel* BdapPage::getLinkCompleteRecords()
 {
     return ui->labelCompleteRecords;

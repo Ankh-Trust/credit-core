@@ -95,8 +95,8 @@ in the getinfo-output. If the numbers match, the installation is completed.
 ```
 credit-cli getinfo
 {
-  "version": 1000000,
-  "protocolversion": 71100,
+  "version": 1010000,
+  "protocolversion": 71110,
   "walletversion": 100000,
   "balance": 0.00000000,
   "privatesend_balance": 0.00000000,

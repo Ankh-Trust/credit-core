@@ -480,6 +480,10 @@ Var vänlig och försök igen.</translation>
         <translation>Kommandoradsalternativ</translation>
     </message>
     <message>
+        <source>&amp;Import mnemonic/private key...</source>
+        <translation>&amp;Importera mnemonic/privat nyckel...</translation>
+    </message>    
+    <message>
         <source>&amp;PrivateSend information</source>
         <translation>&amp;Skicka privat information</translation>
     </message>
@@ -524,7 +528,7 @@ Var vänlig och försök igen.</translation>
     <message numerus="yes">
         <source>%n active connection(s) to Credit network</source>
         <translation>
-            <numerusform>%n aktiva anslutningar till dynamiska-nätverket</numerusform>
+            <numerusform>%n aktiva anslutningar till Credit-nätverket</numerusform>
         </translation>
     </message>
     <message>
@@ -1306,7 +1310,7 @@ Följaktligen kommer användare som har säkerhetskopierade avstängningar ocks�
     </message>
     <message>
         <source>Connect to the Credit network through a SOCKS5 proxy.</source>
-        <translation>Anslut till dynamiska-nätverket genom en SOCKS5-proxy.</translation>
+        <translation>Anslut till Credit-nätverket genom en SOCKS5-proxy.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1326,7 +1330,7 @@ Följaktligen kommer användare som har säkerhetskopierade avstängningar ocks�
     </message>
     <message>
         <source>Connect to the Credit network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Anslut till dynamiska-nätverket via en separat SOCKS5-proxy för Tor-dolda tjänster.</translation>
+        <translation>Anslut till Credit-nätverket via en separat SOCKS5-proxy för Tor-dolda tjänster.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
@@ -1537,7 +1541,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet.</source>
-        <translation>Den visade informationen kan vara inaktuell. Plånboken synkroniseras automatiskt med dynamiska-nätverket efter att anslutningen är upprättad, men denna process har inte slutförts ännu.</translation>
+        <translation>Den visade informationen kan vara inaktuell. Plånboken synkroniseras automatiskt med Credit-nätverket efter att anslutningen är upprättad, men denna process har inte slutförts ännu.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -2292,7 +2296,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Credit network.</source>
-        <translation>Ett valfritt meddelande att bifoga betalningsbegäran, vilket visas när begäran öppnas. Obs: Meddelandet kommer inte att sändas med betalningen över dynamiska-nätverket.</translation>
+        <translation>Ett valfritt meddelande att bifoga betalningsbegäran, vilket visas när begäran öppnas. Obs: Meddelandet kommer inte att sändas med betalningen över Credit-nätverket.</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -2304,7 +2308,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Credit network.</source>
-        <translation>Ett valfritt meddelande att bifoga betalningsbegäran, vilket visas när begäran öppnas. Obs: Meddelandet kommer inte att sändas med betalningen över dynamiska-nätverket.</translation>
+        <translation>Ett valfritt meddelande att bifoga betalningsbegäran, vilket visas när begäran öppnas. Obs: Meddelandet kommer inte att sändas med betalningen över Credit-nätverket.</translation>
     </message>
     <message>
         <source>Use this form to request payments. All fields are &lt;b&gt;optional&lt;/b&gt;.</source>
@@ -2852,7 +2856,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>A message that was attached to the credit: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Credit network.</source>
-        <translation>Ett meddelande som bifogades credit: -URIn och som lagras med transaktionen som referens. NB: Meddelandet kommer inte att sändas över dynamiska-nätverket.</translation>
+        <translation>Ett meddelande som bifogades credit: -URIn och som lagras med transaktionen som referens. NB: Meddelandet kommer inte att sändas över Credit-nätverket.</translation>
     </message>
     <message>
         <source>The fee will be deducted from the amount being sent. The recipient will receive a lower amount of Credit than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
@@ -3613,15 +3617,15 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>My ServiceNodes</source>
-        <translation>Mina Dyn-noder</translation>
+        <translation>Mina ServiceNodes</translation>
     </message>
     <message>
         <source>All ServiceNodes</source>
-        <translation>Alla Dyn-noder</translation>
+        <translation>Alla ServiceNodes</translation>
     </message>
     <message>
         <source>Note: Status of your ServiceNodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your ServiceNode should be running but you still do not see &quot;ENABLED&quot; in &quot;Status&quot; field.</source>
-        <translation>Obs! Statusen för dina Dynodier i den lokala plånboken kan eventuellt vara lite felaktig.&lt;br /&gt; Vänta alltid på plånboken för att synkronisera ytterligare data och dubbelkolla från en annan nod&lt;br /&gt; om din Dynod ska vara igång men du ser fortfarande inte &quot;aktiverad&quot; i &quot;Status&quot; fält.</translation>
+        <translation>Obs! Statusen för dina ServiceNodes i den lokala plånboken kan eventuellt vara lite felaktig.&lt;br /&gt; Vänta alltid på plånboken för att synkronisera ytterligare data och dubbelkolla från en annan nod&lt;br /&gt; om din Servicenode ska vara igång men du ser fortfarande inte &quot;aktiverad&quot; i &quot;Status&quot; fält.</translation>
     </message>
     <message>
         <source>Start &amp;all</source>
@@ -3697,7 +3701,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>You can&apos;t use this command until ServiceNode list is synced</source>
-        <translation>Du kan inte använda det här kommandot tills Dynod-listan synkroniseras</translation>
+        <translation>Du kan inte använda det här kommandot tills ServiceNode-listan synkroniseras</translation>
     </message>
     <message>
         <source>Confirm ServiceNode start</source>
@@ -3788,7 +3792,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
     </message>
     <message>
         <source>This shows the overall hashrate of the Credit network</source>
-        <translation>Detta visar den totala hashraten i det dynamiska-nätverket</translation>
+        <translation>Detta visar den totala hashraten i det Credit-nätverket</translation>
     </message>
     <message>
         <source>This shows the average time between the blocks you have mined</source>
@@ -5403,7 +5407,7 @@ till exempel: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     <name>ModalOverlay</name>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet. This means that recent transactions will not be visible, and the balance will not be up-to-date until this process has completed.</source>
-        <translation>Den information som visas kan vara föråldrad. Din plånbok synkroniseras automatiskt med det dynamiska-nätverket efter att en anslutning har upprättats, men den här processen har inte slutförts än. Det innebär att de senaste transaktionerna inte kommer att synas, och resten kommer inte att uppdateras förrän processen har slutförts.</translation>
+        <translation>Den information som visas kan vara föråldrad. Din plånbok synkroniseras automatiskt med det Credit-nätverket efter att en anslutning har upprättats, men den här processen har inte slutförts än. Det innebär att de senaste transaktionerna inte kommer att synas, och resten kommer inte att uppdateras förrän processen har slutförts.</translation>
     </message>
     <message>
         <source>Spending _AC may not be possible during that phase!</source>
@@ -5452,29 +5456,6 @@ till exempel: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     <message>
         <source>Hide</source>
         <translation>Göm</translation>
-    </message>
-</context>
-<context>
-    <name>BdapAccountTableModel</name>
-    <message>
-        <source>BDAP Error</source>
-        <translation>BDAP Fel</translation>
-    </message>
-    <message>
-        <source>Common Name</source>
-        <translation>Vanligt namn</translation>
-    </message>
-    <message>
-        <source>Object Full Path</source>
-        <translation>Objektets Fulla sökväg</translation>
-    </message>
-    <message>
-        <source>Expiration Date</source>
-        <translation>Utgångsdatum</translation>
-    </message>
-    <message>
-        <source>Records found: </source>
-        <translation>Hittade Poster:</translation>
     </message>
 </context>
 <context>
@@ -5664,6 +5645,10 @@ till exempel: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
         <translation>Uppdatera</translation>
     </message>
     <message>
+        <source>Refresh All</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Add a user</source>
         <translation>Lägg till en användare</translation>
     </message>
@@ -5838,6 +5823,22 @@ till exempel: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     <message>
         <source>BDAP Pending Request Link Detail</source>
         <translation>Väntar på begäran länkdetalj</translation>
+    </message>
+    <message>
+        <source>Common Name</source>
+        <translation>Vanligt namn</translation>
+    </message>
+    <message>
+        <source>Object Full Path</source>
+        <translation>Objektets Fulla sökväg</translation>
+    </message>
+    <message>
+        <source>Expiration Date</source>
+        <translation>Utgångsdatum</translation>
+    </message>
+    <message>
+        <source>Records found: </source>
+        <translation>Hittade Poster:</translation>
     </message>
 </context>
 <context>
@@ -6183,7 +6184,7 @@ Wallet will restart after mnemonic has been imported.</source>
     </message>
     <message>
         <source>Tips: The private key file is the file exported by Credit 'dumpwallet filename', not the .dat file.</source>
-        <translation>Tips: Den privata nyckelfilen är filen som exporteras av Dynamic 'dumpwallet filename', inte .dat filen.</translation>
+        <translation>Tips: Den privata nyckelfilen är filen som exporteras av Credit 'dumpwallet filename', inte .dat filen.</translation>
     </message>
     <message>
         <source>Wallet already has an HD account loaded.

@@ -1,6 +1,21 @@
 **Credit CHANGELOG**
 -------------------------
 
+**Credit v1.1.0.0**
+
+* [BDAP] Remove second month overrun check
+* Bump client and block version to 1.0.3.0
+* [RPC] More user-friendly error message when partially signing
+* [Qt] Translations Updated
+* [BDAP] Show fee required in the insufficient funds error message
+* [BDAP] Use new epoch to string format function in Qt
+* [Tests] Add unit test for new add months to epoch function
+* [Util] Refactor add months to epoch functions
+* [Test] Add unit tests for new format ISO date and time
+* [BDAP] Fix comparison between signed and unsigned warning
+* [RPC] Fix dynode-list bug
+
+
 **Credit v1.0.2.0**
 
 * [BDAP] Set maximum months stored in local accounts db
@@ -36,5 +51,6 @@
 **Credit v1.0.0.0**
 
 * Increase ServiceCollateral to 50,000 0AC
+
 
 ** Initial Fork from Duality

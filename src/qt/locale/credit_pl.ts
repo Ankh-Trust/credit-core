@@ -479,6 +479,10 @@
         <translation>Opcje komendy linii</translation>
     </message>
     <message>
+        <source>&amp;Import mnemonic/private key...</source>
+        <translation>&amp;Importuj klucz mnemoniczny/prywatny...</translation>
+    </message>    
+    <message>
         <source>&amp;PrivateSend information</source>
         <translation>&amp;Prywatnie wysłana informacja</translation>
     </message>
@@ -985,11 +989,11 @@ Adres: %4
     </message>
     <message>
         <source>PrivateSend was successfully set to high (%1 and 8 rounds). You can change this at any time by opening Credit&apos;s configuration screen.</source>
-        <translation>PrivateSend ustawiona pomyślnie do wysokości(% 1 en 8 rund). Możesz je zmienić w każdej chwili poprzez otworzenie ekranu konfiguracji Credit&apos;s</translation>    
+        <translation>PrivateSend ustawiona pomyślnie do wysokości(% 1 en 8 rund). Możesz je zmienić w każdej chwili poprzez otworzenie ekranu konfiguracji Credit&apos;s</translation>
     </message>
     <message>
         <source>PrivateSend was successfully set to maximum (%1 and 16 rounds). You can change this at any time by opening Credit&apos;s configuration screen.</source>
-        <translation>PrivateSend ustawiona pomyślnie do PrivateSend ustawiona pomyślnie do maksimum (% 1 en 16 rund). Możesz je zmienić w każdej chwili poprzez otworzenie ekranu konfiguracji Credit&apos;s</translation>   
+        <translation>PrivateSend ustawiona pomyślnie do PrivateSend ustawiona pomyślnie do maksimum (% 1 en 16 rund). Możesz je zmienić w każdej chwili poprzez otworzenie ekranu konfiguracji Credit&apos;s</translation>
             </message>
 </context>
 <context>
@@ -1141,14 +1145,14 @@ Zachowasz kontrolę nad twoimi pieniędzmi przez cały czas.&lt;hr&gt;
 &lt;li&gt;PrivateSend zaczyna się przez rozbicie wkładów twojej tranzakcji na standardowe/domyślne denominacje.
 Te denominacje są 0.001, 0.01 _AC, 0.1 _AC, 1 _AC, 10 _AC -- na kształt papierowych pieniędzy, których używasz każdego dnia.&lt;/li&gt;
 &lt;li&gt;Twój portfel podczas kiedy wysyła monety, nadaje prośbę do specjalnie skonfigurowanych węzłów na sieci, zwanych &#39;ServiceNodes&#39;.
-Te Dynody są informowane wtedy, że jesteś zainteresowany miksowaniem pewnych denominacji.
-Nie identyfikująca informacja została wysłana do Dynod, więc one nigdy nie wiedzą &#39;kim&#39; jesteś.&lt;/li&gt;
+Te Servicenody są informowane wtedy, że jesteś zainteresowany miksowaniem pewnych denominacji.
+Nie identyfikująca informacja została wysłana do Servicenod, więc one nigdy nie wiedzą &#39;kim&#39; jesteś.&lt;/li&gt;
 &lt;li&gt;Kiedy dwoje innych osób wyśle podobne wiadomości dając do zrozumienia, że chcą miksować te same denominacje, sesja miksowania rozpoczyna się.
-Dynody miksują wkłady oraz instruują wszystkich trzech użytkowników&#39; portfele do opłacenia nie-transformowanych wkładów do siebie.
+Servicenody miksują wkłady oraz instruują wszystkich trzech użytkowników&#39; portfele do opłacenia nie-transformowanych wkładów do siebie.
 YTwój portfel płaci denominację bezpośrednio do siebie, ale w różnych adresach (zwanych adres zmiany).&lt;/li&gt;
 &lt;li&gt;Aby nakazać pełne przesłonięcie twoich funduszy, twój portfel musi powtórzyć ten proces pewną ilość razy po każdej denominacji.
 Za każdym razem kiedy proces ten jest zakończony, je&#39;st nazwany &#39;runda&#39;. Każda runda PrivateSend sprawia, że jest niewyobrażalnie trudno zidentyfikować źródło pochodzenia twoich funduszy.&lt;/li&gt;
-&lt;li&gt;Ten proces miksowania zdarza się w tle bez żadnej interwencji z twojej strony. Kiedy zechcesz dokonać tranzakcji, 
+&lt;li&gt;Ten proces miksowania zdarza się w tle bez żadnej interwencji z twojej strony. Kiedy zechcesz dokonać tranzakcji,
 twoje fundusze będą już zanonimizowane. Nie ma potrzeby dodatkowego pisania.&lt;/li&gt;
 &lt;/ol&gt; &lt;hr&gt;
 &lt;b&gt;WAŻNE:&lt;/b&gt; twój portfel zawiera tylko 2000 z tych &#39;adresów zamin&#39;. Za każdym razem, kiedy ma miejsce miksowanie, zostaje użytych do 9 twoich adresów.
@@ -1339,7 +1343,7 @@ https://www.transifex.com/projects/p/credit/</translation>
     </message>
     <message>
         <source>This setting determines the amount of individual ServiceNodes that an input will be anonymized through.&lt;br/&gt;More rounds of anonymization gives a higher degree of privacy, but also costs more in fees.</source>
-        <translation>To ustawienie ustala ilość indywidualnych Dynod których wkład zostanie anonimizowany poprzez.&lt;br/&gt;Więcej rund anonimizacji poda wyższy stopień prywatności ale też kosztuje więcej. </translation>
+        <translation>To ustawienie ustala ilość indywidualnych Servicenod których wkład zostanie anonimizowany poprzez.&lt;br/&gt;Więcej rund anonimizacji poda wyższy stopień prywatności ale też kosztuje więcej. </translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -1351,11 +1355,11 @@ https://www.transifex.com/projects/p/credit/</translation>
     </message>
     <message>
         <source>Show ServiceNodes Tab</source>
-        <translation>Pokaż tabulator Dynod</translation>
+        <translation>Pokaż tabulator Servicenod</translation>
     </message>
     <message>
         <source>Show additional tab listing all your ServiceNodes in first sub-tab&lt;br/&gt;and all ServiceNodes on the network in second sub-tab.</source>
-        <translation>Pokaż dodatkowy tabulator listy wszystkich twoich Dynod w pierwszym pod-tabulatorze&lt;br/&gt;oraz wszystkie Dynody w sieci drugiego pod-tabulatora.</translation>
+        <translation>Pokaż dodatkowy tabulator listy wszystkich twoich Servicenod w pierwszym pod-tabulatorze&lt;br/&gt;oraz wszystkie Servicenody w sieci drugiego pod-tabulatora.</translation>
     </message>
     <message>
         <source>Enable advanced PrivateSend interface</source>
@@ -1656,7 +1660,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>The denominations you submitted to the ServiceNode.&lt;br&gt;To mix, other users must submit the exact same denominations.</source>
-        <translation>Podanie o denominacje wysłane do Dynod.&lt;br&gt;Aby nastąpiło mieszanie, inni użytkownicy muszą wysłać dokładnie takie same denominacje.</translation>
+        <translation>Podanie o denominacje wysłane do Servicenod.&lt;br&gt;Aby nastąpiło mieszanie, inni użytkownicy muszą wysłać dokładnie takie same denominacje.</translation>
     </message>
     <message>
         <source>(Last Message)</source>
@@ -3621,7 +3625,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>Note: Status of your ServiceNodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your ServiceNode should be running but you still do not see &quot;ENABLED&quot; in &quot;Status&quot; field.</source>
-        <translation>Uwaga: Status twoich Dynod w lakalnym portfelu może być potencjalnie nieprawidłowy.&lt;br /&gt; Zawsze czekaj na portfel aby zsynchronizować dane potem podwójnie sprawdź inny nod&lt;br /&gt;jeśli twój Dynod powinien funkcjonować ale nadal nie widzisz&quot;URUCHOMIONY&quot; w&quot;Statusie&quot; pola.</translation>
+        <translation>Uwaga: Status twoich Servicenod w lakalnym portfelu może być potencjalnie nieprawidłowy.&lt;br /&gt; Zawsze czekaj na portfel aby zsynchronizować dane potem podwójnie sprawdź inny nod&lt;br /&gt;jeśli twój Servicenod powinien funkcjonować ale nadal nie widzisz&quot;URUCHOMIONY&quot; w&quot;Statusie&quot; pola.</translation>
     </message>
     <message>
         <source>Start &amp;all</source>
@@ -3677,11 +3681,11 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>Are you sure you want to start ALL ServiceNodes?</source>
-        <translation>Jesteś pewny, że chcesz rozpocząć/zestartować WSZYSTKIE Dynody?</translation>
+        <translation>Jesteś pewny, że chcesz rozpocząć/zestartować WSZYSTKIE Servicenody?</translation>
     </message>
     <message>
         <source>Are you sure you want to start MISSING ServiceNodes?</source>
-        <translation>esteś pewny, że chcesz rozpocząć/zestartować BRAKUJĄCE Dynody?</translation>
+        <translation>esteś pewny, że chcesz rozpocząć/zestartować BRAKUJĄCE Servicenody?</translation>
     </message>
     <message>
         <source>Confirm missing ServiceNodes start</source>
@@ -3697,11 +3701,11 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>You can&apos;t use this command until ServiceNode list is synced</source>
-        <translation>Możesz użyć tego polecenia dopóki lista Dynod jest zsynchroznizowana</translation>
+        <translation>Możesz użyć tego polecenia dopóki lista Servicenod jest zsynchroznizowana</translation>
     </message>
     <message>
         <source>Confirm ServiceNode start</source>
-        <translation>Potwierdź start Dynod</translation>
+        <translation>Potwierdź start Servicenod</translation>
     </message>
     <message>
         <source>Are you sure you want to start ServiceNode %1?</source>
@@ -3721,7 +3725,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
     </message>
     <message>
         <source>Successfully started %d ServiceNodes, failed to start %d, total %d</source>
-        <translation>Pomyślnie rozpoczęty %d Dynody, start nie powiódł się %d, total %d</translation>
+        <translation>Pomyślnie rozpoczęty %d Servicenody, start nie powiódł się %d, total %d</translation>
     </message>
 </context>
 <context>
@@ -4485,7 +4489,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Importing...</source>
-        <translation>Importuje...</translation> 
+        <translation>Importuje...</translation>
     </message>
     <message>
         <source>Imports blocks from external blk000??.dat file</source>
@@ -4621,15 +4625,15 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>No ServiceNodes detected.</source>
-        <translation>Wykryto brak Dynod.</translation>
+        <translation>Wykryto brak Servicenod.</translation>
     </message>
     <message>
         <source>No compatible ServiceNode found.</source>
-        <translation>Znaleziono niekompatybilne Dynody.</translation>
+        <translation>Znaleziono niekompatybilne Servicenody.</translation>
     </message>
     <message>
         <source>Not in the ServiceNode list.</source>
-        <translation>Nie ma na liście Dynod..</translation>
+        <translation>Nie ma na liście Servicenod..</translation>
     </message>
     <message>
         <source>Number of automatic wallet backups (default: 10)</source>
@@ -4669,7 +4673,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Set external address:port to get to this ServiceNode (example: %s)</source>
-        <translation>Ustaw zewnętrzny adres w: port aby otrzymać ten Dynod (przykład.: %s)</translation>
+        <translation>Ustaw zewnętrzny adres w: port aby otrzymać ten Servicenod (przykład.: %s)</translation>
     </message>
     <message>
         <source>Set key pool size to &lt;n&gt; (default: %u)</source>
@@ -4717,7 +4721,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Submitted following entries to ServiceNode: %u / %d</source>
-        <translation>Dostarczono następujące wejścia do Dynoda: %u / %d</translation>
+        <translation>Dostarczono następujące wejścia do Servicenoda: %u / %d</translation>
     </message>
     <message>
         <source>Submitted to ServiceNode, waiting for more entries ( %u / %d ) %s</source>
@@ -4725,7 +4729,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Submitted to ServiceNode, waiting in queue %s</source>
-        <translation>Dostarczono do Dynoda, czekanie w kolejce %s</translation>
+        <translation>Dostarczono do Servicenoda, czekanie w kolejce %s</translation>
     </message>
     <message>
         <source>Synchronization failed</source>
@@ -4741,15 +4745,15 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Synchronizing ServiceNode winners...</source>
-        <translation>Synchronizacja wygranych Dynod...</translation>
+        <translation>Synchronizacja wygranych Servicenod...</translation>
     </message>
     <message>
         <source>Synchronizing ServiceNode payments...</source>
-        <translation>Synchronizacja opłat Dynod...</translation>
+        <translation>Synchronizacja opłat Servicenod...</translation>
     </message>
     <message>
         <source>Synchronizing ServiceNodes...</source>
-        <translation>Synchronizacja Dynod...</translation>
+        <translation>Synchronizacja Servicenod...</translation>
     </message>
     <message>
         <source>Synchronizing governance objects...</source>
@@ -4761,7 +4765,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>This is not a ServiceNode.</source>
-        <translation>To nie jest Dynod.</translation>
+        <translation>To nie jest Servicenod.</translation>
     </message>
     <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
@@ -4773,7 +4777,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Use N separate ServiceNodes to anonymize funds  (2-8, default: %u)</source>
-        <translation>Użyj N, aby oddzielić Dynody do anonimizacji funduszy (2-8, domyślny: %u)</translation>
+        <translation>Użyj N, aby oddzielić Servicenody do anonimizacji funduszy (2-8, domyślny: %u)</translation>
     </message>
     <message>
         <source>Use UPnP to map the listening port (default: %u)</source>
@@ -4805,7 +4809,7 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>Can&apos;t find random ServiceNode.</source>
-        <translation>Nie można znaleźć przypadkowych Dynod.</translation>
+        <translation>Nie można znaleźć przypadkowych Servicenod.</translation>
     </message>
     <message>
         <source>Can&apos;t mix while sync in progress.</source>
@@ -4881,11 +4885,11 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
     <message>
         <source>ServiceNode options:</source>
-        <translation>Opcje Dynod:</translation>
+        <translation>Opcje Servicenod:</translation>
     </message>
     <message>
         <source>ServiceNode queue is full.</source>
-        <translation>Kolejka Dynod jest pełna.</translation>
+        <translation>Kolejka Servicenod jest pełna.</translation>
     </message>
     <message>
         <source>ServiceNode:</source>
@@ -5454,733 +5458,731 @@ Na przykład: alertnotify=echo %%s | mail -s &quot;Credit Alert&quot; admin@foo.
     </message>
 </context>
 <context>
-    <name>BdapAccountTableModel</name>
-    <message>
-        <source>BDAP Error</source>
-        <translation>Needs Translating</translation>
-    </message>
-    <message>
-        <source>Common Name</source>
-        <translation>Needs Translating</translation>
-    </message>
-    <message>
-        <source>Object Full Path</source>
-        <translation>Needs Translating</translation>
-    </message>
-    <message>
-        <source>Expiration Date</source>
-        <translation>Needs Translating</translation>
-    </message>
-    <message>
-        <source>Records found: </source>
-        <translation>Needs Translating</translation>
-    </message>
-</context>
-<context>
     <name>BdapAddUserDialog</name>
     <message>
         <source>Add BDAP User</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj użytkownika BDAP</translation>
     </message>
     <message>
         <source>Common name:</source>
-        <translation>Needs Translating</translation>
+        <translation>Nazwa zwyczajowa:</translation>
     </message>
     <message>
         <source>Registration months:</source>
-        <translation>Needs Translating</translation>
+        <translation>Miesiące rejestracji:</translation>
     </message>
     <message>
         <source>User ID:</source>
-        <translation>Needs Translating</translation>
+        <translation>Identyfikator użytkownika:</translation>
     </message>
     <message>
         <source>Create a new address</source>
-        <translation>Needs Translating</translation>
+        <translation>Utwórz nowy adres</translation>
     </message>
     <message>
         <source>Add User</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj użytkownika</translation>
     </message>
     <message>
         <source>Group ID:</source>
-        <translation>Needs Translating</translation>
+        <translation>Identyfikator grupy:</translation>
     </message>
     <message>
         <source>Add Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj grupę</translation>
     </message>
     <message>
         <source>Successfully added user</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie dodano użytkownika</translation>
     </message>
     <message>
         <source>Expiration Date</source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności</translation>
     </message>
     <message>
         <source>Records found: </source>
-        <translation>Needs Translating</translation>
+        <translation>Znaleziono wpisy: </translation>
     </message>
     <message>
         <source>message</source>
-        <translation>Needs Translating</translation>
+        <translation>wiadomość</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>Needs Translating</translation>
+        <translation>dobrze</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Needs Translating</translation>
+        <translation>anulować</translation>
     </message>
 </context>
 <context>
     <name>BdapLinkDetailDialog</name>
     <message>
         <source>BDAP Link Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Szczegóły łącza BDAP</translation>
     </message>
     <message>
         <source>Requestor:</source>
-        <translation>Needs Translating</translation>
+        <translation>Pytający:</translation>
     </message>
     <message>
         <source>Recipient:</source>
-        <translation>Needs Translating</translation>
+        <translation>Odbiorca:</translation>
     </message>
     <message>
         <source>Link Public Key (Requestor):</source>
-        <translation>Needs Translating</translation>
+        <translation>link klucz publiczny (żądający):</translation>
     </message>
     <message>
         <source>Link Public Key (Recipient):</source>
-        <translation>Needs Translating</translation>
+        <translation>link klucz publiczny (odbiorca):</translation>
     </message>
     <message>
         <source>Requestor Link Address:</source>
-        <translation>Needs Translating</translation>
+        <translation>Adres linku żądającego:</translation>
     </message>
     <message>
         <source>Recipient Link Address:</source>
-        <translation>Needs Translating</translation>
+        <translation>Adres linku odbiorcy:</translation>
     </message>
     <message>
         <source>Signature Proof:</source>
-        <translation>Needs Translating</translation>
+        <translation>Dowód podpisu:</translation>
     </message>
     <message>
         <source>Link Message:</source>
-        <translation>Needs Translating</translation>
+        <translation>Link Wiadomość:</translation>
     </message>
     <message>
         <source>TXID:</source>
-        <translation>Needs Translating</translation>
+        <translation>TXID:</translation>
     </message>
     <message>
         <source>Time:</source>
-        <translation>Needs Translating</translation>
-    </message>   
+        <translation>Czas:</translation>
+    </message>
     <message>
         <source>Expiration Date:</source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności:</translation>
     </message>
     <message>
         <source>Expired:</source>
-        <translation>Needs Translating</translation>
+        <translation>Przedawniony:</translation>
     </message>
 </context>
 <context>
     <name>BdapLinkTableModel</name>
     <message>
         <source>BDAP User Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Dane użytkownika BDAP</translation>
     </message>
     <message>
         <source>BDAP Error</source>
-        <translation>Needs Translating</translation>
+        <translation>Błąd BDAP</translation>
     </message>
     <message>
         <source>Requestor</source>
-        <translation>Needs Translating</translation>
+        <translation>Wnioskodawca</translation>
     </message>
     <message>
         <source>Recipient</source>
-        <translation>Needs Translating</translation>
+        <translation>Odbiorca</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Needs Translating</translation>
+        <translation>Data</translation>
     </message>
     </context>
 <context>
     <name>BdapLinkTablePriv</name>
     <message>
         <source>BDAP Error</source>
-        <translation>Needs Translating</translation>
+        <translation>Błąd BDAP</translation>
     </message>
     <message>
         <source>Requestor</source>
-        <translation>Needs Translating</translation>
+        <translation>Wnioskodawca</translation>
     </message>
     <message>
         <source>Recipient</source>
-        <translation>Needs Translating</translation>
+        <translation>Odbiorca</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Needs Translating</translation>
+        <translation>Data</translation>
     </message>
 </context>
 <context>
     <name>BdapPage</name>
     <message>
         <source>Common Name</source>
-        <translation>Needs Translating</translation>
+        <translation>Nazwa zwyczajowa</translation>
     </message>
     <message>
         <source>Object Full Path</source>
-        <translation>Needs Translating</translation>
+        <translation>Pełna ścieżka obiektu</translation>
     </message>
     <message>
         <source>Expiration Date</source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności</translation>
     </message>
     <message>
         <source>Users</source>
-        <translation>Needs Translating</translation>
+        <translation>Użytkownicy</translation>
     </message>
     <message>
         <source>Update and Delete transactions are available when this is checked</source>
-        <translation>Needs Translating</translation>
+        <translation>Aktualizuj i usuwaj transakcje są dostępne, gdy jest zaznaczone</translation>
     </message>
     <message>
         <source>Only display My Users</source>
-        <translation>Needs Translating</translation>
+        <translation>Wyświetlaj tylko moich użytkowników</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Needs Translating</translation>
+        <translation>Odświeżać</translation>
+    </message>
+    <message>
+        <source>Refresh All</source>
+        <translation>Odśwież wszystko</translation>
     </message>
     <message>
         <source>Add a user</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj użytkownika</translation>
     </message>
     <message>
         <source>Add User</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj użytkownika</translation>
     </message>
     <message>
         <source>Update User</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaktualizuj użytkownika</translation>
     </message>
     <message>
         <source>Delete the currently selected user from the list</source>
-        <translation>Needs Translating</translation>
+        <translation>Usuń aktualnie wybranego użytkownika z listy</translation>
     </message>
     <message>
         <source>Delete User</source>
-        <translation>Needs Translating</translation>
+        <translation>Usuń użytkownika</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Needs Translating</translation>
+        <translation>Grupy</translation>
     </message>
     <message>
         <source>Links</source>
-        <translation>Needs Translating</translation>
+        <translation>Spinki do mankietów</translation>
     </message>
     <message>
         <source>Update and Delete transactions are available when this is checked</source>
-        <translation>Needs Translating</translation>
+        <translation>Aktualizuj i usuwaj transakcje są dostępne, gdy jest zaznaczone</translation>
     </message>
     <message>
         <source>Only display My Groups</source>
-        <translation>Needs Translating</translation>
+        <translation>Wyświetlaj tylko Moje grupy</translation>
     </message>
     <message>
         <source>Add a new group</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj nową grupę</translation>
     </message>
     <message>
         <source>Add Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj grupę</translation>
     </message>
     <message>
         <source>Update Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaktualizuj grupę</translation>
     </message>
     <message>
         <source>Delete the currently selected group from the list</source>
-        <translation>Needs Translating</translation>
+        <translation>Usuń aktualnie wybraną grupę z listy</translation>
     </message>
     <message>
         <source>&amp;Delete Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Usuń grupę</translation>
     </message>
     <message>
         <source>Add BDAP Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj grupę BDAP</translation>
     </message>
     <message>
         <source>Are you sure you want to delete \"</source>
-        <translation>Needs Translating</translation>
+        <translation>Czy jesteś pewien, że chcesz usunąć \"</translation>
     </message>
     <message>
         <source>Confirm Delete Account</source>
-        <translation>Needs Translating</translation>
+        <translation>Potwierdź usunięcie konta</translation>
     </message>
     <message>
         <source>Update BDAP Group</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaktualizuj grupę BDAP</translation>
     </message>
     <message>
         <source>BDAP Group Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Szczegóły grupy BDAP</translation>
     </message>
     <message>
         <source>BDAP User Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Dane użytkownika BDAP</translation>
     </message>
     <message>
         <source>Update BDAP User</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaktualizuj użytkownika BDAP</translation>
     </message>
     <message>
         <source>Successfully deleted user</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie usunięto użytkownika</translation>
     </message>
     <message>
         <source>Successfully deleted group</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie usunięto grupę</translation>
     </message>
     <message>
         <source>BDAP Error</source>
-        <translation>Needs Translating</translation>
+        <translation>Błąd BDAP</translation>
     </message>
     <message>
         <source>Enter common name to search</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź nazwę pospolitą, aby wyszukać</translation>
     </message>
     <message>
         <source>Enter object full path to search</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź pełną ścieżkę obiektu do wyszukiwania</translation>
     </message>
     <message>
         <source>Requestor</source>
-        <translation>Needs Translating</translation>
+        <translation>Wnioskodawca</translation>
     </message>
     <message>
         <source>Recipient</source>
-        <translation>Needs Translating</translation>
+        <translation>Odbiorca</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Needs Translating</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Pending Accept</source>
-        <translation>Needs Translating</translation>
+        <translation>Oczekuje na akceptację</translation>
     </message>
     <message>
         <source>Pending Request</source>
-        <translation>Needs Translating</translation>
+        <translation>Żądanie w trybie oczekującym</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation>Needs Translating</translation>
+        <translation>Kompletny</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Needs Translating</translation>
+        <translation>Odświeżać</translation>
     </message>
     <message>
         <source>Requestor search</source>
-        <translation>Needs Translating</translation>
+        <translation>Wyszukiwanie żądającego</translation>
     </message>
     <message>
         <source>Recipient search</source>
-        <translation>Needs Translating</translation>
+        <translation>Wyszukiwanie odbiorców</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaakceptować</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Needs Translating</translation>
+        <translation>Usunąć</translation>
     </message>
     <message>
         <source>Add New Link</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj nowy link</translation>
     </message>
     <message>
         <source>Deny</source>
-        <translation>Needs Translating</translation>
+        <translation>Deny</translation>
     </message>
     <message>
         <source>Spam</source>
-        <translation>Needs Translating</translation>
+        <translation>Spam</translation>
     </message>
     <message>
         <source>Confirm Accept Link</source>
-        <translation>Needs Translating</translation>
+        <translation>Potwierdź Akceptuj link</translation>
     </message>
     <message>
         <source>Successfully accepted link</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie zaakceptowano link</translation>
     </message>
     <message>
         <source>BDAP Pending Accept Link Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>BDAP Oczekuje na akceptację szczegółów linku</translation>
     </message>
     <message>
         <source>BDAP Pending Request Link Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Szczegółowy link do strony oczekującej na żądanie BDAP</translation>
+    </message>
+    <message>
+        <source>Common Name</source>
+        <translation>Nazwa zwyczajowa</translation>
+    </message>
+    <message>
+        <source>Object Full Path</source>
+        <translation>Pełna ścieżka obiektu</translation>
+    </message>
+    <message>
+        <source>Expiration Date</source>
+        <translation>Termin ważności</translation>
+    </message>
+    <message>
+        <source>Records found: </source>
+        <translation>Znaleziono wpisy: </translation>
     </message>
 </context>
 <context>
     <name>BdapUpdateAccountDialog</name>
     <message>
         <source>Update BDAP Account</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaktualizuj konto BDAP</translation>
     </message>
     <message>
         <source>User ID:</source>
-        <translation>Needs Translating</translation>
+        <translation>Identyfikator użytkownika:</translation>
     </message>
     <message>
         <source>Common Name:</source>
-        <translation>Needs Translating</translation>
+        <translation>Nazwa zwyczajowa:</translation>
     </message>
     <message>
         <source>Registration Days:</source>
-        <translation>Needs Translating</translation>
+        <translation>Dni rejestracji:</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>Needs Translating</translation>
+        <translation>dobrze</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation>Needs Translating</translation>
+        <translation>Aktualizacja</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Needs Translating</translation>
+        <translation>Anulować</translation>
     </message>
     <message>
         <source>Group ID:</source>
-        <translation>Needs Translating</translation>
+        <translation>Identyfikator grupy:</translation>
     </message>
     <message>
         <source>Expiration date: </source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności: </translation>
     </message>
     <message>
         <source>Successfully updated user</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie zaktualizowano użytkownika</translation>
     </message>
     <message>
         <source>Successfully updated group</source>
-        <translation>Needs Translating</translation>
+        <translation>Pomyślnie zaktualizowano grupę</translation>
     </message>
     <message>
         <source>message</source>
-        <translation>Needs Translating</translation>
+        <translation>wiadomość</translation>
     </message>
 </context>
 <context>
     <name>BdapLinkDetailDialog</name>
     <message>
         <source>BDAP Link Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Szczegóły łącza BDAP</translation>
     </message>
     <message>
         <source>BDAP Pending Accept Link Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>BDAP Oczekuje na akceptację szczegółów linku</translation>
     </message>
     <message>
         <source>Registration Days:</source>
-        <translation>Needs Translating</translation>
+        <translation>Dni rejestracji:</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>Needs Translating</translation>
+        <translation>dobrze</translation>
     </message>
     <message>
         <source>Expiration date: </source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności: </translation>
     </message>
     <message>
         <source>Requestor: </source>
-        <translation>Needs Translating</translation>
+        <translation>Pytający: </translation>
     </message>
     <message>
         <source>Recipient: </source>
-        <translation>Needs Translating</translation>
+        <translation>Odbiorca: </translation>
     </message>
     <message>
         <source>Link Public Key (Requestor): </source>
-        <translation>Needs Translating</translation>
+        <translation>Link Klucz Publiczny (żądający): </translation>
     </message>
     <message>
         <source>Link Public Key (Recipient): </source>
-        <translation>Needs Translating</translation>
+        <translation>Link Klucz publiczny (odbiorca): </translation>
     </message>
     <message>
         <source>Requestor Link Address: </source>
-        <translation>Needs Translating</translation>
+        <translation>Adres linku żądającego: </translation>
     </message>
     <message>
         <source>Recipient Link Address: </source>
-        <translation>Needs Translating</translation>
+        <translation>Adres linku odbiorcy: </translation>
     </message>
     <message>
         <source>Signature Proof: </source>
-        <translation>Needs Translating</translation>
+        <translation>Dowód podpisu: </translation>
     </message>
     <message>
         <source>Link Message: </source>
-        <translation>Needs Translating</translation>
+        <translation>Link Wiadomość: </translation>
     </message>
     <message>
         <source>TXID: </source>
-        <translation>Needs Translating</translation>
+        <translation>TXID: </translation>
     </message>
     <message>
         <source>Time: </source>
-        <translation>Needs Translating</translation>
+        <translation>Czas: </translation>
     </message>
     <message>
         <source>Please note that your transaction will not be reflected until the next block.</source>
-        <translation>Needs Translating</translation>
+        <translation>Pamiętaj, że Twoja transakcja nie zostanie odzwierciedlona do następnego bloku.</translation>
     </message>
 </context>
 <context>
     <name>BdapUserDetailDialog</name>
     <message>
         <source>BDAP User Detail</source>
-        <translation>Needs Translating</translation>
+        <translation>Dane użytkownika BDAP</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>Needs Translating</translation>
+        <translation>Formularz</translation>
     </message>
     <message>
         <source>Common Name:</source>
-        <translation>Needs Translating</translation>
+        <translation>Nazwa zwyczajowa:</translation>
     </message>
     <message>
         <source>Object Full Path:</source>
-        <translation>Needs Translating</translation>
+        <translation>Pełna ścieżka obiektu:</translation>
     </message>
     <message>
         <source>Wallet Address:</source>
-        <translation>Needs Translating</translation>
+        <translation>Adres portfela:</translation>
     </message>
     <message>
         <source>DHT Public Key:</source>
-        <translation>Needs Translating</translation>
+        <translation>Klucz publiczny DHT:</translation>
     </message>
     <message>
         <source>Link address:</source>
-        <translation>Needs Translating</translation>
+        <translation>Adres linku:</translation>
     </message>
     <message>
         <source>TX ID:</source>
-        <translation>Needs Translating</translation>
+        <translation>TX ID:</translation>
     </message>
     <message>
         <source>Time:</source>
-        <translation>Needs Translating</translation>
+        <translation>Czas:</translation>
     </message>
     <message>
         <source>Expiration Date:</source>
-        <translation>Needs Translating</translation>
+        <translation>Termin ważności:</translation>
     </message>
     <message>
         <source>Expired:</source>
-        <translation>Needs Translating</translation>
+        <translation>Przedawniony:</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>Needs Translating</translation>
+        <translation>dobrze</translation>
     </message>
     <message>
         <source>message</source>
-        <translation>Needs Translating</translation>
+        <translation>wiadomość</translation>
     </message>
     <message>
         <source>BDAP Error</source>
-        <translation>Needs Translating</translation>
+        <translation>Błąd BDAP</translation>
     </message>
 </context>
 <context>
     <name>BdapAddLinkDialog</name>
     <message>
         <source>BDAP Add New Link</source>
-        <translation>Needs Translating</translation>
+        <translation>BDAP Dodaj nowy link</translation>
     </message>
     <message>
         <source>(required)</source>
-        <translation>Needs Translating</translation>
+        <translation>(wymagany)</translation>
     </message>
     <message>
         <source>(optional)</source>
-        <translation>Needs Translating</translation>
+        <translation>(opcjonalny)</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation>Needs Translating</translation>
+        <translation>Od:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation>Needs Translating</translation>
+        <translation>Do:</translation>
     </message>
     <message>
         <source>Link Message:</source>
-        <translation>Needs Translating</translation>
+        <translation>Link Wiadomość:</translation>
     </message>
     <message>
         <source>Registration Days:</source>
-        <translation>Needs Translating</translation>
+        <translation>Dni rejestracji:</translation>
     </message>
     <message>
         <source>Add Link</source>
-        <translation>Needs Translating</translation>
+        <translation>Dodaj link</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Needs Translating</translation>
+        <translation>anulować</translation>
     </message>
     <message>
         <source>BDAP Add Link Error</source>
-        <translation>Needs Translating</translation>
+        <translation>Błąd dodawania łącza BDAP</translation>
     </message>
     <message>
         <source>Requestor, Recipient and Link Message are required fields</source>
-        <translation>Needs Translating</translation>
+        <translation>Żądający, Odbiorca i Link Wiadomość są wymagane</translation>
     </message>
 </context>
 <context>
     <name>MnemonicDialog</name>
     <message>
         <source>Tips: if the import process is interrupted(such as a power cut or accidental shutdown), please re-enter the recovery phrase or the private key and click the 'Import' button.</source>
-        <translation>Needs Translating</translation>
+        <translation>Wskazówki: jeśli proces importowania zostanie przerwany (np. Przerwa w dostawie prądu lub przypadkowe zamknięcie), wprowadź ponownie zwrot odzyskiwania lub klucz prywatny i kliknij przycisk „Importuj”.</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation>Needs Translating</translation>
+        <translation>Wybierz plik</translation>
     </message>
     <message>
         <source>Import mnemonic</source>
-        <translation>Needs Translating</translation>
+        <translation>Importuj mnemonik</translation>
     </message>
     <message>
         <source>Import Recovery Phrase</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaimportuj frazę odzyskiwania</translation>
     </message>
     <message>
         <source>Paste from clipboard</source>
-        <translation>Needs Translating</translation>
+        <translation>Wklej ze schowka</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Needs Translating</translation>
+        <translation>oczyścić</translation>
     </message>
     <message>
         <source>Enter your BIP39 compliant Recovery Phrase/Mnemonic</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź zgodną z BIP39 frazę odzyskiwania / mnemoniczną</translation>
     </message>
     <message>
         <source>Recovery Passphrase</source>
-        <translation>Needs Translating</translation>
+        <translation>Hasło odzyskiwania</translation>
     </message>
     <message>
         <source>Enter a passphrase to protect your Recovery Phrase. (optional)</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź hasło, aby zabezpieczyć swoją frazę odzyskiwania. (opcjonalny)</translation>
     </message>
     <message>
         <source>Language</source>
-        <translation>Needs Translating</translation>
+        <translation>Język</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>Needs Translating</translation>
+        <translation>Ostrzeżenie</translation>
     </message>
     <message>
         <source>Please ensure you backup your Recovery Phrase and Passphrase - they are not recoverable!
-Wallet wil restart after mnemonic has been imported.</source>
-        <translation>Needs Translating</translation>
+Wallet will restart after mnemonic has been imported.</source>
+        <translation>Należy wykonać kopię zapasową frazy odzyskiwania i hasła - nie można ich odzyskać!
+Portfel uruchomi się ponownie po zaimportowaniu mnemonika.</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation>Needs Translating</translation>
+        <translation>Import</translation>
     </message>
     <message>
         <source>Reimport</source>
-        <translation>Needs Translating</translation>
+        <translation>Reimport</translation>
     </message>
     <message>
         <source>Create mnemonic</source>
-        <translation>Needs Translating</translation>
+        <translation>Utwórz mnemonik</translation>
     </message>
     <message>
         <source>Create New Recovery Phrase</source>
-        <translation>Needs Translating</translation>
+        <translation>Utwórz nową frazę odzyskiwania</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
-        <translation>Needs Translating</translation>
+        <translation>Skopiuj do schowka</translation>
     </message>
     <message>
         <source>Bytes of Entropy</source>
-        <translation>Needs Translating</translation>
+        <translation>Bajty Entropii</translation>
     </message>
     <message>
         <source>Generate</source>
-        <translation>Needs Translating</translation>
+        <translation>Generować</translation>
     </message>
     <message>
         <source>Validate</source>
-        <translation>Needs Translating</translation>
+        <translation>Uprawomocnić</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Needs Translating</translation>
+        <translation>Anulować</translation>
     </message>
     <message>
         <source>Import privatekey</source>
-        <translation>Needs Translating</translation>
+        <translation>Importuj klucz prywatny</translation>
     </message>
     <message>
         <source>Input single privatekey</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź pojedynczy klucz prywatny</translation>
     </message>
     <message>
         <source>Force Rescan</source>
-        <translation>Needs Translating</translation>
+        <translation>Wymuś ponowne skanowanie</translation>
     </message>
     <message>
         <source>example: L2pVnppu4S12FDFTn6sCoyvfCU4QiedHVxNyqJQ63Kty6gGRm1Mz</source>
-        <translation>Needs Translating</translation>
+        <translation>przykład: L2pVnppu4S12FDFTn6sCoyvfCU4QiedHVxNyqJQ63Kty6gGRm1Mz</translation>
     </message>
     <message>
         <source>Import privatekey file</source>
-        <translation>Needs Translating</translation>
+        <translation>Zaimportuj plik prywatny</translation>
     </message>
     <message>
         <source>Input privatekey file</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź plik klucza prywatnego</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Needs Translating</translation>
+        <translation>Przeglądaj</translation>
     </message>
     <message>
         <source>Tips: The private key file is the file exported by Credit 'dumpwallet filename', not the .dat file.</source>
-        <translation>Needs Translating</translation>
+        <translation>Wskazówki: Plik klucza prywatnego to plik eksportowany przez Creditzną „nazwę pliku zrzutu”, a nie plik .dat.</translation>
     </message>
     <message>
         <source>Wallet already has an HD account loaded.
@@ -6188,7 +6190,10 @@ By importing another recovery phrase a new account will be created and set as th
 The wallet will receive on addresses from the new imported account only.
 Your old account wallet file will be renamed to wallat.dat.before-mnemonic-import.&lt;isodate&gt; in your data directory
 </source>
-        <translation>Needs Translating</translation>
+        <translation>Portfel ma już załadowane konto HD.
+Po zaimportowaniu kolejnej frazy odzyskiwania zostanie utworzone nowe konto i ustawione jako domyślne.
+Portfel otrzyma tylko adresy z nowego importowanego konta.
+Nazwa twojego starego pliku portfela zostanie zmieniona na wallat.dat.przed-importem-mnemonicznym.&lt;isodate&gt; do katalogu danych</translation>
     </message>
     <message>
         <source>Wallet already has an HD account loaded.
@@ -6196,11 +6201,14 @@ By importing another recovery phrase a new account will be created and set as th
 The wallet will receive on addresses from the new imported account only.
 Your old account wallet file will be renamed to wallat.dat.before-mnemonic-import.&lt;isodate&gt; in your data directory
 </source>
-        <translation>Needs Translating</translation>
+        <translation>Portfel ma już załadowane konto HD.
+Po zaimportowaniu kolejnej frazy odzyskiwania zostanie utworzone nowe konto i ustawione jako domyślne.
+Portfel otrzyma tylko adresy z nowego importowanego konta.
+Nazwa twojego starego pliku portfela zostanie zmieniona na wallat.dat.przed-importem-mnemonicznym.&lt;isodate&gt; do katalogu danych</translation>
     </message>
     <message>
         <source>Enter your BIP39 compliant Recovery Phrase/Mnemonic.</source>
-        <translation>Needs Translating</translation>
+        <translation>Wprowadź zgodną z BIP39 frazę odzyskiwania / Mnemonik.</translation>
     </message>
 </context>
 </TS>

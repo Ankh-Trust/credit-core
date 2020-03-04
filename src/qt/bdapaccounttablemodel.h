@@ -7,6 +7,7 @@
 #define CREDIT_QT_BDAPACCOUNTTABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QObject>
 #include <QStringList>
 #include <QTableWidget>
 #include <QLabel>

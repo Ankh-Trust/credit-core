@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -1118,7 +1117,11 @@ void CreditGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVeri
 #endif // ENABLE_WALLET
 
         tooltip += QString("<br>");
-        tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
+        if (secs < 60) {
+            tooltip += tr("Less than 60 seconds behind.");
+        } else {
+            tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
+        }      
         tooltip += QString("<br>");
         tooltip += tr("Transactions after this will not yet be visible.");
     } else if (fLiteMode) {

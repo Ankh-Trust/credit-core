@@ -14,6 +14,7 @@
 #include "primitives/transaction.h"
 #include "utilmoneystr.h"
 #include "utilstrencodings.h"
+#include "utiltime.h"
 #include "servicenode-sync.h"
 #include "spork.h"
 #ifdef ENABLE_WALLET

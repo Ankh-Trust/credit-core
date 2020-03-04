@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2017-2019 The Particl Core developers
@@ -983,10 +982,6 @@ public:
      * populate vCoins with vector of available COutputs for the specified address.
      */
     void GetBDAPCoins(std::vector<COutput>& vCoins, const CScript& prevScriptPubKey) const;
-    /**
-     * return BDAP Credit anmount
-     */
-    CAmount GetBDAPCredits() const;
     /**
      * return BDAP Credits in Dynamic
      */

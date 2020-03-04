@@ -1,8 +1,8 @@
-# **Ankh Credit (0AC) v1.0.2.0**
+# **Ankh Credit (0AC) v1.1.0.0**
 
 ![0AC logo](https://github.com/Ankh-Trust/credit-core/blob/master/src/qt/res/icons/about.png)
 
-**Copyright (c) 2019-2019 [Ankh](https://ankh.foundation)**
+**Copyright (c) 2019-2020 [Ankh](https://ankh.foundation)**
 
 What is [Credit](https://ankh.foundation/credit)?
 ----------------
