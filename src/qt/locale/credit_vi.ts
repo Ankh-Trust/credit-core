@@ -5651,7 +5651,7 @@ ví dụ: alertnotify=echo %%s | mail -s "Credit Alert" admin@foo.com
     <name>MnemonicDialog</name>
     <message>
         <source>Tips: if the import process is interrupted(such as a power cut or accidental shutdown), please re-enter the recovery phrase or the private key and click the 'Import' button.</source>
-        <translation>Mẹo: nếu quá trình nhập bị gián đoạn (chẳng hạn như cắt điện hoặc tắt do vô tình), vui lòng nhập lại cụm từ khôi phục hoặc khóa riêng và nhấp vào nút 'Nhập'.</translation
+        <translation>Mẹo: nếu quá trình nhập bị gián đoạn (chẳng hạn như cắt điện hoặc tắt do vô tình), vui lòng nhập lại cụm từ khôi phục hoặc khóa riêng và nhấp vào nút 'Nhập'.</translation>
     </message>
     <message>
         <source>Choose File</source>
