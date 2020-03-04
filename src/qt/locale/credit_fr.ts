@@ -3414,7 +3414,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>à</translation>
     </message>
 </context>
-+<context>
+<context>
     <name>ServicenodeList</name>
     <message>
         <source>Form</source>

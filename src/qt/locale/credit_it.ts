@@ -3243,7 +3243,7 @@ Più URL vengono separati da una barra verticale |.</translation>
         <translation>a</translation>
     </message>
 </context>
-+<context>
+<context>
     <name>ServicenodeList</name>
     <message>
         <source>Form</source>
