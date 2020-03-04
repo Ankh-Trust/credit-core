@@ -3384,7 +3384,7 @@ Näillä toiminnoilla voit korjata korruptoituneen lohkoketjun tai puuttuvat/van
         <translation>-&gt;</translation>
     </message>
 </context>
-+<context>
+<context>
     <name>ServicenodeList</name>
     <message>
         <source>Form</source>
