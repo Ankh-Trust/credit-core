@@ -985,7 +985,7 @@ public:
     /**
      * return BDAP Credits in Dynamic
      */
-    CAmount GetBDAPDynamicAmount() const;
+    CAmount GetBDAPCreditAmount() const;
     /**
      * Shuffle and select coins until nTargetValue is reached while avoiding
      * small change; This method is stochastic for some inputs and upon
