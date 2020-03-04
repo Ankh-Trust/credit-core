@@ -2070,7 +2070,7 @@ https://www.transifex.com/projects/p/credit/</translation>
     <message>
         <source>WARNING: Scammers have been active, telling users to type commands here, stealing their wallet contents. Do not use this console without fully understanding the ramification of a command.</source>
         <translation>ВНИМАНИЕ: Измамниците са били активни и казват на потребителите да въвеждат команди тук, открадвайки съдържанието на портфейла им. Не използвайте тази конзола, без да разбирате напълно разширяването на дадена команда.</translation>
-    </message>    
+    </message>
     <message>
         <source>%1 B</source>
         <translation>%1 Б</translation>
@@ -3386,7 +3386,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>Единица за показване на количеството.Клик за избиране на друга единица.</translation>
     </message>
 </context>
-+<context>
+<context>
     <name>ServicenodeList</name>
     <message>
         <source>Form</source>
