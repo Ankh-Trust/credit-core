@@ -477,7 +477,7 @@ For BDAP transactions,
 */
 void SendBDAPTransaction(const CScript& bdapDataScript, const CScript& bdapOPScript, CWalletTx& wtxNew, const CAmount& nDataAmount, const CAmount& nOpAmount, const bool fUseInstantSend)
 {
-    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
+    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPCreditAmount();
 
     // Check amounts
     if (nOpAmount <= 0)
@@ -520,7 +520,7 @@ void SendBDAPTransaction(const CScript& bdapDataScript, const CScript& bdapOPScr
 void SendLinkingTransaction(const CScript& bdapDataScript, const CScript& bdapOPScript, const CScript& stealthScript,
                                 CWalletTx& wtxNew, const CAmount& nOneTimeFee, const CAmount& nDepositFee, const bool fUseInstantSend)
 {
-    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPDynamicAmount();
+    CAmount curBalance = pwalletMain->GetBalance() + pwalletMain->GetBDAPCreditAmount();
 
     // Check amount
     if (nOneTimeFee <= 0)

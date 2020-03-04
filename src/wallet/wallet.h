@@ -983,7 +983,7 @@ public:
      */
     void GetBDAPCoins(std::vector<COutput>& vCoins, const CScript& prevScriptPubKey) const;
     /**
-     * return BDAP Credits in Dynamic
+     * return BDAP Credits
      */
     CAmount GetBDAPCreditAmount() const;
     /**
@@ -1001,7 +1001,7 @@ public:
 
     bool SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTallyRet, bool fSkipDenominated = true, bool fAnonymizable = true, bool fSkipUnconfirmed = true, int nMaxOupointsPerAddress = -1) const;
 
-    /// Get 1000DYN output and keys which can be used for the ServiceNode
+    /// Get 1000 0AC output and keys which can be used for the ServiceNode
     bool GetServiceNodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash = "", std::string strOutputIndex = "");
     /// Extract txin information and keys from output
     bool GetOutpointAndKeysFromOutput(const COutput& out, COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet);
