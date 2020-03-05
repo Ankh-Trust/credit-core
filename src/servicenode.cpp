@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -200,7 +199,11 @@ void CServiceNode::Check(bool fForce)
 
     if (fWaitForPing && !fOurServiceNode) {
         // ...but if it was already expired before the initial check - return right away
-        if (IsExpired() || IsSentinelPingExpired() || IsNewStartRequired()) {
+        bool isSentinelPingExpired = false;
+        if (sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG))
+            isSentinelPingExpired = IsSentinelPingExpired();
+
+        if (IsExpired() || isSentinelPingExpired || IsNewStartRequired()) {
             LogPrint("servicenode", "CServiceNode::Check -- ServiceNode %s is in %s state, waiting for ping\n", outpoint.ToStringShort(), GetStateString());
             return;
         }
@@ -223,19 +226,20 @@ void CServiceNode::Check(bool fForce)
             }
             return;
         }
+        if (sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG)) {
+            // part 1: expire based on creditd ping
+            bool fSentinelPingActive = servicenodeSync.IsSynced() && snodeman.IsSentinelPingActive();
+            bool fSentinelPingExpired = fSentinelPingActive && !IsPingedWithin(SERVICENODE_SENTINEL_PING_MAX_SECONDS);
+            LogPrint("servicenode", "CServicenode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
+                outpoint.ToStringShort(), GetAdjustedTime(), fSentinelPingExpired);
 
-        // part 1: expire based on creditd ping
-        bool fSentinelPingActive = servicenodeSync.IsSynced() && dnodeman.IsSentinelPingActive();
-        bool fSentinelPingExpired = fSentinelPingActive && !IsPingedWithin(SERVICENODE_SENTINEL_PING_MAX_SECONDS);
-        LogPrint("servicenode", "CServiceNode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
-            outpoint.ToStringShort(), GetAdjustedTime(), fSentinelPingExpired);
-
-        if (sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG) && fSentinelPingExpired) {
-            nActiveState = SERVICENODE_SENTINEL_PING_EXPIRED;
-            if (nActiveStatePrev != nActiveState) {
-                LogPrint("servicenode", "CServiceNode::Check -- ServiceNode %s is in %s state now\n", outpoint.ToStringShort(), GetStateString());
+            if (fSentinelPingExpired) {
+                nActiveState = SERVICENODE_SENTINEL_PING_EXPIRED;
+                if (nActiveStatePrev != nActiveState) {
+                    LogPrint("servicenode", "CServicenode::Check -- Servicenode %s is in %s state now\n", outpoint.ToStringShort(), GetStateString());
+                }
+                return;
             }
-            return;
         }
     }
 
@@ -253,18 +257,20 @@ void CServiceNode::Check(bool fForce)
 
     if (!fWaitForPing || fOurServiceNode) {
         // part 2: expire based on sentinel info
-        bool fSentinelPingActive = servicenodeSync.IsSynced() && dnodeman.IsSentinelPingActive();
-        bool fSentinelPingExpired = fSentinelPingActive && !lastPing.fSentinelIsCurrent;
+        if (sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG)) {
+            bool fSentinelPingActive = servicenodeSync.IsSynced() && snodeman.IsSentinelPingActive();
+            bool fSentinelPingExpired = fSentinelPingActive && !lastPing.fSentinelIsCurrent;
 
-        LogPrint("servicenode", "CServiceNode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
+        LogPrint("servicenode", "CServicenode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
             outpoint.ToStringShort(), GetAdjustedTime(), fSentinelPingExpired);
 
-        if (sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG) && fSentinelPingExpired) {
-            nActiveState = SERVICENODE_SENTINEL_PING_EXPIRED;
-            if (nActiveStatePrev != nActiveState) {
-                LogPrint("servicenode", "CServiceNode::Check -- ServiceNode %s is in %s state now\n", outpoint.ToStringShort(), GetStateString());
+            if (fSentinelPingExpired) {
+                nActiveState = SERVICENODE_SENTINEL_PING_EXPIRED;
+                if (nActiveStatePrev != nActiveState) {
+                    LogPrint("servicenode", "CServiceNode::Check -- ServiceNode %s is in %s state now\n", outpoint.ToStringShort(), GetStateString());
+                }
+                return;
             }
-            return;
         }
     }
 
