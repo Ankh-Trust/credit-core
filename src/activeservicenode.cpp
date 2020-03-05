@@ -116,7 +116,7 @@ bool CActiveServiceNode::SendServiceNodePing(CConnman& connman)
         return false;
     }
 
-    if (!dnodeman.Has(outpoint)) {
+    if (!snodeman.Has(outpoint)) {
         strNotCapableReason = "ServiceNode not in ServiceNode list";
         nState = ACTIVE_SERVICENODE_NOT_CAPABLE;
         LogPrintf("CActiveServiceNode::SendServiceNodePing -- %s: %s\n", GetStateString(), strNotCapableReason);
@@ -133,12 +133,12 @@ bool CActiveServiceNode::SendServiceNodePing(CConnman& connman)
     }
 
     // Update lastPing for our ServiceNode in ServiceNode list
-    if (dnodeman.IsServiceNodePingedWithin(outpoint, SERVICENODE_MIN_DNP_SECONDS, dnp.sigTime)) {
+    if (snodeman.IsServiceNodePingedWithin(outpoint, SERVICENODE_MIN_DNP_SECONDS, dnp.sigTime)) {
         LogPrintf("CActiveServiceNode::SendServiceNodePing -- Too early to send ServiceNode Ping\n");
         return false;
     }
 
-    dnodeman.SetServiceNodeLastPing(outpoint, dnp);
+    snodeman.SetServiceNodeLastPing(outpoint, dnp);
 
     LogPrintf("CActiveServiceNode::SendServiceNodePing -- Relaying ping, collateral=%s\n", outpoint.ToStringShort());
     dnp.Relay(connman);
@@ -233,9 +233,9 @@ void CActiveServiceNode::ManageStateRemote()
     LogPrint("servicenode", "CActiveServiceNode::ManageStateRemote -- Start status = %s, type = %s, pinger enabled = %d, pubKeyServiceNode.GetID() = %s\n",
         GetStatus(), fPingerEnabled, GetTypeString(), pubKeyServiceNode.GetID().ToString());
 
-    dnodeman.CheckServiceNode(pubKeyServiceNode, true);
+    snodeman.CheckServiceNode(pubKeyServiceNode, true);
     servicenode_info_t infoDn;
-    if (dnodeman.GetServiceNodeInfo(pubKeyServiceNode, infoDn)) {
+    if (snodeman.GetServiceNodeInfo(pubKeyServiceNode, infoDn)) {
         if (infoDn.nProtocolVersion != PROTOCOL_VERSION) {
             nState = ACTIVE_SERVICENODE_NOT_CAPABLE;
             strNotCapableReason = "Invalid protocol version";

@@ -221,7 +221,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
             if (nRequestedServiceNodeAttempt <= 2) {
                 connman.PushMessage(pnode, msgMaker.Make(NetMsgType::GETSPORKS)); //get current network sporks
             } else if (nRequestedServiceNodeAttempt < 4) {
-                dnodeman.PsegUpdate(pnode, connman);
+                snodeman.PsegUpdate(pnode, connman);
             } else if (nRequestedServiceNodeAttempt < 6) {
                 //sync payment votes
                 if (pnode->nVersion == 70900) {
@@ -308,7 +308,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                     continue;
                 nRequestedServiceNodeAttempt++;
 
-                dnodeman.PsegUpdate(pnode, connman);
+                snodeman.PsegUpdate(pnode, connman);
 
                 connman.ReleaseNodeVector(vNodesCopy);
                 return; //this will cause each peer to get one request each six seconds for the various assets we need

@@ -371,7 +371,7 @@ void CGovernanceManager::UpdateCachesAndClean()
 {
     LogPrint("gobject", "CGovernanceManager::UpdateCachesAndClean\n");
 
-    std::vector<uint256> vecDirtyHashes = dnodeman.GetAndClearDirtyGovernanceObjectHashes();
+    std::vector<uint256> vecDirtyHashes = snodeman.GetAndClearDirtyGovernanceObjectHashes();
 
     LOCK2(cs_main, cs);
 
@@ -422,7 +422,7 @@ void CGovernanceManager::UpdateCachesAndClean()
         if ((pObj->IsSetCachedDelete() || pObj->IsSetExpired()) &&
             (nTimeSinceDeletion >= GOVERNANCE_DELETION_DELAY)) {
             LogPrint("gobject", "CGovernanceManager::UpdateCachesAndClean -- erase obj %s\n", (*it).first.ToString());
-            dnodeman.RemoveGovernanceObject(pObj->GetHash());
+            snodeman.RemoveGovernanceObject(pObj->GetHash());
 
             // Remove vote references
             const object_ref_cm_t::list_t& listItems = cmapVoteToObject.GetItemList();
@@ -514,8 +514,8 @@ std::vector<CGovernanceVote> CGovernanceManager::GetCurrentVotes(const uint256& 
     CServiceNode dn;
     std::map<COutPoint, CServiceNode> mapServiceNodes;
     if (dnCollateralOutpointFilter.IsNull()) {
-        mapServiceNodes = dnodeman.GetFullServiceNodeMap();
-    } else if (dnodeman.Get(dnCollateralOutpointFilter, dn)) {
+        mapServiceNodes = snodeman.GetFullServiceNodeMap();
+    } else if (snodeman.Get(dnCollateralOutpointFilter, dn)) {
         mapServiceNodes[dnCollateralOutpointFilter] = dn;
     }
 
@@ -1072,7 +1072,7 @@ int CGovernanceManager::RequestGovernanceObjectVotes(const std::vector<CNode*>& 
     int nMaxObjRequestsPerNode = 1;
     size_t nProjectedVotes = 2000;
     if (Params().NetworkIDString() != CBaseChainParams::MAIN) {
-        nMaxObjRequestsPerNode = std::max(1, int(nProjectedVotes / std::max(1, dnodeman.size())));
+        nMaxObjRequestsPerNode = std::max(1, int(nProjectedVotes / std::max(1, snodeman.size())));
     }
 
     {

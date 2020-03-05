@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -313,9 +312,6 @@ void PrepareShutdown()
     g_connman.reset();
 
     if (!fLiteMode && !fRPCInWarmup) {
-        // STORE DATA CACHES INTO SERIALIZED DAT FILES
-        CFlatDB<CServiceNodeMan> flatdb1("sncache.dat", "magicServiceNodeCache");
-        flatdb1.Dump(dnodeman);
         CFlatDB<CServiceNodePayments> flatdb2("snpayments.dat", "magicServiceNodePaymentsCache");
         flatdb2.Dump(snpayments);
         CFlatDB<CGovernanceManager> flatdb3("governance.dat", "magicGovernanceCache");
@@ -1475,8 +1471,8 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     }
 
     // Start the lightweight task scheduler thread
-    CScheduler::Function serviceLoop = boost::bind(&CScheduler::serviceQueue, &scheduler);
-    threadGroup.create_thread(boost::bind(&TraceThread<CScheduler::Function>, "scheduler", serviceLoop));
+    CScheduler::Function serviceLoop = std::bind(&CScheduler::serviceQueue, &scheduler);
+    threadGroup.create_thread(std::bind(&TraceThread<CScheduler::Function>, "scheduler", serviceLoop));
 
     /* Start the RPC server already.  It will be started in "warmup" mode
      * and not really process calls already (but it will signify connections
@@ -2011,14 +2007,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         boost::filesystem::path pathDB = GetDataDir();
         std::string strDBName;
 
-        strDBName = "sncache.dat";
-        uiInterface.InitMessage(_("Loading ServiceNode cache..."));
-        CFlatDB<CServiceNodeMan> flatdb1(strDBName, "magicServiceNodeCache");
-        if (!flatdb1.Load(dnodeman)) {
-            return InitError(_("Failed to load ServiceNode cache from") + "\n" + (pathDB / strDBName).string());
-        }
-
-        if (dnodeman.size()) {
+        if (snodeman.size()) {
             strDBName = "snpayments.dat";
             uiInterface.InitMessage(_("Loading ServiceNode payment cache..."));
             CFlatDB<CServiceNodePayments> flatdb2(strDBName, "magicServiceNodePaymentsCache");
@@ -2065,21 +2054,21 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     // ********************************************************* Step 11d: start credit-ps-<smth> threads
 
     if (!fLiteMode) {
-        scheduler.scheduleEvery(boost::bind(&CNetFulfilledRequestManager::DoMaintenance, boost::ref(netfulfilledman)), 60);
-        scheduler.scheduleEvery(boost::bind(&CServiceNodeSync::DoMaintenance, boost::ref(servicenodeSync), boost::ref(*g_connman)), SERVICENODE_SYNC_TICK_SECONDS);
-        scheduler.scheduleEvery(boost::bind(&CServiceNodeMan::DoMaintenance, boost::ref(dnodeman), boost::ref(*g_connman)), 1);
-        scheduler.scheduleEvery(boost::bind(&CActiveServiceNode::DoMaintenance, boost::ref(activeServiceNode), boost::ref(*g_connman)), SERVICENODE_MIN_DNP_SECONDS);
+        scheduler.scheduleEvery(std::bind(&CNetFulfilledRequestManager::DoMaintenance, std::ref(netfulfilledman)), 60);
+        scheduler.scheduleEvery(std::bind(&CServiceNodeSync::DoMaintenance, std::ref(servicenodeSync), std::ref(*g_connman)), SERVICENODE_SYNC_TICK_SECONDS);
+        scheduler.scheduleEvery(std::bind(&CServiceNodeMan::DoMaintenance, std::ref(snodeman), std::ref(*g_connman)), 1);
+        scheduler.scheduleEvery(std::bind(&CActiveServiceNode::DoMaintenance, std::ref(activeServiceNode), std::ref(*g_connman)), SERVICENODE_MIN_DNP_SECONDS);
 
-        scheduler.scheduleEvery(boost::bind(&CServiceNodePayments::DoMaintenance, boost::ref(snpayments)), 60);
-        scheduler.scheduleEvery(boost::bind(&CGovernanceManager::DoMaintenance, boost::ref(governance), boost::ref(*g_connman)), 60 * 5);
+        scheduler.scheduleEvery(std::bind(&CServiceNodePayments::DoMaintenance, std::ref(snpayments)), 60);
+        scheduler.scheduleEvery(std::bind(&CGovernanceManager::DoMaintenance, std::ref(governance), std::ref(*g_connman)), 60 * 5);
 
-        scheduler.scheduleEvery(boost::bind(&CInstantSend::DoMaintenance, boost::ref(instantsend)), 60);
+        scheduler.scheduleEvery(std::bind(&CInstantSend::DoMaintenance, std::ref(instantsend)), 60);
 
         if (fServiceNodeMode)
-            scheduler.scheduleEvery(boost::bind(&CPrivateSendServer::DoMaintenance, boost::ref(privateSendServer), boost::ref(*g_connman)), 1);
+            scheduler.scheduleEvery(std::bind(&CPrivateSendServer::DoMaintenance, std::ref(privateSendServer), std::ref(*g_connman)), 1);
 #ifdef ENABLE_WALLET
         else
-            scheduler.scheduleEvery(boost::bind(&CPrivateSendClientManager::DoMaintenance, boost::ref(privateSendClient), boost::ref(*g_connman)), 1);
+            scheduler.scheduleEvery(std::bind(&CPrivateSendClientManager::DoMaintenance, std::ref(privateSendClient), std::ref(*g_connman)), 1);
 #endif // ENABLE_WALLET
     }
 

@@ -76,7 +76,7 @@ bool CServiceNode::UpdateFromNewBroadcast(CServiceNodeBroadcast& dnb, CConnman& 
     int nDos = 0;
     if (!dnb.lastPing || (dnb.lastPing && dnb.lastPing.CheckAndUpdate(this, true, nDos, connman))) {
         lastPing = dnb.lastPing;
-        dnodeman.mapSeenServiceNodePing.insert(std::make_pair(lastPing.GetHash(), lastPing));
+        snodeman.mapSeenServiceNodePing.insert(std::make_pair(lastPing.GetHash(), lastPing));
     }
     // if it matches our ServiceNode privkey...
     if (fServiceNodeMode && pubKeyServiceNode == activeServiceNode.pubKeyServiceNode) {
@@ -175,7 +175,7 @@ void CServiceNode::Check(bool fForce)
     } else if (nPoSeBanScore >= SERVICENODE_POSE_BAN_MAX_SCORE) {
         nActiveState = SERVICENODE_POSE_BAN;
         // ban for the whole payment cycle
-        nPoSeBanHeight = nHeight + dnodeman.size();
+        nPoSeBanHeight = nHeight + snodeman.size();
         LogPrintf("CServiceNode::Check -- ServiceNode %s is banned till block %d now\n", outpoint.ToStringShort(), nPoSeBanHeight);
         return;
     }
@@ -593,7 +593,7 @@ bool CServiceNodeBroadcast::CheckOutpoint(int& nDos)
             Params().GetConsensus().nServiceNodeMinimumConfirmations, outpoint.ToStringShort());
         // UTXO is legit but has not enough confirmations.
         // Maybe we miss few blocks, let this dnb be checked again later.
-        dnodeman.mapSeenServiceNodeBroadcast.erase(GetHash());
+        snodeman.mapSeenServiceNodeBroadcast.erase(GetHash());
         return false;
     }
 
@@ -924,11 +924,11 @@ bool CServiceNodePing::CheckAndUpdate(CServiceNode* pdn, bool fFromNewBroadcast,
     LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode ping accepted, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
     pdn->lastPing = *this;
 
-    // and update dnodeman.mapSeenServiceNodeBroadcast.lastPing which is probably outdated
+    // and update snodeman.mapSeenServiceNodeBroadcast.lastPing which is probably outdated
     CServiceNodeBroadcast dnb(*pdn);
     uint256 hash = dnb.GetHash();
-    if (dnodeman.mapSeenServiceNodeBroadcast.count(hash)) {
-        dnodeman.mapSeenServiceNodeBroadcast[hash].second.lastPing = *this;
+    if (snodeman.mapSeenServiceNodeBroadcast.count(hash)) {
+        snodeman.mapSeenServiceNodeBroadcast[hash].second.lastPing = *this;
     }
 
     // force update, ignoring cache
@@ -999,6 +999,6 @@ void CServiceNode::FlagGovernanceItemsAsDirty()
         }
     }
     for (size_t i = 0; i < vecDirty.size(); ++i) {
-        dnodeman.AddDirtyGovernanceObjectHash(vecDirty[i]);
+        snodeman.AddDirtyGovernanceObjectHash(vecDirty[i]);
     }
 }

@@ -243,7 +243,7 @@ bool CGovernanceVote::IsValid(bool fSignatureCheck) const
     }
 
     servicenode_info_t infoDn;
-    if (!dnodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
+    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
         LogPrint("gobject", "CGovernanceVote::IsValid -- Unknown ServiceNode - %s\n", servicenodeOutpoint.ToStringShort());
         return false;
     }

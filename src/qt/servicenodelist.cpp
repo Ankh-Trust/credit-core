@@ -121,14 +121,14 @@ void ServiceNodeList::StartAlias(std::string strAlias)
             bool fSuccess = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
 
             int nDoS;
-            if (fSuccess && !dnodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
+            if (fSuccess && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
                 strError = "Failed to verify DNB";
                 fSuccess = false;
             }
 
             if (fSuccess) {
                 strStatusHtml += "<br>Successfully started ServiceNode.";
-                dnodeman.NotifyServiceNodeUpdates(*g_connman);
+                snodeman.NotifyServiceNodeUpdates(*g_connman);
             } else {
                 strStatusHtml += "<br>Failed to start ServiceNode.<br>Error: " + strError;
             }
@@ -161,20 +161,20 @@ void ServiceNodeList::StartAll(std::string strCommand)
 
         COutPoint outpoint = COutPoint(uint256S(dne.getTxHash()), nOutputIndex);
 
-        if (strCommand == "start-missing" && dnodeman.Has(outpoint))
+        if (strCommand == "start-missing" && snodeman.Has(outpoint))
             continue;
 
         bool fSuccess = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
 
         int nDoS;
-        if (fSuccess && !dnodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
+        if (fSuccess && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
             strError = "Failed to verify DNB";
             fSuccess = false;
         }
 
         if (fSuccess) {
             nCountSuccessful++;
-            dnodeman.NotifyServiceNodeUpdates(*g_connman);
+            snodeman.NotifyServiceNodeUpdates(*g_connman);
         } else {
             nCountFailed++;
             strFailedHtml += "\nFailed to start " + dne.getAlias() + ". Error: " + strError;
@@ -213,7 +213,7 @@ void ServiceNodeList::updateMyServiceNodeInfo(QString strAlias, QString strAddr,
     }
 
     servicenode_info_t infoDn;
-    bool fFound = dnodeman.GetServiceNodeInfo(outpoint, infoDn);
+    bool fFound = snodeman.GetServiceNodeInfo(outpoint, infoDn);
 
     QTableWidgetItem* aliasItem = new QTableWidgetItem(strAlias);
     QTableWidgetItem* addrItem = new QTableWidgetItem(fFound ? QString::fromStdString(infoDn.addr.ToString()) : strAddr);
@@ -297,7 +297,7 @@ void ServiceNodeList::updateNodeList()
     ui->tableWidgetServiceNodes->setSortingEnabled(false);
     ui->tableWidgetServiceNodes->clearContents();
     ui->tableWidgetServiceNodes->setRowCount(0);
-    std::map<COutPoint, CServiceNode> mapServiceNodes = dnodeman.GetFullServiceNodeMap();
+    std::map<COutPoint, CServiceNode> mapServiceNodes = snodeman.GetFullServiceNodeMap();
     int offsetFromUtc = GetOffsetFromUtc();
 
     for (const auto& dnpair : mapServiceNodes) {

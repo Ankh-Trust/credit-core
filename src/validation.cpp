@@ -2396,7 +2396,7 @@ int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Para
                 // no votes for this block
                 continue;
             }
-            if (!dnodeman.GetServiceNodeInfo(payee, dnInfo)) {
+            if (!snodeman.GetServiceNodeInfo(payee, dnInfo)) {
                 // unknown servicenode
                 continue;
             }

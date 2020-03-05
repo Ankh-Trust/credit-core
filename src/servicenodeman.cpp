@@ -25,7 +25,7 @@
 #include "warnings.h"
 
 /** ServiceNode manager */
-CServiceNodeMan dnodeman;
+CServiceNodeMan snodeman;
 
 const std::string CServiceNodeMan::SERIALIZATION_VERSION_STRING = "CServiceNodeMan-Version-4";
 const int CServiceNodeMan::LAST_PAID_SCAN_BLOCKS = 100;
@@ -1823,18 +1823,18 @@ void CServiceNodeMan::DoMaintenance(CConnman& connman)
     nTick++;
 
     // make sure to check all servicenodes first
-    dnodeman.Check();
+    snodeman.Check();
 
-    dnodeman.ProcessPendingDnbRequests(connman);
-    dnodeman.ProcessPendingDnvRequests(connman);
+    snodeman.ProcessPendingDnbRequests(connman);
+    snodeman.ProcessPendingDnvRequests(connman);
 
     if (nTick % 60 == 0) {
-        dnodeman.ProcessServiceNodeConnections(connman);
-        dnodeman.CheckAndRemove(connman);
-        dnodeman.WarnServiceNodeDaemonUpdates();
+        snodeman.ProcessServiceNodeConnections(connman);
+        snodeman.CheckAndRemove(connman);
+        snodeman.WarnServiceNodeDaemonUpdates();
     }
 
     if (fServiceNodeMode && (nTick % (60 * 5) == 0)) {
-        dnodeman.DoFullVerificationStep(connman);
+        snodeman.DoFullVerificationStep(connman);
     }
 }

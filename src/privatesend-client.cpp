@@ -68,12 +68,12 @@ void CPrivateSendClientManager::ProcessMessage(CNode* pfrom, const std::string& 
             return;
 
         servicenode_info_t infoDn;
-        if (!dnodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, infoDn))
+        if (!snodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, infoDn))
             return;
 
         if (!psq.CheckSignature(infoDn.pubKeyServiceNode)) {
             // we probably have outdated info
-            dnodeman.AskForDN(pfrom, psq.servicenodeOutpoint, connman);
+            snodeman.AskForDN(pfrom, psq.servicenodeOutpoint, connman);
             return;
         }
 
@@ -102,15 +102,15 @@ void CPrivateSendClientManager::ProcessMessage(CNode* pfrom, const std::string& 
                 }
             }
 
-            int nThreshold = infoDn.nLastPsq + dnodeman.CountServiceNodes() / 5;
-            LogPrint("privatesend", "PSQUEUE -- nLastPsq: %d  threshold: %d  nPsqCount: %d\n", infoDn.nLastPsq, nThreshold, dnodeman.nPsqCount);
+            int nThreshold = infoDn.nLastPsq + snodeman.CountServiceNodes() / 5;
+            LogPrint("privatesend", "PSQUEUE -- nLastPsq: %d  threshold: %d  nPsqCount: %d\n", infoDn.nLastPsq, nThreshold, snodeman.nPsqCount);
             //don't allow a few nodes to dominate the queuing process
-            if (infoDn.nLastPsq != 0 && nThreshold > dnodeman.nPsqCount) {
+            if (infoDn.nLastPsq != 0 && nThreshold > snodeman.nPsqCount) {
                 LogPrint("privatesend", "PSQUEUE -- ServiceNode %s is sending too many psq messages\n", infoDn.addr.ToString());
                 return;
             }
 
-            if (!dnodeman.AllowMixing(psq.servicenodeOutpoint))
+            if (!snodeman.AllowMixing(psq.servicenodeOutpoint))
                 return;
 
             LogPrint("privatesend", "PSQUEUE -- new PrivateSend queue (%s) from servicenode %s\n", psq.ToString(), infoDn.addr.ToString());
@@ -856,7 +856,7 @@ bool CPrivateSendClientSession::DoAutomaticDenominating(CConnman& connman, bool 
             return false;
         }
 
-        if (dnodeman.size() == 0) {
+        if (snodeman.size() == 0) {
             LogPrint("privatesend", "CPrivateSendClientSession::DoAutomaticDenominating -- No ServiceNodes detected\n");
             strAutoDenomResult = _("No ServiceNodes detected.");
             return false;
@@ -972,7 +972,7 @@ bool CPrivateSendClientManager::DoAutomaticDenominating(CConnman& connman, bool 
         return false;
     }
 
-    int nDnCountEnabled = dnodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
+    int nDnCountEnabled = snodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
 
     // If we've used 90% of the ServiceNode list then drop the oldest first ~30%
     int nThreshold_high = nDnCountEnabled * 0.9;
@@ -1011,7 +1011,7 @@ void CPrivateSendClientManager::AddUsedServiceNode(const COutPoint& outpointDn)
 }
 servicenode_info_t CPrivateSendClientManager::GetNotUsedServiceNode()
 {
-    return dnodeman.FindRandomNotInVec(vecServiceNodesUsed, MIN_PRIVATESEND_PEER_PROTO_VERSION);
+    return snodeman.FindRandomNotInVec(vecServiceNodesUsed, MIN_PRIVATESEND_PEER_PROTO_VERSION);
 }
 
 bool CPrivateSendClientSession::JoinExistingQueue(CAmount nBalanceNeedsAnonymized, CConnman& connman)
@@ -1025,7 +1025,7 @@ bool CPrivateSendClientSession::JoinExistingQueue(CAmount nBalanceNeedsAnonymize
     while (privateSendClient.GetQueueItemAndTry(psq)) {
         servicenode_info_t infoDn;
 
-        if (!dnodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, infoDn)) {
+        if (!snodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, infoDn)) {
             LogPrintf("CPrivateSendClientSession::JoinExistingQueue -- psq servicenode is not in servicenode list, servicenode=%s\n", psq.servicenodeOutpoint.ToStringShort());
             continue;
         }
@@ -1090,7 +1090,7 @@ bool CPrivateSendClientSession::StartNewQueue(CAmount nValueMin, CAmount nBalanc
         return false;
 
     int nTries = 0;
-    int nDnCount = dnodeman.CountServiceNodes();
+    int nDnCount = snodeman.CountServiceNodes();
 
     // ** find the coins we'll use
     std::vector<CTxIn> vecTxIn;
@@ -1121,11 +1121,11 @@ bool CPrivateSendClientSession::StartNewQueue(CAmount nValueMin, CAmount nBalanc
             continue;
         }
 
-        if (infoDn.nLastPsq != 0 && infoDn.nLastPsq + nDnCount / 5 > dnodeman.nPsqCount) {
+        if (infoDn.nLastPsq != 0 && infoDn.nLastPsq + nDnCount / 5 > snodeman.nPsqCount) {
             LogPrintf("CPrivateSendClientSession::StartNewQueue -- Too early to mix on this servicenode!"
                       " servicenode=%s  addr=%s  nLastPsq=%d  CountEnabled/5=%d  nPsqCount=%d\n",
                 infoDn.outpoint.ToStringShort(), infoDn.addr.ToString(), infoDn.nLastPsq,
-                nDnCount / 5, dnodeman.nPsqCount);
+                nDnCount / 5, snodeman.nPsqCount);
             nTries++;
             continue;
         }

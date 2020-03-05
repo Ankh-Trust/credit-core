@@ -219,7 +219,7 @@ UniValue gobject(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Must wait for client to sync with servicenode network. Try again in a minute or so.");
         }
 
-        bool fDnFound = dnodeman.Has(activeServiceNode.outpoint);
+        bool fDnFound = snodeman.Has(activeServiceNode.outpoint);
 
         DBG(std::cout << "gobject: submit activeServiceNode.pubKeyServiceNode = " << activeServiceNode.pubKeyServiceNode.GetHash().ToString()
                       << ", outpoint = " << activeServiceNode.outpoint.ToStringShort()
@@ -350,7 +350,7 @@ UniValue gobject(const JSONRPCRequest& request)
         UniValue returnObj(UniValue::VOBJ);
 
         CServiceNode dn;
-        bool fDnFound = dnodeman.Get(activeServiceNode.outpoint, dn);
+        bool fDnFound = snodeman.Get(activeServiceNode.outpoint, dn);
 
         if (!fDnFound) {
             nFailed++;
@@ -451,7 +451,7 @@ UniValue gobject(const JSONRPCRequest& request)
             COutPoint outpoint(nTxHash, nOutputIndex);
 
             CServiceNode dn;
-            bool fDnFound = dnodeman.Get(outpoint, dn);
+            bool fDnFound = snodeman.Get(outpoint, dn);
 
             if (!fDnFound) {
                 nFailed++;
@@ -567,7 +567,7 @@ UniValue gobject(const JSONRPCRequest& request)
             COutPoint outpoint(nTxHash, nOutputIndex);
 
             CServiceNode dn;
-            bool fDnFound = dnodeman.Get(outpoint, dn);
+            bool fDnFound = snodeman.Get(outpoint, dn);
 
             if (!fDnFound) {
                 nFailed++;
@@ -888,7 +888,7 @@ UniValue voteraw(const JSONRPCRequest& request)
     }
 
     CServiceNode dn;
-    bool fDnFound = dnodeman.Get(outpoint, dn);
+    bool fDnFound = snodeman.Get(outpoint, dn);
 
     if (!fDnFound) {
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Failure to find servicenode in list : " + outpoint.ToStringShort());

@@ -254,7 +254,7 @@ void CInstantSend::Vote(CTxLockCandidate& txLockCandidate, CConnman& connman)
 
         int nRank;
         int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, snpayments.GetMinServiceNodePaymentsProto());
-        if (!dnodeman.GetServiceNodeRank(activeServiceNode.outpoint, nRank, nLockInputHeight, nMinRequiredProtocol)) {
+        if (!snodeman.GetServiceNodeRank(activeServiceNode.outpoint, nRank, nLockInputHeight, nMinRequiredProtocol)) {
             LogPrint("instantsend", "CInstantSend::Vote -- Can't calculate rank for servicenode %s\n", activeServiceNode.outpoint.ToStringShort());
             continue;
         }
@@ -472,7 +472,7 @@ void CInstantSend::UpdateVotedOutpoints(const CTxLockVote& vote, CTxLockCandidat
                     txLockCandidate.MarkOutpointAsAttacked(vote.GetOutpoint());
                     it2->second.MarkOutpointAsAttacked(vote.GetOutpoint());
                     // apply maximum PoSe ban score to this servicenode i.e. PoSe-ban it instantly
-                    dnodeman.PoSeBan(vote.GetServiceNodeOutpoint());
+                    snodeman.PoSeBan(vote.GetServiceNodeOutpoint());
                     // NOTE: This vote must be relayed further to let all other nodes know about such
                     // misbehaviour of this servicenode. This way they should also be able to construct
                     // conflicting lock and PoSe-ban this servicenode.
@@ -1049,9 +1049,9 @@ bool CTxLockRequest::IsSimple() const
 
 bool CTxLockVote::IsValid(CNode* pnode, CConnman& connman) const
 {
-    if (!dnodeman.Has(outpointServiceNode)) {
+    if (!snodeman.Has(outpointServiceNode)) {
         LogPrint("instantsend", "CTxLockVote::IsValid -- Unknown servicenode %s\n", outpointServiceNode.ToStringShort());
-        dnodeman.AskForDN(pnode, outpointServiceNode, connman);
+        snodeman.AskForDN(pnode, outpointServiceNode, connman);
         return false;
     }
 
@@ -1065,7 +1065,7 @@ bool CTxLockVote::IsValid(CNode* pnode, CConnman& connman) const
 
     int nRank;
     int nMinRequiredProtocol = std::max(MIN_INSTANTSEND_PROTO_VERSION, snpayments.GetMinServiceNodePaymentsProto());
-    if (!dnodeman.GetServiceNodeRank(outpointServiceNode, nRank, nLockInputHeight, nMinRequiredProtocol)) {
+    if (!snodeman.GetServiceNodeRank(outpointServiceNode, nRank, nLockInputHeight, nMinRequiredProtocol)) {
         //can be caused by past versions trying to vote with an invalid protocol
         LogPrint("instantsend", "CTxLockVote::IsValid -- Can't calculate rank for servicenode %s\n", outpointServiceNode.ToStringShort());
         return false;
@@ -1103,7 +1103,7 @@ bool CTxLockVote::CheckSignature() const
 
     servicenode_info_t infoDn;
 
-    if (!dnodeman.GetServiceNodeInfo(outpointServiceNode, infoDn)) {
+    if (!snodeman.GetServiceNodeInfo(outpointServiceNode, infoDn)) {
         LogPrintf("CTxLockVote::CheckSignature -- Unknown ServiceNode: servicenode=%s\n", outpointServiceNode.ToString());
         return false;
     }

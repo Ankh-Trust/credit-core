@@ -196,11 +196,11 @@ UniValue servicenode(const JSONRPCRequest& request)
 
         int nCount;
         servicenode_info_t dnInfo;
-        dnodeman.GetNextServiceNodeInQueueForPayment(true, nCount, dnInfo);
+        snodeman.GetNextServiceNodeInQueueForPayment(true, nCount, dnInfo);
 
-        int total = dnodeman.size();
-        int ps = dnodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
-        int enabled = dnodeman.CountEnabled();
+        int total = snodeman.size();
+        int ps = snodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
+        int enabled = snodeman.CountEnabled();
 
         if (request.params.size() == 1) {
             UniValue obj(UniValue::VOBJ);
@@ -242,9 +242,9 @@ UniValue servicenode(const JSONRPCRequest& request)
             pindex = chainActive.Tip();
         }
         nHeight = pindex->nHeight + (strCommand == "current" ? 1 : 10);
-        dnodeman.UpdateLastPaid(pindex);
+        snodeman.UpdateLastPaid(pindex);
 
-        if (!dnodeman.GetNextServiceNodeInQueueForPayment(nHeight, true, nCount, dnInfo))
+        if (!snodeman.GetNextServiceNodeInQueueForPayment(nHeight, true, nCount, dnInfo))
             return "unknown";
 
         UniValue obj(UniValue::VOBJ);
@@ -288,7 +288,7 @@ UniValue servicenode(const JSONRPCRequest& request)
                 bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
 
                 int nDoS;
-                if (fResult && !dnodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
+                if (fResult && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
                     strError = "Failed to verify DNB";
                     fResult = false;
                 }
@@ -297,7 +297,7 @@ UniValue servicenode(const JSONRPCRequest& request)
                 if (!fResult) {
                     statusObj.push_back(Pair("errorMessage", strError));
                 }
-                dnodeman.NotifyServiceNodeUpdates(*g_connman);
+                snodeman.NotifyServiceNodeUpdates(*g_connman);
                 break;
             }
         }
@@ -333,7 +333,7 @@ UniValue servicenode(const JSONRPCRequest& request)
 
             COutPoint outpoint = COutPoint(uint256S(dne.getTxHash()), (uint32_t)atoi(dne.getOutputIndex()));
             CServiceNode dn;
-            bool fFound = dnodeman.Get(outpoint, dn);
+            bool fFound = snodeman.Get(outpoint, dn);
             CServiceNodeBroadcast dnb;
 
             if (strCommand == "start-missing" && fFound)
@@ -344,7 +344,7 @@ UniValue servicenode(const JSONRPCRequest& request)
             bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
 
             int nDoS;
-            if (fResult && !dnodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
+            if (fResult && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
                 strError = "Failed to verify DNB";
                 fResult = false;
             }
@@ -362,7 +362,7 @@ UniValue servicenode(const JSONRPCRequest& request)
 
             resultsObj.push_back(Pair("status", statusObj));
         }
-        dnodeman.NotifyServiceNodeUpdates(*g_connman);
+        snodeman.NotifyServiceNodeUpdates(*g_connman);
 
         UniValue returnObj(UniValue::VOBJ);
         returnObj.push_back(Pair("overall", strprintf("Successfully started %d servicenodes, failed to start %d, total %d", nSuccessful, nFailed, nSuccessful + nFailed)));
@@ -385,7 +385,7 @@ UniValue servicenode(const JSONRPCRequest& request)
         for (const auto& dne : servicenodeConfig.getEntries()) {
             COutPoint outpoint = COutPoint(uint256S(dne.getTxHash()), (uint32_t)atoi(dne.getOutputIndex()));
             CServiceNode dn;
-            bool fFound = dnodeman.Get(outpoint, dn);
+            bool fFound = snodeman.Get(outpoint, dn);
 
             std::string strStatus = fFound ? dn.GetStatus() : "MISSING";
 
@@ -429,7 +429,7 @@ UniValue servicenode(const JSONRPCRequest& request)
         dnObj.push_back(Pair("service", activeServiceNode.service.ToString()));
 
         CServiceNode dn;
-        if (dnodeman.Get(activeServiceNode.outpoint, dn)) {
+        if (snodeman.Get(activeServiceNode.outpoint, dn)) {
             dnObj.push_back(Pair("payee", CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString()));
         }
 
@@ -527,13 +527,13 @@ UniValue servicenodelist(const JSONRPCRequest& request)
             LOCK(cs_main);
             pindex = chainActive.Tip();
         }
-        dnodeman.UpdateLastPaid(pindex);
+        snodeman.UpdateLastPaid(pindex);
     }
 
     UniValue obj(UniValue::VOBJ);
     if (strMode == "rank") {
         CServiceNodeMan::rank_pair_vec_t vServiceNodeRanks;
-        dnodeman.GetServiceNodeRanks(vServiceNodeRanks);
+        snodeman.GetServiceNodeRanks(vServiceNodeRanks);
         for (const auto& rankpair : vServiceNodeRanks) {
             std::string strOutpoint = rankpair.second.outpoint.ToStringShort();
             if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
@@ -541,7 +541,7 @@ UniValue servicenodelist(const JSONRPCRequest& request)
             obj.push_back(Pair(strOutpoint, rankpair.first));
         }
     } else {
-        std::map<COutPoint, CServiceNode> mapServiceNodes = dnodeman.GetFullServiceNodeMap();
+        std::map<COutPoint, CServiceNode> mapServiceNodes = snodeman.GetFullServiceNodeMap();
         for (const auto& dnpair : mapServiceNodes) {
             CServiceNode dn = dnpair.second;
             std::string strOutpoint = dnpair.first.ToStringShort();
@@ -862,8 +862,8 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
             int nDos = 0;
             bool fResult;
             if (dnb.CheckSignature(nDos)) {
-                fResult = dnodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDos, *g_connman);
-                dnodeman.NotifyServiceNodeUpdates(*g_connman);
+                fResult = snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDos, *g_connman);
+                snodeman.NotifyServiceNodeUpdates(*g_connman);
             } else
                 fResult = false;
 

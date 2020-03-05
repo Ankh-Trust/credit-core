@@ -262,7 +262,7 @@ void CServiceNodePayments::FillBlockPayee(CMutableTransaction& txNew, int nBlock
         // no servicenode detected...
         int nCount = 0;
         servicenode_info_t dnInfo;
-        if (!dnodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
+        if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
             hasPayment = false;
             LogPrintf("CServiceNodePayments::FillBlockPayee: Failed to detect ServiceNode to pay\n");
             return;
@@ -380,10 +380,10 @@ void CServiceNodePayments::ProcessMessage(CNode* pfrom, const std::string& strCo
         }
 
         servicenode_info_t dnInfo;
-        if (!dnodeman.GetServiceNodeInfo(vote.servicenodeOutpoint, dnInfo)) {
+        if (!snodeman.GetServiceNodeInfo(vote.servicenodeOutpoint, dnInfo)) {
             // dn was not found, so we can't check vote, some info is probably missing
             LogPrintf("SERVICENODEPAYMENTVOTE -- ServiceNode is missing %s\n", vote.servicenodeOutpoint.ToStringShort());
-            dnodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
+            snodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
             return;
         }
 
@@ -399,7 +399,7 @@ void CServiceNodePayments::ProcessMessage(CNode* pfrom, const std::string& strCo
             }
             // Either our info or vote info could be outdated.
             // In case our info is outdated, ask for an update,
-            dnodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
+            snodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
             // but there is nothing we can do if vote info itself is outdated
             // (i.e. it was signed by a DN which changed its key),
             // so just quit here.
@@ -700,11 +700,11 @@ bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::
 {
     servicenode_info_t dnInfo;
 
-    if (!dnodeman.GetServiceNodeInfo(servicenodeOutpoint, dnInfo)) {
+    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, dnInfo)) {
         strError = strprintf("Unknown servicenode=%s", servicenodeOutpoint.ToStringShort());
         // Only ask if we are already synced and still have no idea about that ServiceNode
         if (servicenodeSync.IsServiceNodeListSynced()) {
-            dnodeman.AskForDN(pnode, servicenodeOutpoint, connman);
+            snodeman.AskForDN(pnode, servicenodeOutpoint, connman);
         }
 
         return false;
@@ -731,7 +731,7 @@ bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::
 
     int nRank;
 
-    if (!dnodeman.GetServiceNodeRank(servicenodeOutpoint, nRank, nBlockHeight - 101, nMinRequiredProtocol)) {
+    if (!snodeman.GetServiceNodeRank(servicenodeOutpoint, nRank, nBlockHeight - 101, nMinRequiredProtocol)) {
         LogPrint("snpayments", "CServiceNodePaymentVote::IsValid -- Can't calculate rank for servicenode %s\n",
             servicenodeOutpoint.ToStringShort());
         return false;
@@ -770,7 +770,7 @@ bool CServiceNodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
 
     int nRank;
 
-    if (!dnodeman.GetServiceNodeRank(activeServiceNode.outpoint, nRank, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
+    if (!snodeman.GetServiceNodeRank(activeServiceNode.outpoint, nRank, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
         LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- Unknown ServiceNode\n");
         return false;
     }
@@ -789,7 +789,7 @@ bool CServiceNodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
     int nCount = 0;
     servicenode_info_t dnInfo;
 
-    if (!dnodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
+    if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
         LogPrintf("CServiceNodePayments::ProcessBlock -- ERROR: Failed to find ServiceNode to pay\n");
         return false;
     }
@@ -827,7 +827,7 @@ void CServiceNodePayments::CheckBlockVotes(int nBlockHeight)
         return;
 
     CServiceNodeMan::rank_pair_vec_t dns;
-    if (!dnodeman.GetServiceNodeRanks(dns, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
+    if (!snodeman.GetServiceNodeRanks(dns, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
         LogPrintf("CServiceNodePayments::CheckBlockVotes -- nBlockHeight=%d, GetServiceNodeRanks failed\n", nBlockHeight);
         return;
     }
@@ -1086,7 +1086,7 @@ bool CServiceNodePayments::IsEnoughData() const
 
 int CServiceNodePayments::GetStorageLimit() const
 {
-    return std::max(int(dnodeman.size() * nStorageCoeff), nMinBlocksToStore);
+    return std::max(int(snodeman.size() * nStorageCoeff), nMinBlocksToStore);
 }
 
 void CServiceNodePayments::UpdatedBlockTip(const CBlockIndex* pindex, CConnman& connman)

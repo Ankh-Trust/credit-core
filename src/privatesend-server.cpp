@@ -50,7 +50,7 @@ void CPrivateSendServer::ProcessMessage(CNode* pfrom, const std::string& strComm
         LogPrint("privatesend", "PSACCEPT -- nDenom %d (%s)  txCollateral %s", psa.nDenom, CPrivateSend::GetDenominationsToString(psa.nDenom), psa.txCollateral.ToString());
 
         servicenode_info_t dnInfo;
-        if (!dnodeman.GetServiceNodeInfo(activeServiceNode.outpoint, dnInfo)) {
+        if (!snodeman.GetServiceNodeInfo(activeServiceNode.outpoint, dnInfo)) {
             PushStatus(pfrom, STATUS_REJECTED, ERR_DN_LIST, connman);
             return;
         }
@@ -70,7 +70,7 @@ void CPrivateSendServer::ProcessMessage(CNode* pfrom, const std::string& strComm
                 }
             }
 
-            if (dnInfo.nLastPsq != 0 && dnInfo.nLastPsq + dnodeman.CountServiceNodes() / 5 > dnodeman.nPsqCount) {
+            if (dnInfo.nLastPsq != 0 && dnInfo.nLastPsq + snodeman.CountServiceNodes() / 5 > snodeman.nPsqCount) {
                 LogPrintf("PSACCEPT -- last psq too recent, must wait: addr=%s\n", pfrom->addr.ToString());
                 PushStatus(pfrom, STATUS_REJECTED, ERR_RECENT, connman);
                 return;
@@ -118,12 +118,12 @@ void CPrivateSendServer::ProcessMessage(CNode* pfrom, const std::string& strComm
             return;
 
         servicenode_info_t dnInfo;
-        if (!dnodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, dnInfo))
+        if (!snodeman.GetServiceNodeInfo(psq.servicenodeOutpoint, dnInfo))
             return;
 
         if (!psq.CheckSignature(dnInfo.pubKeyServiceNode)) {
             // we probably have outdated info
-            dnodeman.AskForDN(pfrom, psq.servicenodeOutpoint, connman);
+            snodeman.AskForDN(pfrom, psq.servicenodeOutpoint, connman);
             return;
         }
 
@@ -136,14 +136,14 @@ void CPrivateSendServer::ProcessMessage(CNode* pfrom, const std::string& strComm
                 }
             }
 
-            int nThreshold = dnInfo.nLastPsq + dnodeman.CountServiceNodes() / 5;
-            LogPrint("privatesend", "PSQUEUE -- nLastPsq: %d  threshold: %d  nPsqCount: %d\n", dnInfo.nLastPsq, nThreshold, dnodeman.nPsqCount);
+            int nThreshold = dnInfo.nLastPsq + snodeman.CountServiceNodes() / 5;
+            LogPrint("privatesend", "PSQUEUE -- nLastPsq: %d  threshold: %d  nPsqCount: %d\n", dnInfo.nLastPsq, nThreshold, snodeman.nPsqCount);
             //don't allow a few nodes to dominate the queuing process
-            if (dnInfo.nLastPsq != 0 && nThreshold > dnodeman.nPsqCount) {
+            if (dnInfo.nLastPsq != 0 && nThreshold > snodeman.nPsqCount) {
                 LogPrint("privatesend", "PSQUEUE -- ServiceNode %s is sending too many psq messages\n", dnInfo.addr.ToString());
                 return;
             }
-            dnodeman.AllowMixing(psq.servicenodeOutpoint);
+            snodeman.AllowMixing(psq.servicenodeOutpoint);
 
             LogPrint("privatesend", "PSQUEUE -- new PrivateSend queue (%s) from servicenode %s\n", psq.ToString(), dnInfo.addr.ToString());
             vecPrivateSendQueue.push_back(psq);

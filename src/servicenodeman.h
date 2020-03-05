@@ -13,7 +13,7 @@
 class CServiceNodeMan;
 class CConnman;
 
-extern CServiceNodeMan dnodeman;
+extern CServiceNodeMan snodeman;
 
 class CServiceNodeMan
 {

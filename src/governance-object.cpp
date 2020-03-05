@@ -116,13 +116,13 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
         return false;
     }
 
-    if (!dnodeman.Has(vote.GetServiceNodeOutpoint())) {
+    if (!snodeman.Has(vote.GetServiceNodeOutpoint())) {
         std::ostringstream ostr;
         ostr << "CGovernanceObject::ProcessVote -- ServiceNode " << vote.GetServiceNodeOutpoint().ToStringShort() << " not found";
         exception = CGovernanceException(ostr.str(), GOVERNANCE_EXCEPTION_WARNING);
         if (cmmapOrphanVotes.Insert(vote.GetServiceNodeOutpoint(), vote_time_pair_t(vote, GetAdjustedTime() + GOVERNANCE_ORPHAN_EXPIRATION_TIME))) {
             if (pfrom) {
-                dnodeman.AskForDN(pfrom, vote.GetServiceNodeOutpoint(), connman);
+                snodeman.AskForDN(pfrom, vote.GetServiceNodeOutpoint(), connman);
             }
             LogPrintf("%s\n", ostr.str());
         } else {
@@ -190,7 +190,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
         return false;
     }
 
-    if (!dnodeman.AddGovernanceVote(vote.GetServiceNodeOutpoint(), vote.GetParentHash())) {
+    if (!snodeman.AddGovernanceVote(vote.GetServiceNodeOutpoint(), vote.GetParentHash())) {
         std::ostringstream ostr;
         ostr << "CGovernanceObject::ProcessVote -- Unable to add governance vote"
              << ", DN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
@@ -212,7 +212,7 @@ void CGovernanceObject::ClearServiceNodeVotes()
 
     vote_m_it it = mapCurrentDNVotes.begin();
     while (it != mapCurrentDNVotes.end()) {
-        if (!dnodeman.Has(it->first)) {
+        if (!snodeman.Has(it->first)) {
             fileVotes.RemoveVotesFromServiceNode(it->first);
             mapCurrentDNVotes.erase(it++);
         } else {
@@ -485,7 +485,7 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingServ
 
         std::string strOutpoint = servicenodeOutpoint.ToStringShort();
         servicenode_info_t infoDn;
-        if (!dnodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
+        if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
             CServiceNode::CollateralStatus err = CServiceNode::CheckCollateral(servicenodeOutpoint, CPubKey());
             if (err == CServiceNode::COLLATERAL_UTXO_NOT_FOUND) {
                 strError = "Failed to find ServiceNode UTXO, missing servicenode=" + strOutpoint + "\n";
@@ -702,7 +702,7 @@ void CGovernanceObject::UpdateSentinelVariables()
 {
     // CALCULATE MINIMUM SUPPORT LEVELS REQUIRED
 
-    int nDnCount = dnodeman.CountEnabled();
+    int nDnCount = snodeman.CountEnabled();
     if (nDnCount == 0)
         return;
 
@@ -748,7 +748,7 @@ void CGovernanceObject::CheckOrphanVotes(CConnman& connman)
         const CGovernanceVote& vote = pairVote.first;
         if (pairVote.second < nNow) {
             fRemove = true;
-        } else if (!dnodeman.Has(vote.GetServiceNodeOutpoint())) {
+        } else if (!snodeman.Has(vote.GetServiceNodeOutpoint())) {
             ++it;
             continue;
         }

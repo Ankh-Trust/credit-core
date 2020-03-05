@@ -44,7 +44,7 @@ void CDHTSettings::LoadPeerList()
 {
     std::string strPeerList = "";
     // get all ServiceNodes above the minimum protocol version
-    std::map<COutPoint, CServiceNode> mapServiceNodes = dnodeman.GetFullServiceNodeMap();
+    std::map<COutPoint, CServiceNode> mapServiceNodes = snodeman.GetFullServiceNodeMap();
     for (auto& dnpair : mapServiceNodes) {
         CServiceNode dn = dnpair.second;
         if (dn.nProtocolVersion >= MIN_DHT_PROTO_VERSION) {
