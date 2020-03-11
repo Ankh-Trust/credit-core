@@ -3,6 +3,9 @@
 
 **Credit v1.1.0.0**
 
+* Use std::function and std::bind in scheduler instead of boost/std mix
+* [ServiceNode] Do not call sentinel methods when spork is inactive
+* [ServiceNode] Remove sncache.dat file
 * [BDAP] Remove second month overrun check
 * Bump client and block version to 1.0.3.0
 * [RPC] More user-friendly error message when partially signing
@@ -13,7 +16,7 @@
 * [Util] Refactor add months to epoch functions
 * [Test] Add unit tests for new format ISO date and time
 * [BDAP] Fix comparison between signed and unsigned warning
-* [RPC] Fix dynode-list bug
+* [RPC] Fix servicnode-list bug
 
 
 **Credit v1.0.2.0**

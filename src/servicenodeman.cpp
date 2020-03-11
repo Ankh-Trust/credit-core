@@ -27,7 +27,7 @@
 /** ServiceNode manager */
 CServiceNodeMan snodeman;
 
-const std::string CServiceNodeMan::SERIALIZATION_VERSION_STRING = "CServiceNodeMan-Version-4";
+const std::string CServiceNodeMan::SERIALIZATION_VERSION_STRING = "CServiceNodeMan-Version-5";
 const int CServiceNodeMan::LAST_PAID_SCAN_BLOCKS = 100;
 
 struct CompareLastPaidBlock {
