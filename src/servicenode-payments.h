@@ -24,8 +24,8 @@ static const int snpayments_SIGNATURES_TOTAL = 20;
 //  vote for servicenode and be elected as a payment winner
 // V1 - Last protocol version before update
 // V2 - Newest protocol version
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 71000;
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71100;  // Only Service Nodes >= v1.0.2.0 will get paid after Spork 10 activation
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 71100;
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71110;  // Only Service Nodes >= v1.1.0.0 will get paid after Spork 10 activation
 
 extern CCriticalSection cs_vecPayees;
 extern CCriticalSection cs_mapServiceNodeBlocks;
