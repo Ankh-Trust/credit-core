@@ -7,7 +7,7 @@
 * [ServiceNode] Do not call sentinel methods when spork is inactive
 * [ServiceNode] Remove sncache.dat file
 * [BDAP] Remove second month overrun check
-* Bump client and block version to 1.0.3.0
+* Bump client and block version to 1.1.0.0
 * [RPC] More user-friendly error message when partially signing
 * [Qt] Translations Updated
 * [BDAP] Show fee required in the insufficient funds error message
