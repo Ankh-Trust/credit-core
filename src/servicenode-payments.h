@@ -17,8 +17,8 @@ class CServiceNodeBlockPayees;
 class CServiceNodePayments;
 class CServiceNodePaymentVote;
 
-static const int snpayments_SIGNATURES_REQUIRED = 10;
-static const int snpayments_SIGNATURES_TOTAL = 20;
+static const int SNPAYMENTS_SIGNATURES_REQUIRED = 10;
+static const int SNPAYMENTS_SIGNATURES_TOTAL = 20;
 
 //! minimum peer version that can receive and send servicenode payment messages,
 //  vote for servicenode and be elected as a payment winner

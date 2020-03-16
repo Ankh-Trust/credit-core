@@ -596,7 +596,7 @@ bool CServiceNodeBlockPayees::IsTransactionValid(const CTransaction& txNew, cons
     std::string strPayeesPossible = "";
     CAmount nServiceNodePayment = GetFluidServiceNodeReward(nHeight);
 
-    //require at least snpayments_SIGNATURES_REQUIRED signatures
+    //require at least SNPAYMENTS_SIGNATURES_REQUIRED signatures
 
     for (const auto& payee : vecPayees) {
         if (payee.GetVoteCount() >= nMaxSignatures) {
@@ -604,12 +604,12 @@ bool CServiceNodeBlockPayees::IsTransactionValid(const CTransaction& txNew, cons
         }
     }
 
-    // if we don't have at least snpayments_SIGNATURES_REQUIRED signatures on a payee, approve whichever is the longest chain
-    if (nMaxSignatures < snpayments_SIGNATURES_REQUIRED)
+    // if we don't have at least SNPAYMENTS_SIGNATURES_REQUIRED signatures on a payee, approve whichever is the longest chain
+    if (nMaxSignatures < SNPAYMENTS_SIGNATURES_REQUIRED)
         return true;
 
     for (const auto& payee : vecPayees) {
-        if (payee.GetVoteCount() >= snpayments_SIGNATURES_REQUIRED) {
+        if (payee.GetVoteCount() >= SNPAYMENTS_SIGNATURES_REQUIRED) {
             for (const auto& txout : txNew.vout) {
                 if (payee.GetPayee() == txout.scriptPubKey && nServiceNodePayment == txout.nValue) {
                     LogPrint("snpayments", "CServiceNodeBlockPayees::IsTransactionValid -- Found required payment\n");
@@ -737,14 +737,14 @@ bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::
         return false;
     }
 
-    if (nRank > snpayments_SIGNATURES_TOTAL) {
+    if (nRank > SNPAYMENTS_SIGNATURES_TOTAL) {
         // It's common to have servicenodes mistakenly think they are in the top 10
         // We don't want to print all of these messages in normal mode, debug mode should print though
-        strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), snpayments_SIGNATURES_TOTAL, nRank);
+        strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), SNPAYMENTS_SIGNATURES_TOTAL, nRank);
         // Only ban for new dnw which is out of bounds, for old dnw DN list itself might be way too much off
-        if (nRank > snpayments_SIGNATURES_TOTAL * 2 && nBlockHeight > nValidationHeight) {
+        if (nRank > SNPAYMENTS_SIGNATURES_TOTAL * 2 && nBlockHeight > nValidationHeight) {
             LOCK(cs_main);
-            strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), snpayments_SIGNATURES_TOTAL * 2, nRank);
+            strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), SNPAYMENTS_SIGNATURES_TOTAL * 2, nRank);
             LogPrintf("CServiceNodePaymentVote::IsValid -- Error: %s\n", strError);
             Misbehaving(pnode->GetId(), 20);
         }
@@ -775,8 +775,8 @@ bool CServiceNodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
         return false;
     }
 
-    if (nRank > snpayments_SIGNATURES_TOTAL) {
-        LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- ServiceNode not in the top %d (%d)\n", snpayments_SIGNATURES_TOTAL, nRank);
+    if (nRank > SNPAYMENTS_SIGNATURES_TOTAL) {
+        LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- ServiceNode not in the top %d (%d)\n", SNPAYMENTS_SIGNATURES_TOTAL, nRank);
         return false;
     }
 
@@ -876,7 +876,7 @@ void CServiceNodePayments::CheckBlockVotes(int nBlockHeight)
                 dn.second.outpoint.ToStringShort());
         }
 
-        if (++i >= snpayments_SIGNATURES_TOTAL)
+        if (++i >= SNPAYMENTS_SIGNATURES_TOTAL)
             break;
     }
 
@@ -1025,15 +1025,15 @@ void CServiceNodePayments::RequestLowDataPaymentBlocks(CNode* pnode, CConnman& c
         int nTotalVotes = 0;
         bool fFound = false;
         for (const auto& payee : dnBlockPayees.second.vecPayees) {
-            if (payee.GetVoteCount() >= snpayments_SIGNATURES_REQUIRED) {
+            if (payee.GetVoteCount() >= SNPAYMENTS_SIGNATURES_REQUIRED) {
                 fFound = true;
                 break;
             }
             nTotalVotes += payee.GetVoteCount();
         }
-        // A clear winner (snpayments_SIGNATURES_REQUIRED+ votes) was found
+        // A clear winner (SNPAYMENTS_SIGNATURES_REQUIRED+ votes) was found
         // or no clear winner was found but there are at least avg number of votes
-        if (fFound || nTotalVotes >= (snpayments_SIGNATURES_TOTAL + snpayments_SIGNATURES_REQUIRED) / 2) {
+        if (fFound || nTotalVotes >= (SNPAYMENTS_SIGNATURES_TOTAL + SNPAYMENTS_SIGNATURES_REQUIRED) / 2) {
             // so just move to the next block
             continue;
         }
@@ -1079,7 +1079,7 @@ std::string CServiceNodePayments::ToString() const
 
 bool CServiceNodePayments::IsEnoughData() const
 {
-    float nAverageVotes = (snpayments_SIGNATURES_TOTAL + snpayments_SIGNATURES_REQUIRED) / 2;
+    float nAverageVotes = (SNPAYMENTS_SIGNATURES_TOTAL + SNPAYMENTS_SIGNATURES_REQUIRED) / 2;
     int nStorageLimit = GetStorageLimit();
     return GetBlockCount() > nStorageLimit && GetVoteCount() > nStorageLimit * nAverageVotes;
 }
