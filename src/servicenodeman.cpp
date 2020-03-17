@@ -38,7 +38,7 @@ struct CompareLastPaidBlock {
     }
 };
 
-struct CompareScoreDN {
+struct CompareScoreSN {
     bool operator()(const std::pair<arith_uint256, const CServiceNode*>& t1,
         const std::pair<arith_uint256, const CServiceNode*>& t2) const
     {
@@ -664,7 +664,7 @@ bool CServiceNodeMan::GetServiceNodeScores(const uint256& nBlockHash, CServiceNo
         }
     }
 
-    sort(vecServiceNodeScoresRet.rbegin(), vecServiceNodeScoresRet.rend(), CompareScoreDN());
+    sort(vecServiceNodeScoresRet.rbegin(), vecServiceNodeScoresRet.rend(), CompareScoreSN());
     return !vecServiceNodeScoresRet.empty();
 }
 

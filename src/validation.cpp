@@ -619,13 +619,13 @@ bool CheckTransaction(const CTransaction& tx, CValidationState& state)
     if (fIsBDAP && tx.nVersion != BDAP_TX_VERSION)
         return state.DoS(100, false, REJECT_INVALID, "incorrect-bdap-tx-version");
 
-    if (fIsBDAP && !CheckBDAPTxDynamicUsage(tx, vBdapCoins, nStandardIn, nCreditsIn, nStandardOut, nCreditsOut, nDataBurned))
+    if (fIsBDAP && !CheckBDAPTxCreditUsage(tx, vBdapCoins, nStandardIn, nCreditsIn, nStandardOut, nCreditsOut, nDataBurned))
         return state.DoS(100, false, REJECT_INVALID, "bad-bdap-credit-use");
 
     return true;
 }
 
-bool CheckBDAPTxDynamicUsage(const CTransaction& tx, const std::vector<Coin>& vBdapCoins,
+bool CheckBDAPTxCreditUsage(const CTransaction& tx, const std::vector<Coin>& vBdapCoins,
                                 const CAmount& nStandardIn, const CAmount& nCreditsIn, const CAmount& nStandardOut, const CAmount& nCreditsOut, const CAmount& nDataBurned)
 {
     LogPrint("bdap", "%s -- nStandardIn %d, nCreditsIn %d, nStandardOut %d, nCreditsOut %d, nDataBurned %d\n", __func__,
