@@ -58,7 +58,7 @@ DDNS
 
 Credit
 -------
-* dnsync [status|next|reset]
+* snsync [status|next|reset]
 * servicenode "command"...
 * servicenodebroadcast "command"...
 * servicenodelist ( "mode" "filter" )
@@ -104,7 +104,7 @@ Network
 -------
 * addnode "node" "add|remove|onetry"
 * clearbanned
-* disconnectnode "node" 
+* disconnectnode "node"
 * getaddednodeinfo dns ( "node" )
 * getconnectioncount
 * getnettotals

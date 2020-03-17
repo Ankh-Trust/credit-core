@@ -142,11 +142,11 @@ UniValue debug(const JSONRPCRequest& request)
     return "Debug mode: " + (fDebug ? strMode : "off");
 }
 
-UniValue dnsync(const JSONRPCRequest& request)
+UniValue snsync(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
-            "dnsync [status|next|reset]\n"
+            "snsync [status|next|reset]\n"
             "Returns the sync status, updates to the next step or resets it entirely.\n");
 
     std::string strMode = request.params[0].get_str();
@@ -1125,7 +1125,7 @@ static const CRPCCommand commands[] =
         {"addressindex", "getaddressbalance", &getaddressbalance, false, {"addresses"}},
 
         /* Credit features */
-        {"credit", "dnsync", &dnsync, true, {}},
+        {"credit", "snsync", &snsync, true, {}},
         {"credit", "spork", &spork, true, {"value"}},
 
         /* Not shown in help */

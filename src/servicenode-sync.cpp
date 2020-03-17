@@ -43,7 +43,7 @@ void CServiceNodeSync::BumpAssetLastTime(const std::string strFuncName)
     if (IsSynced() || IsFailed())
         return;
     nTimeLastBumped = GetTime();
-    LogPrint("dnsync", "CServiceNodeSync::BumpAssetLastTime -- %s\n", strFuncName);
+    LogPrint("snsync", "CServiceNodeSync::BumpAssetLastTime -- %s\n", strFuncName);
 }
 
 std::string CServiceNodeSync::GetAssetName()
@@ -455,7 +455,7 @@ void CServiceNodeSync::SendGovernanceSyncRequest(CNode* pnode, CConnman& connman
 
 void CServiceNodeSync::AcceptedBlockHeader(const CBlockIndex* pindexNew)
 {
-    LogPrint("dnsync", "CServiceNodeSync::AcceptedBlockHeader -- pindexNew->nHeight: %d\n", pindexNew->nHeight);
+    LogPrint("snsync", "CServiceNodeSync::AcceptedBlockHeader -- pindexNew->nHeight: %d\n", pindexNew->nHeight);
 
     if (!IsBlockchainSynced()) {
         // Postpone timeout each time new block header arrives while we are still syncing blockchain
@@ -465,7 +465,7 @@ void CServiceNodeSync::AcceptedBlockHeader(const CBlockIndex* pindexNew)
 
 void CServiceNodeSync::NotifyHeaderTip(const CBlockIndex* pindexNew, bool fInitialDownload, CConnman& connman)
 {
-    LogPrint("dnsync", "CServiceNodeSync::NotifyHeaderTip -- pindexNew->nHeight: %d fInitialDownload=%d\n", pindexNew->nHeight, fInitialDownload);
+    LogPrint("snsync", "CServiceNodeSync::NotifyHeaderTip -- pindexNew->nHeight: %d fInitialDownload=%d\n", pindexNew->nHeight, fInitialDownload);
 
     if (IsFailed() || IsSynced() || !pindexBestHeader)
         return;
@@ -478,7 +478,7 @@ void CServiceNodeSync::NotifyHeaderTip(const CBlockIndex* pindexNew, bool fIniti
 
 void CServiceNodeSync::UpdatedBlockTip(const CBlockIndex* pindexNew, bool fInitialDownload, CConnman& connman)
 {
-    LogPrint("dnsync", "CServiceNodeSync::UpdatedBlockTip -- pindexNew->nHeight: %d fInitialDownload=%d\n", pindexNew->nHeight, fInitialDownload);
+    LogPrint("snsync", "CServiceNodeSync::UpdatedBlockTip -- pindexNew->nHeight: %d fInitialDownload=%d\n", pindexNew->nHeight, fInitialDownload);
 
     if (IsFailed() || IsSynced() || !pindexBestHeader)
         return;
@@ -513,7 +513,7 @@ void CServiceNodeSync::UpdatedBlockTip(const CBlockIndex* pindexNew, bool fIniti
 
     fReachedBestHeader = fReachedBestHeaderNew;
 
-    LogPrint("dnsync", "CServiceNodeSync::NotifyHeaderTip -- pindexNew->nHeight: %d pindexBestHeader->nHeight: %d fInitialDownload=%d fReachedBestHeader=%d\n",
+    LogPrint("snsync", "CServiceNodeSync::NotifyHeaderTip -- pindexNew->nHeight: %d pindexBestHeader->nHeight: %d fInitialDownload=%d fReachedBestHeader=%d\n",
         pindexNew->nHeight, pindexBestHeader->nHeight, fInitialDownload, fReachedBestHeader);
 
     if (!IsBlockchainSynced() && fReachedBestHeader) {
