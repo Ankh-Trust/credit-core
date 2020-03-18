@@ -17,6 +17,7 @@
 * [Test] Add unit tests for new format ISO date and time
 * [BDAP] Fix comparison between signed and unsigned warning
 * [RPC] Fix servicnode-list bug
+* Increase protocol to 71110 or greater
 
 
 **Credit v1.0.2.0**
