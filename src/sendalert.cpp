@@ -57,7 +57,7 @@ void ThreadSendAlert(CConnman& connman)
 
     // These versions are protocol versions
     alert.nMinVer = 60800;
-    alert.nMaxVer = 71100;
+    alert.nMaxVer = 71110;
 
     //
     //  1000 for Misc warnings like out of disk space and clock is wrong

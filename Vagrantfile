@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VM_NAME = "credit-v2.4"
+VM_NAME = "credit-v1.1"
 CREDIT_PATH = "/opt/credit"
 
 # ugly hack to prevent hashicorp's bitrot. See https://github.com/hashicorp/vagrant/issues/9442
@@ -49,15 +49,15 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  
+
   # Main net
   config.vm.network "forwarded_port", guest: 33600, host: 33600 # P2P
   config.vm.network "forwarded_port", guest: 33650, host: 33650, host_ip: "127.0.0.1" # RPC
-  
+
   # Test net
   config.vm.network "forwarded_port", guest: 33700, host: 33700 # P2P
   config.vm.network "forwarded_port", guest: 33750, host: 33750, host_ip: "127.0.0.1" # RPC
-  
+
   # ReqTest net
   config.vm.network "forwarded_port", guest: 33800, host: 33800 # P2P
   config.vm.network "forwarded_port", guest: 33850, host: 33850, host_ip: "127.0.0.1" # RPC
