@@ -118,7 +118,7 @@ void CServiceNodeMan::AskForDN(CNode* pnode, const COutPoint& outpoint, CConnman
     }
     mWeAskedForServiceNodeListEntry[outpoint][addrSquashed] = GetTime() + PSEG_UPDATE_SECONDS;
 
-    if (pnode->GetSendVersion() == 70900) {
+    if (pnode->GetSendVersion() == 71110) {
         connman.PushMessage(pnode, msgMaker.Make(NetMsgType::PSEG, CTxIn(outpoint)));
     } else {
         connman.PushMessage(pnode, msgMaker.Make(NetMsgType::PSEG, outpoint));
@@ -436,7 +436,7 @@ void CServiceNodeMan::PsegUpdate(CNode* pnode, CConnman& connman)
         }
     }
 
-    if (pnode->GetSendVersion() == 70900) {
+    if (pnode->GetSendVersion() == 71110) {
         connman.PushMessage(pnode, msgMaker.Make(NetMsgType::PSEG, CTxIn()));
     } else {
         connman.PushMessage(pnode, msgMaker.Make(NetMsgType::PSEG, COutPoint()));
@@ -915,7 +915,7 @@ void CServiceNodeMan::ProcessMessage(CNode* pfrom, const std::string& strCommand
 
         COutPoint servicenodeOutpoint;
 
-        if (pfrom->nVersion == 70900) {
+        if (pfrom->nVersion == 71110) {
             CTxIn vin;
             vRecv >> vin;
             servicenodeOutpoint = vin.prevout;

@@ -127,7 +127,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 70900 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {

@@ -54,7 +54,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 70900 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {
@@ -87,7 +87,7 @@ public:
             nDaemonVersion = DEFAULT_DAEMON_VERSION;
             return;
         }
-        if (!(nVersion == 70900 && (s.GetType() & SER_NETWORK))) {
+        if (!(nVersion == 71110 && (s.GetType() & SER_NETWORK))) {
             READWRITE(nDaemonVersion);
         }
     }
@@ -205,7 +205,7 @@ public:
     {
         LOCK(cs);
         int nVersion = s.GetVersion();
-        if (nVersion == 70900 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {
@@ -370,7 +370,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 70900 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {
@@ -438,7 +438,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 70900 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin1{};
             CTxIn txin2{};

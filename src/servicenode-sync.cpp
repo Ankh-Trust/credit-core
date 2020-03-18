@@ -224,7 +224,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 snodeman.PsegUpdate(pnode, connman);
             } else if (nRequestedServiceNodeAttempt < 6) {
                 //sync payment votes
-                if (pnode->nVersion == 70900) {
+                if (pnode->nVersion == 71110) {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit())); //sync payment votes
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC)); //sync payment votes
@@ -360,7 +360,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 nRequestedServiceNodeAttempt++;
 
                 // ask node for all payment votes it has (new nodes will only return votes for future payments)
-                if (pnode->nVersion == 70900) {
+                if (pnode->nVersion == 71110) {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit()));
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC));
