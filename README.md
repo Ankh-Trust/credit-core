@@ -13,10 +13,10 @@ What is [Credit](https://ankh.foundation/credit)?
 * PoW Target Spacing: 30 Seconds
 * PoW Reward per Block: Controlled via Fluid Protocol
 * PoW Reward Start Height: Block 5
-* Maturity: 10 Blocks
+* Maturity: 50 Blocks
 * PoW Blocks: ~2,880 per day
 * ServiceNode Collateral Amount: 50,000 0AC
-* ServiceNode Min Confirmation: 17 Blocks
+* ServiceNode Min Confirmation: 60 Blocks
 * ServiceNode Reward: Controlled via Fluid Protocol
 * ServiceNode Reward Start Height: Block 43,200
 * Total Coins: 2<sup>63</sup> - 1
@@ -30,19 +30,19 @@ What is [Credit](https://ankh.foundation/credit)?
 P2P Port = 33600
 RPC Port = 33650
 ServiceNodes = 33600
-Magic Bytes: 0x63 0x65 0x78 0x83
+Magic Bytes: 0x65 0x67 0x7a 0x85
 
 **TestNet Parameters**
 P2P Port = 33700
 RPC Port = 33750
 ServiceNodes = 33700
-Magic Bytes: 0x33 0x36 0x19 0x43
+Magic Bytes: 0x35 0x38 0x1b 0x45
 
 **RegTest Parameters**
 P2P Port = 33800
 RPC Port = 33850
 ServiceNodes = 33800
-Magic Bytes = 0x33 0x36 0x19 0x43
+Magic Bytes = 0x37 0x3a 0x1d 0x47
 
 
 UNIX BUILD NOTES

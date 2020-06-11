@@ -3792,7 +3792,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>Chế độ này -genproclimit-cpu kiểm soát bao nhiêu khối được sinh tức thời.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend cần đầu vào với ít nhất 10 xác nhận, bạn có thể cần phải đợi vài phút và thử lại.</translation>
     </message>
     <message>

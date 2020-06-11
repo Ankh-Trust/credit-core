@@ -3960,8 +3960,8 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
         <translation>En éste modo -genproclimit-cpu controla cuantos bloques son generados inmediatamente.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
-        <translation>InstantSend necesita entradas con al menos 10 confirmaciones, podría tener que esperar algunos minutos e intentar de nuevo.</translation>
+        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <translation>InstantSend necesita entradas con al menos 50 confirmaciones, podría tener que esperar algunos minutos e intentar de nuevo.</translation>
     </message>
     <message>
         <source>Name to construct url for KeePass entry that stores the wallet passphrase</source>

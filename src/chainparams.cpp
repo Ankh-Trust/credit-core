@@ -133,7 +133,7 @@ public:
         consensus.nGovernanceMinQuorum = 10;
         consensus.nGovernanceFilterElements = 20000;
 
-        consensus.nServiceNodeMinimumConfirmations = 15;
+        consensus.nServiceNodeMinimumConfirmations = 60;
 
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
@@ -471,10 +471,10 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x");
 
-        pchMessageStart[0] = 0x35;
-        pchMessageStart[1] = 0x38;
-        pchMessageStart[2] = 0x1b;
-        pchMessageStart[3] = 0x45;
+        pchMessageStart[0] = 0x37;
+        pchMessageStart[1] = 0x3a;
+        pchMessageStart[2] = 0x1d;
+        pchMessageStart[3] = 0x47;
         vAlertPubKey = ParseHex("043ec9f8941d64bcb9abe169aad9400ca3bc713d0b89ccd5dd6f54fac98831cec17fc87f4665fc83ace24e7081f5b6f0ee6cf946195174ba1bdf1eda650573c632");
         nDefaultPort = DEFAULT_P2P_PORT + 200;
         nPruneAfterHeight = 100;

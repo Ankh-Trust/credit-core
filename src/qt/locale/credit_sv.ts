@@ -3973,7 +3973,7 @@ Mest förekommande; som typ på &quot; transaktioner &quot; flik.</translation>
         <translation>I detta läge kontrollerar -genproclimit hur många block som genereras omedelbart.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend kräver indatan med åtminstone 10 bekräftelser. Du kanske måste vänta ett par minuter och försöka igen.</translation>
     </message>
     <message>

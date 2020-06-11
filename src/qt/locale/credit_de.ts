@@ -3970,7 +3970,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-0AC/</translat
         <translation>In diesem Modus kontrolliert -genproclimit-cpu wieviele Blocks sofort generniert werden.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend benötig Eingänge mit zumindest 10 Bestätigungen, Sie müssen wahrscheinlich noch ein paar Minuten warten und es dann nocheinmal versuchen.</translation>
     </message>
     <message>
