@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -53,10 +52,10 @@ ClientModel::ClientModel(OptionsModel* _optionsModel, QObject* parent) : QObject
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(updateTimer()));
     pollTimer->start(MODEL_UPDATE_DELAY);
 
-    pollDnTimer = new QTimer(this);
-    connect(pollDnTimer, SIGNAL(timeout()), this, SLOT(updateDnTimer()));
+    pollSnTimer = new QTimer(this);
+    connect(pollSnTimer, SIGNAL(timeout()), this, SLOT(updateSnTimer()));
     // no need to update as frequent as data for balances/txes/blocks
-    pollDnTimer->start(MODEL_UPDATE_DELAY * 4);
+    pollSnTimer->start(MODEL_UPDATE_DELAY * 4);
 
     subscribeToCoreSignals();
 }
@@ -178,7 +177,7 @@ void ClientModel::updateTimer()
     Q_EMIT bytesChanged(getTotalBytesRecv(), getTotalBytesSent());
 }
 
-void ClientModel::updateDnTimer()
+void ClientModel::updateSnTimer()
 {
     QString newServiceNodeCountString = getServiceNodeCountString();
 

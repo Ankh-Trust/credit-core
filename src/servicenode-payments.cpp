@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -168,7 +167,7 @@ bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount bloc
             // should NOT allow such superblocks, when superblocks are enabled
             return false;
         }
-        // continue validation, should pay DN
+        // continue validation, should pay SN
         LogPrint("gobject", "IsBlockPayeeValid -- No triggered superblock detected at height %d\n", nBlockHeight);
     } else {
         // should NOT allow superblocks at all, when superblocks are disabled
@@ -261,14 +260,14 @@ void CServiceNodePayments::FillBlockPayee(CMutableTransaction& txNew, int nBlock
     if (hasPayment && !snpayments.GetBlockPayee(nBlockHeight, payee)) {
         // no servicenode detected...
         int nCount = 0;
-        servicenode_info_t dnInfo;
-        if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
+        servicenode_info_t snInfo;
+        if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, snInfo)) {
             hasPayment = false;
             LogPrintf("CServiceNodePayments::FillBlockPayee: Failed to detect ServiceNode to pay\n");
             return;
         }
         // fill payee with locally calculated winner and hope for the best
-        payee = GetScriptForDestination(dnInfo.pubKeyCollateralAddress.GetID());
+        payee = GetScriptForDestination(snInfo.pubKeyCollateralAddress.GetID());
     }
 
     // make sure it's not filled yet
@@ -311,7 +310,7 @@ void CServiceNodePayments::ProcessMessage(CNode* pfrom, const std::string& strCo
             return;
 
         // DEPRECATED, should be removed on next protocol bump
-        //if (pfrom->nVersion == 71110) {
+        //if (pfrom->nVersion == 71000) {
         //    int nCountNeeded;
         //    vRecv >> nCountNeeded;
         //}
@@ -379,16 +378,16 @@ void CServiceNodePayments::ProcessMessage(CNode* pfrom, const std::string& strCo
             return;
         }
 
-        servicenode_info_t dnInfo;
-        if (!snodeman.GetServiceNodeInfo(vote.servicenodeOutpoint, dnInfo)) {
-            // dn was not found, so we can't check vote, some info is probably missing
+        servicenode_info_t snInfo;
+        if (!snodeman.GetServiceNodeInfo(vote.servicenodeOutpoint, snInfo)) {
+            // sn was not found, so we can't check vote, some info is probably missing
             LogPrintf("SERVICENODEPAYMENTVOTE -- ServiceNode is missing %s\n", vote.servicenodeOutpoint.ToStringShort());
-            snodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
+            snodeman.AskForSN(pfrom, vote.servicenodeOutpoint, connman);
             return;
         }
 
         int nDos = 0;
-        if (!vote.CheckSignature(dnInfo.pubKeyServiceNode, nCachedBlockHeight, nDos)) {
+        if (!vote.CheckSignature(snInfo.pubKeyServiceNode, nCachedBlockHeight, nDos)) {
             if (nDos) {
                 LOCK(cs_main);
                 LogPrintf("SERVICENODEPAYMENTVOTE -- ERROR: invalid signature\n");
@@ -399,9 +398,9 @@ void CServiceNodePayments::ProcessMessage(CNode* pfrom, const std::string& strCo
             }
             // Either our info or vote info could be outdated.
             // In case our info is outdated, ask for an update,
-            snodeman.AskForDN(pfrom, vote.servicenodeOutpoint, connman);
+            snodeman.AskForSN(pfrom, vote.servicenodeOutpoint, connman);
             // but there is nothing we can do if vote info itself is outdated
-            // (i.e. it was signed by a DN which changed its key),
+            // (i.e. it was signed by a SN which changed its key),
             // so just quit here.
             return;
         }
@@ -486,21 +485,21 @@ bool CServiceNodePayments::GetBlockPayee(int nBlockHeight, CScript& payeeRet) co
 
 // Is this ServiceNode scheduled to get paid soon?
 // -- Only look ahead up to 8 blocks to allow for propagation of the latest 2 blocks of votes
-bool CServiceNodePayments::IsScheduled(const servicenode_info_t& dnInfo, int nNotBlockHeight) const
+bool CServiceNodePayments::IsScheduled(const servicenode_info_t& snInfo, int nNotBlockHeight) const
 {
     LOCK(cs_mapServiceNodeBlocks);
 
     if (!servicenodeSync.IsServiceNodeListSynced())
         return false;
 
-    CScript dnpayee;
-    dnpayee = GetScriptForDestination(dnInfo.pubKeyCollateralAddress.GetID());
+    CScript snpayee;
+    snpayee = GetScriptForDestination(snInfo.pubKeyCollateralAddress.GetID());
 
     CScript payee;
     for (int64_t h = nCachedBlockHeight; h <= nCachedBlockHeight + 8; h++) {
         if (h == nNotBlockHeight)
             continue;
-        if (GetBlockPayee(h, payee) && dnpayee == payee) {
+        if (GetBlockPayee(h, payee) && snpayee == payee) {
             return true;
         }
     }
@@ -698,13 +697,13 @@ void CServiceNodePayments::CheckAndRemove()
 
 bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::string& strError, CConnman& connman) const
 {
-    servicenode_info_t dnInfo;
+    servicenode_info_t snInfo;
 
-    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, dnInfo)) {
+    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, snInfo)) {
         strError = strprintf("Unknown servicenode=%s", servicenodeOutpoint.ToStringShort());
         // Only ask if we are already synced and still have no idea about that ServiceNode
         if (servicenodeSync.IsServiceNodeListSynced()) {
-            snodeman.AskForDN(pnode, servicenodeOutpoint, connman);
+            snodeman.AskForSN(pnode, servicenodeOutpoint, connman);
         }
 
         return false;
@@ -719,8 +718,8 @@ bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::
         nMinRequiredProtocol = MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1;
     }
 
-    if (dnInfo.nProtocolVersion < nMinRequiredProtocol) {
-        strError = strprintf("ServiceNode protocol is too old: nProtocolVersion=%d, nMinRequiredProtocol=%d", dnInfo.nProtocolVersion, nMinRequiredProtocol);
+    if (snInfo.nProtocolVersion < nMinRequiredProtocol) {
+        strError = strprintf("ServiceNode protocol is too old: nProtocolVersion=%d, nMinRequiredProtocol=%d", snInfo.nProtocolVersion, nMinRequiredProtocol);
         return false;
     }
 
@@ -741,7 +740,7 @@ bool CServiceNodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::
         // It's common to have servicenodes mistakenly think they are in the top 10
         // We don't want to print all of these messages in normal mode, debug mode should print though
         strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), SNPAYMENTS_SIGNATURES_TOTAL, nRank);
-        // Only ban for new dnw which is out of bounds, for old dnw DN list itself might be way too much off
+        // Only ban for new snw which is out of bounds, for old snw SN list itself might be way too much off
         if (nRank > SNPAYMENTS_SIGNATURES_TOTAL * 2 && nBlockHeight > nValidationHeight) {
             LOCK(cs_main);
             strError = strprintf("ServiceNode %s is not in the top %d (%d)", servicenodeOutpoint.ToStringShort(), SNPAYMENTS_SIGNATURES_TOTAL * 2, nRank);
@@ -785,18 +784,18 @@ bool CServiceNodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
 
     LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- Start: nBlockHeight=%d, servicenode=%s\n", nBlockHeight, activeServiceNode.outpoint.ToStringShort());
 
-    // pay to the oldest DN that still had no payment but its input is old enough and it was active long enough
+    // pay to the oldest SN that still had no payment but its input is old enough and it was active long enough
     int nCount = 0;
-    servicenode_info_t dnInfo;
+    servicenode_info_t snInfo;
 
-    if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, dnInfo)) {
+    if (!snodeman.GetNextServiceNodeInQueueForPayment(nBlockHeight, true, nCount, snInfo)) {
         LogPrintf("CServiceNodePayments::ProcessBlock -- ERROR: Failed to find ServiceNode to pay\n");
         return false;
     }
 
-    LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- ServiceNode found by GetNextServiceNodeInQueueForPayment(): %s\n", dnInfo.outpoint.ToStringShort());
+    LogPrint("snpayments", "CServiceNodePayments::ProcessBlock -- ServiceNode found by GetNextServiceNodeInQueueForPayment(): %s\n", snInfo.outpoint.ToStringShort());
 
-    CScript payee = GetScriptForDestination(dnInfo.pubKeyCollateralAddress.GetID());
+    CScript payee = GetScriptForDestination(snInfo.pubKeyCollateralAddress.GetID());
 
     CServiceNodePaymentVote voteNew(activeServiceNode.outpoint, nBlockHeight, payee);
 
@@ -826,20 +825,20 @@ void CServiceNodePayments::CheckBlockVotes(int nBlockHeight)
     if (!servicenodeSync.IsWinnersListSynced())
         return;
 
-    CServiceNodeMan::rank_pair_vec_t dns;
-    if (!snodeman.GetServiceNodeRanks(dns, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
+    CServiceNodeMan::rank_pair_vec_t sns;
+    if (!snodeman.GetServiceNodeRanks(sns, nBlockHeight - 101, GetMinServiceNodePaymentsProto())) {
         LogPrintf("CServiceNodePayments::CheckBlockVotes -- nBlockHeight=%d, GetServiceNodeRanks failed\n", nBlockHeight);
         return;
     }
 
     std::string debugStr;
 
-    debugStr += strprintf("CServiceNodePayments::CheckBlockVotes -- nBlockHeight=%d,\n  Expected voting DNs:\n", nBlockHeight);
+    debugStr += strprintf("CServiceNodePayments::CheckBlockVotes -- nBlockHeight=%d,\n  Expected voting SNs:\n", nBlockHeight);
 
     LOCK2(cs_mapServiceNodeBlocks, cs_mapServiceNodePaymentVotes);
 
     int i{0};
-    for (const auto& dn : dns) {
+    for (const auto& sn : sns) {
         CScript payee;
         bool found = false;
 
@@ -853,7 +852,7 @@ void CServiceNodePayments::CheckBlockVotes(int nBlockHeight)
                             voteHash.ToString());
                         continue;
                     }
-                    if (itVote->second.servicenodeOutpoint == dn.second.outpoint) {
+                    if (itVote->second.servicenodeOutpoint == sn.second.outpoint) {
                         payee = itVote->second.payee;
                         found = true;
                         break;
@@ -868,12 +867,12 @@ void CServiceNodePayments::CheckBlockVotes(int nBlockHeight)
             CCreditAddress address2(address1);
 
             debugStr += strprintf("    - %s - voted for %s\n",
-                dn.second.outpoint.ToStringShort(), address2.ToString());
+                sn.second.outpoint.ToStringShort(), address2.ToString());
         } else {
-            mapServiceNodesDidNotVote.emplace(dn.second.outpoint, 0).first->second++;
+            mapServiceNodesDidNotVote.emplace(sn.second.outpoint, 0).first->second++;
 
             debugStr += strprintf("    - %s - no vote received\n",
-                dn.second.outpoint.ToStringShort());
+                sn.second.outpoint.ToStringShort());
         }
 
         if (++i >= SNPAYMENTS_SIGNATURES_TOTAL)
@@ -922,7 +921,7 @@ bool CServiceNodePaymentVote::CheckSignature(const CPubKey& pubKeyServiceNode, i
             if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
                 // nope, not in old format either
                 // Only ban for future block vote when we are already synced.
-                // Otherwise it could be the case when DN which signed this vote is using another key now
+                // Otherwise it could be the case when SN which signed this vote is using another key now
                 // and we have no idea about the old one.
                 if (servicenodeSync.IsServiceNodeListSynced() && nBlockHeight > nValidationHeight) {
                     nDos = 20;
@@ -938,7 +937,7 @@ bool CServiceNodePaymentVote::CheckSignature(const CPubKey& pubKeyServiceNode, i
 
         if (!CMessageSigner::VerifyMessage(pubKeyServiceNode, vchSig, strMessage, strError)) {
             // Only ban for future block vote when we are already synced.
-            // Otherwise it could be the case when DN which signed this vote is using another key now
+            // Otherwise it could be the case when SN which signed this vote is using another key now
             // and we have no idea about the old one.
             if (servicenodeSync.IsServiceNodeListSynced() && nBlockHeight > nValidationHeight) {
                 nDos = 20;
@@ -987,7 +986,7 @@ void CServiceNodePayments::Sync(CNode* pnode, CConnman& connman) const
 
     LogPrintf("CServiceNodePayments::Sync -- Sent %d votes to peer=%d\n", nInvCount, pnode->id);
     CNetMsgMaker msgMaker(pnode->GetSendVersion());
-    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SYNCSTATUSCOUNT, SERVICENODE_SYNC_DNW, nInvCount));
+    connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SYNCSTATUSCOUNT, SERVICENODE_SYNC_SNW, nInvCount));
 }
 // Request low data/unknown payment blocks in batches directly from some node instead of/after preliminary Sync.
 void CServiceNodePayments::RequestLowDataPaymentBlocks(CNode* pnode, CConnman& connman) const
@@ -1020,11 +1019,11 @@ void CServiceNodePayments::RequestLowDataPaymentBlocks(CNode* pnode, CConnman& c
         pindex = pindex->pprev;
     }
 
-    for (auto& dnBlockPayees : mapServiceNodeBlocks) {
-        int nBlockHeight = dnBlockPayees.first;
+    for (auto& snBlockPayees : mapServiceNodeBlocks) {
+        int nBlockHeight = snBlockPayees.first;
         int nTotalVotes = 0;
         bool fFound = false;
-        for (const auto& payee : dnBlockPayees.second.vecPayees) {
+        for (const auto& payee : snBlockPayees.second.vecPayees) {
             if (payee.GetVoteCount() >= SNPAYMENTS_SIGNATURES_REQUIRED) {
                 fFound = true;
                 break;
@@ -1041,7 +1040,7 @@ void CServiceNodePayments::RequestLowDataPaymentBlocks(CNode* pnode, CConnman& c
         DBG(
             // Let's see why this failed
             for (const auto& payee
-                 : dnBlockPayees.second.vecPayees) {
+                 : snBlockPayees.second.vecPayees) {
                 CTxDestination address1;
                 ExtractDestination(payee.GetPayee(), address1);
                 CCreditAddress address2(address1);

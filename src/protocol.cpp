@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -48,12 +47,12 @@ const char* TXLOCKREQUEST = "is";
 const char* TXLOCKVOTE = "txlvote";
 const char* SPORK = "spork";
 const char* GETSPORKS = "getsporks";
-const char* SERVICENODEPAYMENTVOTE = "dnw";
-const char* SERVICENODEPAYMENTBLOCK = "dnwb";
-const char* SERVICENODEPAYMENTSYNC = "dnget";
-const char* DNQUORUM = "dn quorum"; // not implemented
-const char* DNANNOUNCE = "dnb";
-const char* DNPING = "dnp";
+const char* SERVICENODEPAYMENTVOTE = "snw";
+const char* SERVICENODEPAYMENTBLOCK = "snwb";
+const char* SERVICENODEPAYMENTSYNC = "snget";
+const char* SNQUORUM = "sn quorum"; // not implemented
+const char* SNANNOUNCE = "snb";
+const char* SNPING = "snp";
 const char* PSACCEPT = "psa";
 const char* PSVIN = "psi";
 const char* PSFINALTX = "psf";
@@ -64,10 +63,10 @@ const char* PSTX = "pstx";
 const char* PSQUEUE = "psq";
 const char* PSEG = "pseg";
 const char* SYNCSTATUSCOUNT = "ssc";
-const char* DNGOVERNANCESYNC = "govsync";
-const char* DNGOVERNANCEOBJECT = "govobj";
-const char* DNGOVERNANCEOBJECTVOTE = "govobjvote";
-const char* DNVERIFY = "dnv";
+const char* SNGOVERNANCESYNC = "govsync";
+const char* SNGOVERNANCEOBJECT = "govobj";
+const char* SNGOVERNANCEOBJECTVOTE = "govobjvote";
+const char* SNVERIFY = "snv";
 const char* VGPMESSAGE = "vgpmessage";
 }; // namespace NetMsgType
 
@@ -84,13 +83,13 @@ static const char* ppszTypeName[] =
         NetMsgType::SPORK,
         NetMsgType::SERVICENODEPAYMENTVOTE,
         NetMsgType::SERVICENODEPAYMENTBLOCK,
-        NetMsgType::DNQUORUM, // not implemented
-        NetMsgType::DNANNOUNCE,
-        NetMsgType::DNPING,
+        NetMsgType::SNQUORUM, // not implemented
+        NetMsgType::SNANNOUNCE,
+        NetMsgType::SNPING,
         NetMsgType::PSTX,
-        NetMsgType::DNGOVERNANCEOBJECT,
-        NetMsgType::DNGOVERNANCEOBJECTVOTE,
-        NetMsgType::DNVERIFY,
+        NetMsgType::SNGOVERNANCEOBJECT,
+        NetMsgType::SNGOVERNANCEOBJECTVOTE,
+        NetMsgType::SNVERIFY,
         "compact block", // Should never occur
 };
 
@@ -133,8 +132,8 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::SERVICENODEPAYMENTVOTE,
     // NetMsgType::SERVICENODEPAYMENTBLOCK, // there is no message for this, only inventory
     NetMsgType::SERVICENODEPAYMENTSYNC,
-    NetMsgType::DNANNOUNCE,
-    NetMsgType::DNPING,
+    NetMsgType::SNANNOUNCE,
+    NetMsgType::SNPING,
     NetMsgType::PSACCEPT,
     NetMsgType::PSVIN,
     NetMsgType::PSFINALTX,
@@ -145,10 +144,10 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::PSQUEUE,
     NetMsgType::PSEG,
     NetMsgType::SYNCSTATUSCOUNT,
-    NetMsgType::DNGOVERNANCESYNC,
-    NetMsgType::DNGOVERNANCEOBJECT,
-    NetMsgType::DNGOVERNANCEOBJECTVOTE,
-    NetMsgType::DNVERIFY,
+    NetMsgType::SNGOVERNANCESYNC,
+    NetMsgType::SNGOVERNANCEOBJECT,
+    NetMsgType::SNGOVERNANCEOBJECTVOTE,
+    NetMsgType::SNVERIFY,
     NetMsgType::VGPMESSAGE,
 };
 const static std::vector<std::string> allNetMessageTypesVec(allNetMessageTypes, allNetMessageTypes + ARRAYLEN(allNetMessageTypes));

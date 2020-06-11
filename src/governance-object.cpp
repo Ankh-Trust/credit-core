@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -39,7 +38,7 @@ CGovernanceObject::CGovernanceObject() : cs(),
                                          fDirtyCache(true),
                                          fExpired(false),
                                          fUnparsable(false),
-                                         mapCurrentDNVotes(),
+                                         mapCurrentSNVotes(),
                                          cmmapOrphanVotes(),
                                          fileVotes()
 {
@@ -66,7 +65,7 @@ CGovernanceObject::CGovernanceObject(const uint256& nHashParentIn, int nRevision
                                                                                                                                                                           fDirtyCache(true),
                                                                                                                                                                           fExpired(false),
                                                                                                                                                                           fUnparsable(false),
-                                                                                                                                                                          mapCurrentDNVotes(),
+                                                                                                                                                                          mapCurrentSNVotes(),
                                                                                                                                                                           cmmapOrphanVotes(),
                                                                                                                                                                           fileVotes()
 {
@@ -93,7 +92,7 @@ CGovernanceObject::CGovernanceObject(const CGovernanceObject& other) : cs(),
                                                                        fDirtyCache(other.fDirtyCache),
                                                                        fExpired(other.fExpired),
                                                                        fUnparsable(other.fUnparsable),
-                                                                       mapCurrentDNVotes(other.mapCurrentDNVotes),
+                                                                       mapCurrentSNVotes(other.mapCurrentSNVotes),
                                                                        cmmapOrphanVotes(other.cmmapOrphanVotes),
                                                                        fileVotes(other.fileVotes)
 {
@@ -122,7 +121,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
         exception = CGovernanceException(ostr.str(), GOVERNANCE_EXCEPTION_WARNING);
         if (cmmapOrphanVotes.Insert(vote.GetServiceNodeOutpoint(), vote_time_pair_t(vote, GetAdjustedTime() + GOVERNANCE_ORPHAN_EXPIRATION_TIME))) {
             if (pfrom) {
-                snodeman.AskForDN(pfrom, vote.GetServiceNodeOutpoint(), connman);
+                snodeman.AskForSN(pfrom, vote.GetServiceNodeOutpoint(), connman);
             }
             LogPrintf("%s\n", ostr.str());
         } else {
@@ -131,7 +130,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
         return false;
     }
 
-    vote_m_it it = mapCurrentDNVotes.emplace(vote_m_t::value_type(vote.GetServiceNodeOutpoint(), vote_rec_t())).first;
+    vote_m_it it = mapCurrentSNVotes.emplace(vote_m_t::value_type(vote.GetServiceNodeOutpoint(), vote_rec_t())).first;
     vote_rec_t& voteRecordRef = it->second;
     vote_signal_enum_t eSignal = vote.GetSignal();
     if (eSignal == VOTE_SIGNAL_NONE) {
@@ -167,7 +166,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
         if (nTimeDelta < GOVERNANCE_UPDATE_MIN) {
             std::ostringstream ostr;
             ostr << "CGovernanceObject::ProcessVote -- ServiceNode voting too often"
-                 << ", DN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
+                 << ", SN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
                  << ", governance object hash = " << GetHash().ToString()
                  << ", time delta = " << nTimeDelta;
             LogPrint("gobject", "%s\n", ostr.str());
@@ -181,7 +180,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
     if (!vote.IsValid(true)) {
         std::ostringstream ostr;
         ostr << "CGovernanceObject::ProcessVote -- Invalid vote"
-             << ", DN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
+             << ", SN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
              << ", governance object hash = " << GetHash().ToString()
              << ", vote hash = " << vote.GetHash().ToString();
         LogPrintf("%s\n", ostr.str());
@@ -193,7 +192,7 @@ bool CGovernanceObject::ProcessVote(CNode* pfrom,
     if (!snodeman.AddGovernanceVote(vote.GetServiceNodeOutpoint(), vote.GetParentHash())) {
         std::ostringstream ostr;
         ostr << "CGovernanceObject::ProcessVote -- Unable to add governance vote"
-             << ", DN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
+             << ", SN outpoint = " << vote.GetServiceNodeOutpoint().ToStringShort()
              << ", governance object hash = " << GetHash().ToString();
         LogPrint("gobject", "%s\n", ostr.str());
         exception = CGovernanceException(ostr.str(), GOVERNANCE_EXCEPTION_PERMANENT_ERROR);
@@ -210,11 +209,11 @@ void CGovernanceObject::ClearServiceNodeVotes()
 {
     LOCK(cs);
 
-    vote_m_it it = mapCurrentDNVotes.begin();
-    while (it != mapCurrentDNVotes.end()) {
+    vote_m_it it = mapCurrentSNVotes.begin();
+    while (it != mapCurrentSNVotes.end()) {
         if (!snodeman.Has(it->first)) {
             fileVotes.RemoveVotesFromServiceNode(it->first);
-            mapCurrentDNVotes.erase(it++);
+            mapCurrentSNVotes.erase(it++);
         } else {
             ++it;
         }
@@ -484,8 +483,8 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingServ
             return true;
 
         std::string strOutpoint = servicenodeOutpoint.ToStringShort();
-        servicenode_info_t infoDn;
-        if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
+        servicenode_info_t infoSn;
+        if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoSn)) {
             CServiceNode::CollateralStatus err = CServiceNode::CheckCollateral(servicenodeOutpoint, CPubKey());
             if (err == CServiceNode::COLLATERAL_UTXO_NOT_FOUND) {
                 strError = "Failed to find ServiceNode UTXO, missing servicenode=" + strOutpoint + "\n";
@@ -502,9 +501,9 @@ bool CGovernanceObject::IsValidLocally(std::string& strError, bool& fMissingServ
             return false;
         }
 
-        // Check that we have a valid DN signature
-        if (!CheckSignature(infoDn.pubKeyServiceNode)) {
-            strError = "Invalid servicenode signature for: " + strOutpoint + ", pubkey id = " + infoDn.pubKeyServiceNode.GetID().ToString();
+        // Check that we have a valid SN signature
+        if (!CheckSignature(infoSn.pubKeyServiceNode)) {
+            strError = "Invalid servicenode signature for: " + strOutpoint + ", pubkey id = " + infoSn.pubKeyServiceNode.GetID().ToString();
             return false;
         }
 
@@ -635,7 +634,7 @@ int CGovernanceObject::CountMatchingVotes(vote_signal_enum_t eVoteSignalIn, vote
     LOCK(cs);
 
     int nCount = 0;
-    for (const auto& votepair : mapCurrentDNVotes) {
+    for (const auto& votepair : mapCurrentSNVotes) {
         const vote_rec_t& recVote = votepair.second;
         vote_instance_m_cit it2 = recVote.mapInstances.find(eVoteSignalIn);
         if (it2 != recVote.mapInstances.end() && it2->second.eOutcome == eVoteOutcomeIn) {
@@ -674,12 +673,12 @@ int CGovernanceObject::GetAbstainCount(vote_signal_enum_t eVoteSignalIn) const
     return CountMatchingVotes(eVoteSignalIn, VOTE_OUTCOME_ABSTAIN);
 }
 
-bool CGovernanceObject::GetCurrentDNVotes(const COutPoint& dnCollateralOutpoint, vote_rec_t& voteRecord) const
+bool CGovernanceObject::GetCurrentSNVotes(const COutPoint& snCollateralOutpoint, vote_rec_t& voteRecord) const
 {
     LOCK(cs);
 
-    vote_m_cit it = mapCurrentDNVotes.find(dnCollateralOutpoint);
-    if (it == mapCurrentDNVotes.end()) {
+    vote_m_cit it = mapCurrentSNVotes.find(snCollateralOutpoint);
+    if (it == mapCurrentSNVotes.end()) {
         return false;
     }
     voteRecord = it->second;
@@ -702,14 +701,14 @@ void CGovernanceObject::UpdateSentinelVariables()
 {
     // CALCULATE MINIMUM SUPPORT LEVELS REQUIRED
 
-    int nDnCount = snodeman.CountEnabled();
-    if (nDnCount == 0)
+    int nSnCount = snodeman.CountEnabled();
+    if (nSnCount == 0)
         return;
 
     // CALCULATE THE MINUMUM VOTE COUNT REQUIRED FOR FULL SIGNAL
 
-    int nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nDnCount / 10);
-    int nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nDnCount) / 3);
+    int nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nSnCount / 10);
+    int nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nSnCount) / 3);
 
     // SET SENTINEL FLAGS TO FALSE
 

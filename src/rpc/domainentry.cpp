@@ -1081,7 +1081,7 @@ UniValue getcredits(const JSONRPCRequest& request)
                 std::string strMoveSource = stringFromVch(vvch[0]);
                 std::string strMoveDestination = stringFromVch(vvch[1]);
                 strType = strprintf("credit (%s to %s)", strMoveSource, strMoveDestination);
-                if (strMoveSource == "_AC" && strMoveDestination == "BDAP")
+                if (strMoveSource == "0AC" && strMoveDestination == "BDAP")
                     nTotalCredits += credit.first.nValue;
             } else {
                 strType = strprintf("credit (unknown)");
@@ -1122,7 +1122,7 @@ UniValue bdapfees(const JSONRPCRequest& request)
             "{(json objects)\n"
             "  \"monthly\"                    (int)            The credit type.\n"
             "  \"deposit\"                    (int)            The operation code used in the tx output\n"
-            "  \"one-time\"                   (int)            The unspent BDAP amount int _AC\n"
+            "  \"one-time\"                   (int)            The unspent BDAP amount int 0AC\n"
             "  },...n \n"
             "\nExamples:\n"
             + HelpExampleCli("bdapfees", "") +

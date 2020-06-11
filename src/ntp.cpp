@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2013-2016 The NovaCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying

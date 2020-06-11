@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -253,8 +252,8 @@ extern const char* SPORK;
 extern const char* GETSPORKS;
 extern const char* SERVICENODEPAYMENTVOTE;
 extern const char* SERVICENODEPAYMENTSYNC;
-extern const char* DNANNOUNCE;
-extern const char* DNPING;
+extern const char* SNANNOUNCE;
+extern const char* SNPING;
 extern const char* PSACCEPT;
 extern const char* PSVIN;
 extern const char* PSFINALTX;
@@ -265,10 +264,10 @@ extern const char* PSTX;
 extern const char* PSQUEUE;
 extern const char* PSEG;
 extern const char* SYNCSTATUSCOUNT;
-extern const char* DNGOVERNANCESYNC;
-extern const char* DNGOVERNANCEOBJECT;
-extern const char* DNGOVERNANCEOBJECTVOTE;
-extern const char* DNVERIFY;
+extern const char* SNGOVERNANCESYNC;
+extern const char* SNGOVERNANCEOBJECT;
+extern const char* SNGOVERNANCEOBJECTVOTE;
+extern const char* SNVERIFY;
 // BDAP VGP Secure Message
 extern const char* VGPMESSAGE;
 }; // namespace NetMsgType

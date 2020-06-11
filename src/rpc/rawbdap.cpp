@@ -192,7 +192,7 @@ UniValue createrawbdapaccount(const JSONRPCRequest& request)
         FormatMoney(nLinkRequestAmount), FormatMoney(nLinkAcceptAmount), FormatMoney(nTotalLinkAmount));
 
     // Create BDAP credits operation script
-    std::vector<unsigned char> vchMoveSource = vchFromString(std::string("_AC"));
+    std::vector<unsigned char> vchMoveSource = vchFromString(std::string("0AC"));
     std::vector<unsigned char> vchMoveDestination = vchFromString(std::string("BDAP"));
     CScript scriptBdapCredits;
     scriptBdapCredits << CScript::EncodeOP_N(OP_BDAP_MOVE) << CScript::EncodeOP_N(OP_BDAP_ASSET)

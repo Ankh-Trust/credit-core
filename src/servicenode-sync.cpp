@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -55,8 +54,8 @@ std::string CServiceNodeSync::GetAssetName()
         return "SERVICENODE_SYNC_WAITING";
     case (SERVICENODE_SYNC_LIST):
         return "SERVICENODE_SYNC_LIST";
-    case (SERVICENODE_SYNC_DNW):
-        return "SERVICENODE_SYNC_DNW";
+    case (SERVICENODE_SYNC_SNW):
+        return "SERVICENODE_SYNC_SNW";
     case (SERVICENODE_SYNC_GOVERNANCE):
         return "SERVICENODE_SYNC_GOVERNANCE";
     case (SERVICENODE_SYNC_FAILED):
@@ -85,10 +84,10 @@ void CServiceNodeSync::SwitchToNextAsset(CConnman& connman)
         break;
     case (SERVICENODE_SYNC_LIST):
         LogPrint("servicenode", "CServiceNodeSync::SwitchToNextAsset -- Completed %s in %llds\n", GetAssetName(), GetTime() - nTimeAssetSyncStarted);
-        nRequestedServiceNodeAssets = SERVICENODE_SYNC_DNW;
+        nRequestedServiceNodeAssets = SERVICENODE_SYNC_SNW;
         LogPrint("servicenode", "CServiceNodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
         break;
-    case (SERVICENODE_SYNC_DNW):
+    case (SERVICENODE_SYNC_SNW):
         LogPrint("servicenode", "CServiceNodeSync::SwitchToNextAsset -- Completed %s in %llds\n", GetAssetName(), GetTime() - nTimeAssetSyncStarted);
         nRequestedServiceNodeAssets = SERVICENODE_SYNC_GOVERNANCE;
         LogPrint("servicenode", "CServiceNodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
@@ -125,7 +124,7 @@ std::string CServiceNodeSync::GetSyncStatus()
         return _("Synchronization pending...");
     case SERVICENODE_SYNC_LIST:
         return _("Synchronizing ServiceNodes...");
-    case SERVICENODE_SYNC_DNW:
+    case SERVICENODE_SYNC_SNW:
         return _("Synchronizing ServiceNode payments...");
     case SERVICENODE_SYNC_GOVERNANCE:
         return _("Synchronizing governance objects...");
@@ -224,7 +223,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 snodeman.PsegUpdate(pnode, connman);
             } else if (nRequestedServiceNodeAttempt < 6) {
                 //sync payment votes
-                if (pnode->nVersion == 71110) {
+                if (pnode->nVersion == 71000) {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit())); //sync payment votes
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC)); //sync payment votes
@@ -274,7 +273,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 }
             }
 
-            // DNLIST : SYNC SERVICENODE LIST FROM OTHER CONNECTED CLIENTS
+            // SNLIST : SYNC SERVICENODE LIST FROM OTHER CONNECTED CLIENTS
 
             if (nRequestedServiceNodeAssets == SERVICENODE_SYNC_LIST) {
                 LogPrint("servicenode", "CServiceNodeSync::ProcessTick -- nTick %d nRequestedServiceNodeAssets %d nTimeLastBumped %lld GetTime() %lld diff %lld\n", nTick, nRequestedServiceNodeAssets, nTimeLastBumped, GetTime(), GetTime() - nTimeLastBumped);
@@ -314,9 +313,9 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 return; //this will cause each peer to get one request each six seconds for the various assets we need
             }
 
-            // DNW : SYNC SERVICENODE PAYMENT VOTES FROM OTHER CONNECTED CLIENTS
+            // SNW : SYNC SERVICENODE PAYMENT VOTES FROM OTHER CONNECTED CLIENTS
 
-            if (nRequestedServiceNodeAssets == SERVICENODE_SYNC_DNW) {
+            if (nRequestedServiceNodeAssets == SERVICENODE_SYNC_SNW) {
                 LogPrint("snpayments", "CServiceNodeSync::ProcessTick -- nTick %d nRequestedServiceNodeAssets %d nTimeLastBumped %lld GetTime() %lld diff %lld\n", nTick, nRequestedServiceNodeAssets, nTimeLastBumped, GetTime(), GetTime() - nTimeLastBumped);
                 // check for timeout first
                 // This might take a lot longer than SERVICENODE_SYNC_TIMEOUT_SECONDS due to new blocks,
@@ -360,7 +359,7 @@ void CServiceNodeSync::ProcessTick(CConnman& connman)
                 nRequestedServiceNodeAttempt++;
 
                 // ask node for all payment votes it has (new nodes will only return votes for future payments)
-                if (pnode->nVersion == 71110) {
+                if (pnode->nVersion == 71000) {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC, snpayments.GetStorageLimit()));
                 } else {
                     connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SERVICENODEPAYMENTSYNC));
@@ -447,9 +446,9 @@ void CServiceNodeSync::SendGovernanceSyncRequest(CNode* pnode, CConnman& connman
         CBloomFilter filter;
         filter.clear();
 
-        connman.PushMessage(pnode, msgMaker.Make(NetMsgType::DNGOVERNANCESYNC, uint256(), filter));
+        connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SNGOVERNANCESYNC, uint256(), filter));
     } else {
-        connman.PushMessage(pnode, msgMaker.Make(NetMsgType::DNGOVERNANCESYNC, uint256()));
+        connman.PushMessage(pnode, msgMaker.Make(NetMsgType::SNGOVERNANCESYNC, uint256()));
     }
 }
 

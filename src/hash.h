@@ -1,4 +1,3 @@
-
 // Copyright (c) 2009-2019 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Developers
 // Copyright (c) 2014-2019 The Dash Core Developers

@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -66,7 +65,7 @@ private:
     std::map<COutPoint, uint256> mapLockedOutpoints;           // utxo - tx hash
 
     //track servicenodes who voted with no txreq (for DOS protection)
-    std::map<COutPoint, int64_t> mapServiceNodeOrphanVotes; // dn outpoint - time
+    std::map<COutPoint, int64_t> mapServiceNodeOrphanVotes; // sn outpoint - time
 
     bool CreateTxLockCandidate(const CTxLockRequest& txLockRequest);
     void CreateEmptyTxLockCandidate(const uint256& txHash);

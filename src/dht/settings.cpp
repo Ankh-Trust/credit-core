@@ -45,10 +45,10 @@ void CDHTSettings::LoadPeerList()
     std::string strPeerList = "";
     // get all ServiceNodes above the minimum protocol version
     std::map<COutPoint, CServiceNode> mapServiceNodes = snodeman.GetFullServiceNodeMap();
-    for (auto& dnpair : mapServiceNodes) {
-        CServiceNode dn = dnpair.second;
-        if (dn.nProtocolVersion >= MIN_DHT_PROTO_VERSION) {
-            std::string strServiceNodeIP = dn.addr.ToString();
+    for (auto& snpair : mapServiceNodes) {
+        CServiceNode sn = snpair.second;
+        if (sn.nProtocolVersion >= MIN_DHT_PROTO_VERSION) {
+            std::string strServiceNodeIP = sn.addr.ToString();
             size_t pos = strServiceNodeIP.find(":");
             if (pos != std::string::npos && strServiceNodeIP.size() > 5) {
                 // remove port from IP address string
@@ -82,7 +82,7 @@ void CDHTSettings::LoadPeerID(const std::string& strPeerID)
 void CDHTSettings::LoadSettings()
 {
     LoadPeerList();
-    
+
     params.settings.set_bool(settings_pack::enable_dht, false);
     session* newSession = new session(params.settings);
     ses = newSession;
@@ -92,7 +92,7 @@ void CDHTSettings::LoadSettings()
         params.settings.set_int(settings_pack::alert_mask, 0xffffffff); // receive all alerts
         params.settings.set_bool(settings_pack::enable_dht, true);
         params.settings.set_str(settings_pack::user_agent, user_agent);
-        params.settings.set_str(settings_pack::dht_bootstrap_nodes, dht_bootstrap_nodes); 
+        params.settings.set_str(settings_pack::dht_bootstrap_nodes, dht_bootstrap_nodes);
         params.settings.set_str(settings_pack::listen_interfaces, listen_interfaces);
         if (peer_fingerprint.size() > 0)
             params.settings.set_str(settings_pack::peer_fingerprint, peer_fingerprint);
@@ -150,7 +150,7 @@ void CDHTSettings::LoadSettings()
     // ``prefer_rc4``
     // if the allowed encryption level is both, setting this to true will
     // prefer rc4 if both methods are offered, plaintext otherwise
-    //params.settings.set_bool(settings_pack::prefer_rc4, true); 
+    //params.settings.set_bool(settings_pack::prefer_rc4, true);
 
     // ``announce_ip`` is the ip address passed along to trackers as the
     // ``&ip=`` parameter. If left as the default, that parameter is
@@ -206,7 +206,7 @@ void CDHTSettings::LoadSettings()
     //settings.set_bool(settings_pack::coalesce_reads, false);
     //settings.set_bool(settings_pack::coalesce_writes, false);
 
-    // ``auto_manage_prefer_seeds`` 
+    // ``auto_manage_prefer_seeds``
     // prefer seeding torrents when determining which torrents to give
     // active slots to, the default is false which gives preference to
     // downloading torrents
@@ -249,7 +249,7 @@ void CDHTSettings::LoadSettings()
     // is announced to. This is the uTorrent behavior. This is false by
     // default in order to comply with the multi-tracker specification.
     //settings.set_bool(settings_pack::announce_to_all_tiers, true);
-    
+
     // ``prefer_udp_trackers`` is true by default. It means that trackers
     // may be rearranged in a way that udp trackers are always tried
     // before http trackers for the same hostname. Setting this to false
@@ -299,9 +299,9 @@ void CDHTSettings::LoadSettings()
     // can make us start the torrent and serve it.
     //settings.set_bool(settings_pack::incoming_starts_queued_torrents, false);  //TODO: should this be true?
 
-    // ``report_true_downloaded`` when set to true, the downloaded counter 
-    // sent to trackers will include the actual number of payload 
-    // bytes downloaded including redundant bytes. If set to false, it 
+    // ``report_true_downloaded`` when set to true, the downloaded counter
+    // sent to trackers will include the actual number of payload
+    // bytes downloaded including redundant bytes. If set to false, it
     // will not include any redundancy bytes
     //settings.set_bool(settings_pack::report_true_downloaded, false);
 
@@ -333,7 +333,7 @@ void CDHTSettings::LoadSettings()
     // need to make outgoing connections.
     //settings.set_bool(settings_pack::seeding_outgoing_connections, true);
 
-    // ``no_connect_privileged_ports`` when this is true, 
+    // ``no_connect_privileged_ports`` when this is true,
     // libtorrent will not attempt to make outgoing connections
     // to peers whose port is < 1024. This is a safety precaution
     // to avoid being part of a DDoS attack
@@ -348,7 +348,7 @@ void CDHTSettings::LoadSettings()
     // batches.
     //settings.set_bool(settings_pack::smooth_connects, true);
 
-    // ``always_send_user_agent`` 
+    // ``always_send_user_agent``
     // always send user-agent in every web seed request. If false, only
     // the first request per http connection will include the user agent
     //settings.set_bool(settings_pack::always_send_user_agent, true);
@@ -362,7 +362,7 @@ void CDHTSettings::LoadSettings()
     // ``ban_web_seeds`` when true, web seeds sending bad data will be banned
     //settings.set_bool(settings_pack::ban_web_seeds, true); //TODO: should this be true?
 
-    // ``allow_partial_disk_writes`` 
+    // ``allow_partial_disk_writes``
     // when set to false, the ``write_cache_line_size`` will apply across
     // piece boundaries. this is a bad idea unless the piece picker also
     // is configured to have an affinity to pick pieces belonging to the
@@ -380,7 +380,7 @@ void CDHTSettings::LoadSettings()
     // tracker
     //settings.set_bool(settings_pack::report_redundant_bytes, false);
 
-    // ``listen_system_port_fallback`` if this is true, 
+    // ``listen_system_port_fallback`` if this is true,
     // libtorrent will fall back to listening on a port chosen by the
     // operating system (i.e. binding to port 0). If a failure is
     // preferred, set this to false.
@@ -977,7 +977,7 @@ void CDHTSettings::LoadSettings()
     // ``unchoke_slots_limit`` is the max number of unchoked peers in the
     // session. The number of unchoke slots may be ignored depending on
     // what ``choking_algorithm`` is set to.
-    //unchoke_slots_limit,    
+    //unchoke_slots_limit,
 
     // ``connections_limit`` sets a global limit on the number of
     // connections opened. The number of connections is set to a hard
@@ -1247,11 +1247,11 @@ void CDHTSettings::LoadSettings()
     // considers a cache value timed out, negative values are interpreted
     // as zero.
     //resolver_cache_timeout,
-    
+
     // this is the client name and version identifier sent to peers in the
     // handshake message. If this is an empty string, the user_agent is
     // used instead
-    //settings.set_str(settings_pack:handshake_client_version, "Credit"); //todo: add version to user agent 
+    //settings.set_str(settings_pack:handshake_client_version, "Credit"); //todo: add version to user agent
 
     // ``outgoing_interfaces``
     // sets the network interface this session will use when it opens
@@ -1291,4 +1291,3 @@ void CDHTSettings::LoadSettings()
     // to generate a standard client peer ID fingerprint prefix.
     //peer_fingerprint,
 }
-

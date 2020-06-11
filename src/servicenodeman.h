@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -35,11 +34,11 @@ private:
     static const int MAX_POSE_RANK = 10;
     static const int MAX_POSE_BLOCKS = 10;
 
-    static const int DNB_RECOVERY_QUORUM_TOTAL = 10;
-    static const int DNB_RECOVERY_QUORUM_REQUIRED = 10;
-    static const int DNB_RECOVERY_MAX_ASK_ENTRIES = 10;
-    static const int DNB_RECOVERY_WAIT_SECONDS = 60;
-    static const int DNB_RECOVERY_RETRY_SECONDS = 3 * 60 * 60;
+    static const int SNB_RECOVERY_QUORUM_TOTAL = 10;
+    static const int SNB_RECOVERY_QUORUM_REQUIRED = 10;
+    static const int SNB_RECOVERY_MAX_ASK_ENTRIES = 10;
+    static const int SNB_RECOVERY_WAIT_SECONDS = 60;
+    static const int SNB_RECOVERY_RETRY_SECONDS = 3 * 60 * 60;
     // the minimun active ServiceNodes before using InstandSend
     static const int INSTANTSEND_MIN_ACTIVE_SERVICENODE_COUNT = 25;
     // critical section to protect the inner data structures
@@ -48,7 +47,7 @@ private:
     // Keep track of current block height
     int nCachedBlockHeight;
 
-    // map to hold all DNs
+    // map to hold all SNs
     std::map<COutPoint, CServiceNode> mapServiceNodes;
     // who's asked for the ServiceNode list and the last time
     std::map<CService, int64_t> mAskedUsForServiceNodeList;
@@ -61,12 +60,12 @@ private:
     std::map<CService, CServiceNodeVerification> mWeAskedForVerification;
 
     // these maps are used for ServiceNode recovery from SERVICENODE_NEW_START_REQUIRED state
-    std::map<uint256, std::pair<int64_t, std::set<CService> > > mDnbRecoveryRequests;
-    std::map<uint256, std::vector<CServiceNodeBroadcast> > mDnbRecoveryGoodReplies;
-    std::list<std::pair<CService, uint256> > listScheduledDnbRequestConnections;
-    std::map<CService, std::pair<int64_t, std::set<uint256> > > mapPendingDNB;
-    std::map<CService, std::pair<int64_t, CServiceNodeVerification> > mapPendingDNV;
-    CCriticalSection cs_mapPendingDNV;
+    std::map<uint256, std::pair<int64_t, std::set<CService> > > mSnbRecoveryRequests;
+    std::map<uint256, std::vector<CServiceNodeBroadcast> > mSnbRecoveryGoodReplies;
+    std::list<std::pair<CService, uint256> > listScheduledSnbRequestConnections;
+    std::map<CService, std::pair<int64_t, std::set<uint256> > > mapPendingSNB;
+    std::map<CService, std::pair<int64_t, CServiceNodeVerification> > mapPendingSNV;
+    CCriticalSection cs_mapPendingSNV;
 
     /// Set when ServiceNodes are added, cleared when CGovernanceManager is notified
     bool fServiceNodesAdded;
@@ -87,7 +86,7 @@ private:
     void SyncSingle(CNode* pnode, const COutPoint& outpoint, CConnman& connman);
     void SyncAll(CNode* pnode, CConnman& connman);
 
-    void PushPsegInvs(CNode* pnode, const CServiceNode& dn);
+    void PushPsegInvs(CNode* pnode, const CServiceNode& sn);
 
 public:
     // Keep track of all broadcasts I've seen
@@ -118,8 +117,8 @@ public:
         READWRITE(mAskedUsForServiceNodeList);
         READWRITE(mWeAskedForServiceNodeList);
         READWRITE(mWeAskedForServiceNodeListEntry);
-        READWRITE(mDnbRecoveryRequests);
-        READWRITE(mDnbRecoveryGoodReplies);
+        READWRITE(mSnbRecoveryRequests);
+        READWRITE(mSnbRecoveryGoodReplies);
         READWRITE(nLastSentinelPingTime);
         READWRITE(nPsqCount);
 
@@ -133,11 +132,11 @@ public:
     CServiceNodeMan();
 
     /// Add an entry
-    bool Add(CServiceNode& dn);
+    bool Add(CServiceNode& sn);
 
-    /// Ask (source) node for dnb
-    void AskForDN(CNode* pnode, const COutPoint& outpoint, CConnman& connman);
-    void AskForDnb(CNode* pnode, const uint256& hash);
+    /// Ask (source) node for snb
+    void AskForSN(CNode* pnode, const COutPoint& outpoint, CConnman& connman);
+    void AskForSnb(CNode* pnode, const uint256& hash);
 
     bool PoSeBan(const COutPoint& outpoint);
     bool AllowMixing(const COutPoint& outpoint);
@@ -170,14 +169,14 @@ public:
     bool Get(const COutPoint& outpoint, CServiceNode& servicenodeRet);
     bool Has(const COutPoint& outpoint);
 
-    bool GetServiceNodeInfo(const COutPoint& outpoint, servicenode_info_t& dnInfoRet);
-    bool GetServiceNodeInfo(const CPubKey& pubKeyServiceNode, servicenode_info_t& dnInfoRet);
-    bool GetServiceNodeInfo(const CScript& payee, servicenode_info_t& dnInfoRet);
+    bool GetServiceNodeInfo(const COutPoint& outpoint, servicenode_info_t& snInfoRet);
+    bool GetServiceNodeInfo(const CPubKey& pubKeyServiceNode, servicenode_info_t& snInfoRet);
+    bool GetServiceNodeInfo(const CScript& payee, servicenode_info_t& snInfoRet);
 
     /// Find an entry in the ServiceNode list that is next to be paid
-    bool GetNextServiceNodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCountRet, servicenode_info_t& dnInfoRet);
+    bool GetNextServiceNodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCountRet, servicenode_info_t& snInfoRet);
     /// Same as above but use current block height
-    bool GetNextServiceNodeInQueueForPayment(bool fFilterSigTime, int& nCountRet, servicenode_info_t& dnInfoRet);
+    bool GetNextServiceNodeInQueueForPayment(bool fFilterSigTime, int& nCountRet, servicenode_info_t& snInfoRet);
 
     /// Find a random entry
     servicenode_info_t FindRandomNotInVec(const std::vector<COutPoint>& vecToExclude, int nProtocolVersion = -1);
@@ -188,18 +187,18 @@ public:
     bool GetServiceNodeRank(const COutPoint& outpoint, int& nRankRet, int nBlockHeight = -1, int nMinProtocol = 0);
 
     void ProcessServiceNodeConnections(CConnman& connman);
-    std::pair<CService, std::set<uint256> > PopScheduledDnbRequestConnection();
-    void ProcessPendingDnbRequests(CConnman& connman);
+    std::pair<CService, std::set<uint256> > PopScheduledSnbRequestConnection();
+    void ProcessPendingSnbRequests(CConnman& connman);
 
     void ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman);
 
     void DoFullVerificationStep(CConnman& connman);
     void CheckSameAddr();
     bool SendVerifyRequest(const CAddress& addr, const std::vector<const CServiceNode*>& vSortedByAddr, CConnman& connman);
-    void ProcessPendingDnvRequests(CConnman& connman);
-    void SendVerifyReply(CNode* pnode, CServiceNodeVerification& dnv, CConnman& connman);
-    void ProcessVerifyReply(CNode* pnode, CServiceNodeVerification& dnv);
-    void ProcessVerifyBroadcast(CNode* pnode, const CServiceNodeVerification& dnv);
+    void ProcessPendingSnvRequests(CConnman& connman);
+    void SendVerifyReply(CNode* pnode, CServiceNodeVerification& snv, CConnman& connman);
+    void ProcessVerifyReply(CNode* pnode, CServiceNodeVerification& snv);
+    void ProcessVerifyBroadcast(CNode* pnode, const CServiceNodeVerification& snv);
 
     /// Return the number of (unique) ServiceNodes
     int size() { return mapServiceNodes.size(); }
@@ -207,8 +206,8 @@ public:
     std::string ToString() const;
 
     /// Perform complete check and only then update list and maps
-    bool CheckDnbAndUpdateServiceNodeList(CNode* pfrom, CServiceNodeBroadcast dnb, int& nDos, CConnman& connman);
-    bool IsDnbRecoveryRequested(const uint256& hash) { return mDnbRecoveryRequests.count(hash); }
+    bool CheckSnbAndUpdateServiceNodeList(CNode* pfrom, CServiceNodeBroadcast snb, int& nDos, CConnman& connman);
+    bool IsSnbRecoveryRequested(const uint256& hash) { return mSnbRecoveryRequests.count(hash); }
 
     void UpdateLastPaid(const CBlockIndex* pindex);
 
@@ -234,7 +233,7 @@ public:
     void CheckServiceNode(const CPubKey& pubKeyServiceNode, bool fForce);
 
     bool IsServiceNodePingedWithin(const COutPoint& outpoint, int nSeconds, int64_t nTimeToCheckAt = -1);
-    void SetServiceNodeLastPing(const COutPoint& outpoint, const CServiceNodePing& dnp);
+    void SetServiceNodeLastPing(const COutPoint& outpoint, const CServiceNodePing& snp);
 
     void UpdatedBlockTip(const CBlockIndex* pindex);
 

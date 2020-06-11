@@ -1139,7 +1139,8 @@ UniValue getbalance(const JSONRPCRequest& request)
             std::list<COutputEntry> listSent;
             wtx.GetAmounts(listReceived, listSent, allFee, strSentAccount, filter);
             if ((wtx.GetDepthInMainChain() >= nMinDepth) || (fAddLocked && wtx.IsLockedByInstantSend())) {
-                 for (const COutputEntry& r : listReceived)                    nBalance += r.amount;
+                 for (const COutputEntry& r : listReceived)
+                     nBalance += r.amount;
             }
             for (const COutputEntry& s : listSent)
                 nBalance -= s.amount;

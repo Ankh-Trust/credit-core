@@ -647,8 +647,8 @@ std::string HelpMessage(HelpMessageMode mode)
 
     strUsage += HelpMessageGroup(_("ServiceNode options:"));
     strUsage += HelpMessageOpt("-servicenode=<n>", strprintf(_("Enable the client to act as a ServiceNode (0-1, default: %u)"), 0));
-    strUsage += HelpMessageOpt("-dnconf=<file>", strprintf(_("Specify ServiceNode configuration file (default: %s)"), "servicenode.conf"));
-    strUsage += HelpMessageOpt("-dnconflock=<n>", strprintf(_("Lock ServiceNodes from ServiceNode configuration file (default: %u)"), 1));
+    strUsage += HelpMessageOpt("-snconf=<file>", strprintf(_("Specify ServiceNode configuration file (default: %s)"), "servicenode.conf"));
+    strUsage += HelpMessageOpt("-snconflock=<n>", strprintf(_("Lock ServiceNodes from ServiceNode configuration file (default: %u)"), 1));
     strUsage += HelpMessageOpt("-servicenodepairingkey=<n>", _("Set the ServiceNode private key"));
 
 #ifdef ENABLE_WALLET
@@ -871,7 +871,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
         }
     } // End scope of CImportingNow
 
-    // force UpdatedBlockTip to initialize nCachedBlockHeight for PS, DN payments and budgets
+    // force UpdatedBlockTip to initialize nCachedBlockHeight for PS, SN payments and budgets
     // but don't call it directly to prevent triggering of other listeners like zmq etc.
     // GetMainSignals().UpdatedBlockTip(chainActive.Tip());
     ppsNotificationInterface->InitializeCurrentBlockTip();
@@ -1951,22 +1951,22 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
 #ifdef ENABLE_WALLET
     LogPrintf("Using ServiceNode config file %s\n", GetServiceNodeConfigFile().string());
 
-    if (GetBoolArg("-dnconflock", true) && pwalletMain && (servicenodeConfig.getCount() > 0)) {
+    if (GetBoolArg("-snconflock", true) && pwalletMain && (servicenodeConfig.getCount() > 0)) {
         LOCK(pwalletMain->cs_wallet);
         LogPrintf("Locking ServiceNodes:\n");
-        uint256 dnTxHash;
+        uint256 snTxHash;
         uint32_t outputIndex;
-        for (const auto& dne : servicenodeConfig.getEntries()) {
-            dnTxHash.SetHex(dne.getTxHash());
-            outputIndex = (uint32_t)atoi(dne.getOutputIndex());
-            COutPoint outpoint = COutPoint(dnTxHash, outputIndex);
+        for (const auto& sne : servicenodeConfig.getEntries()) {
+            snTxHash.SetHex(sne.getTxHash());
+            outputIndex = (uint32_t)atoi(sne.getOutputIndex());
+            COutPoint outpoint = COutPoint(snTxHash, outputIndex);
             // don't lock non-spendable outpoint (i.e. it's already spent or it's not from this wallet at all)
             if (pwalletMain->IsMine(CTxIn(outpoint)) != ISMINE_SPENDABLE) {
-                LogPrintf("  %s %s - IS NOT SPENDABLE, was not locked\n", dne.getTxHash(), dne.getOutputIndex());
+                LogPrintf("  %s %s - IS NOT SPENDABLE, was not locked\n", sne.getTxHash(), sne.getOutputIndex());
                 continue;
             }
             pwalletMain->LockCoin(outpoint);
-            LogPrintf("  %s %s - locked successfully\n", dne.getTxHash(), dne.getOutputIndex());
+            LogPrintf("  %s %s - locked successfully\n", sne.getTxHash(), sne.getOutputIndex());
         }
     }
 
@@ -2057,7 +2057,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         scheduler.scheduleEvery(std::bind(&CNetFulfilledRequestManager::DoMaintenance, std::ref(netfulfilledman)), 60);
         scheduler.scheduleEvery(std::bind(&CServiceNodeSync::DoMaintenance, std::ref(servicenodeSync), std::ref(*g_connman)), SERVICENODE_SYNC_TICK_SECONDS);
         scheduler.scheduleEvery(std::bind(&CServiceNodeMan::DoMaintenance, std::ref(snodeman), std::ref(*g_connman)), 1);
-        scheduler.scheduleEvery(std::bind(&CActiveServiceNode::DoMaintenance, std::ref(activeServiceNode), std::ref(*g_connman)), SERVICENODE_MIN_DNP_SECONDS);
+        scheduler.scheduleEvery(std::bind(&CActiveServiceNode::DoMaintenance, std::ref(activeServiceNode), std::ref(*g_connman)), SERVICENODE_MIN_SNP_SECONDS);
 
         scheduler.scheduleEvery(std::bind(&CServiceNodePayments::DoMaintenance, std::ref(snpayments)), 60);
         scheduler.scheduleEvery(std::bind(&CGovernanceManager::DoMaintenance, std::ref(governance), std::ref(*g_connman)), 60 * 5);

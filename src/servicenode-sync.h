@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -18,7 +17,7 @@ static const int SERVICENODE_SYNC_FAILED = -1;
 static const int SERVICENODE_SYNC_INITIAL = 0; // sync just started, was reset recently or still in IDB
 static const int SERVICENODE_SYNC_WAITING = 1; // waiting after initial to see if we can get more headers/blocks
 static const int SERVICENODE_SYNC_LIST = 2;
-static const int SERVICENODE_SYNC_DNW = 3;
+static const int SERVICENODE_SYNC_SNW = 3;
 static const int SERVICENODE_SYNC_GOVERNANCE = 4;
 static const int SERVICENODE_SYNC_GOVOBJ = 10;
 static const int SERVICENODE_SYNC_GOVOBJ_VOTE = 11;
@@ -62,7 +61,7 @@ public:
     bool IsFailed() { return nRequestedServiceNodeAssets == SERVICENODE_SYNC_FAILED; }
     bool IsBlockchainSynced() { return nRequestedServiceNodeAssets > SERVICENODE_SYNC_WAITING; }
     bool IsServiceNodeListSynced() { return nRequestedServiceNodeAssets > SERVICENODE_SYNC_LIST; }
-    bool IsWinnersListSynced() { return nRequestedServiceNodeAssets > SERVICENODE_SYNC_DNW; }
+    bool IsWinnersListSynced() { return nRequestedServiceNodeAssets > SERVICENODE_SYNC_SNW; }
     bool IsSynced() { return nRequestedServiceNodeAssets == SERVICENODE_SYNC_FINISHED; }
 
     int GetAssetID() { return nRequestedServiceNodeAssets; }

@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -25,7 +24,7 @@ static const int PRIVATESEND_QUEUE_TIMEOUT = 30;
 static const int PRIVATESEND_SIGNING_TIMEOUT = 15;
 
 //! minimum peer version accepted by mixing pool
-static const int MIN_PRIVATESEND_PEER_PROTO_VERSION = 71110;
+static const int MIN_PRIVATESEND_PEER_PROTO_VERSION = 71000;
 
 static const CAmount PRIVATESEND_ENTRY_MAX_SIZE = 9;
 
@@ -41,10 +40,10 @@ enum PoolMessage {
     ERR_INVALID_SCRIPT,
     ERR_INVALID_TX,
     ERR_MAXIMUM,
-    ERR_DN_LIST,
+    ERR_SN_LIST,
     ERR_MODE,
     ERR_NON_STANDARD_PUBKEY,
-    ERR_NOT_A_DN, // not used
+    ERR_NOT_A_SN, // not used
     ERR_QUEUE_FULL,
     ERR_RECENT,
     ERR_SESSION,
@@ -201,7 +200,7 @@ public:
     {
         READWRITE(nDenom);
         int nVersion = s.GetVersion();
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {
@@ -289,7 +288,7 @@ public:
     {
         READWRITE(tx);
         int nVersion = s.GetVersion();
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {

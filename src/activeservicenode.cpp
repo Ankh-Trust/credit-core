@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -123,25 +122,25 @@ bool CActiveServiceNode::SendServiceNodePing(CConnman& connman)
         return false;
     }
 
-    CServiceNodePing dnp(outpoint);
-    dnp.nSentinelVersion = nSentinelVersion;
-    dnp.fSentinelIsCurrent =
+    CServiceNodePing snp(outpoint);
+    snp.nSentinelVersion = nSentinelVersion;
+    snp.fSentinelIsCurrent =
         (llabs(GetAdjustedTime() - nSentinelPingTime) < SERVICENODE_SENTINEL_PING_MAX_SECONDS);
-    if (!dnp.Sign(keyServiceNode, pubKeyServiceNode)) {
+    if (!snp.Sign(keyServiceNode, pubKeyServiceNode)) {
         LogPrintf("CActiveServiceNode::SendServiceNodePing -- ERROR: Couldn't sign ServiceNode Ping\n");
         return false;
     }
 
     // Update lastPing for our ServiceNode in ServiceNode list
-    if (snodeman.IsServiceNodePingedWithin(outpoint, SERVICENODE_MIN_DNP_SECONDS, dnp.sigTime)) {
+    if (snodeman.IsServiceNodePingedWithin(outpoint, SERVICENODE_MIN_SNP_SECONDS, snp.sigTime)) {
         LogPrintf("CActiveServiceNode::SendServiceNodePing -- Too early to send ServiceNode Ping\n");
         return false;
     }
 
-    snodeman.SetServiceNodeLastPing(outpoint, dnp);
+    snodeman.SetServiceNodeLastPing(outpoint, snp);
 
     LogPrintf("CActiveServiceNode::SendServiceNodePing -- Relaying ping, collateral=%s\n", outpoint.ToStringShort());
-    dnp.Relay(connman);
+    snp.Relay(connman);
 
     return true;
 }
@@ -234,30 +233,30 @@ void CActiveServiceNode::ManageStateRemote()
         GetStatus(), fPingerEnabled, GetTypeString(), pubKeyServiceNode.GetID().ToString());
 
     snodeman.CheckServiceNode(pubKeyServiceNode, true);
-    servicenode_info_t infoDn;
-    if (snodeman.GetServiceNodeInfo(pubKeyServiceNode, infoDn)) {
-        if (infoDn.nProtocolVersion != PROTOCOL_VERSION) {
+    servicenode_info_t infoSn;
+    if (snodeman.GetServiceNodeInfo(pubKeyServiceNode, infoSn)) {
+        if (infoSn.nProtocolVersion != PROTOCOL_VERSION) {
             nState = ACTIVE_SERVICENODE_NOT_CAPABLE;
             strNotCapableReason = "Invalid protocol version";
             LogPrintf("CActiveServiceNode::ManageStateRemote -- %s: %s\n", GetStateString(), strNotCapableReason);
             return;
         }
-        if (service != infoDn.addr) {
+        if (service != infoSn.addr) {
             nState = ACTIVE_SERVICENODE_NOT_CAPABLE;
             strNotCapableReason = "Broadcasted IP doesn't match our external address. Make sure you issued a new broadcast if IP of this ServiceNode changed recently.";
             LogPrintf("CActiveServiceNode::ManageStateRemote -- %s: %s\n", GetStateString(), strNotCapableReason);
             return;
         }
-        if (!CServiceNode::IsValidStateForAutoStart(infoDn.nActiveState)) {
+        if (!CServiceNode::IsValidStateForAutoStart(infoSn.nActiveState)) {
             nState = ACTIVE_SERVICENODE_NOT_CAPABLE;
-            strNotCapableReason = strprintf("ServiceNode in %s state", CServiceNode::StateToString(infoDn.nActiveState));
+            strNotCapableReason = strprintf("ServiceNode in %s state", CServiceNode::StateToString(infoSn.nActiveState));
             LogPrintf("CActiveServiceNode::ManageStateRemote -- %s: %s\n", GetStateString(), strNotCapableReason);
             return;
         }
         if (nState != ACTIVE_SERVICENODE_STARTED) {
             LogPrintf("CActiveServiceNode::ManageStateRemote -- STARTED!\n");
-            outpoint = infoDn.outpoint;
-            service = infoDn.addr;
+            outpoint = infoSn.outpoint;
+            service = infoSn.addr;
             fPingerEnabled = true;
             nState = ACTIVE_SERVICENODE_STARTED;
         }

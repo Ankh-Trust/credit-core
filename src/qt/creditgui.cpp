@@ -883,7 +883,7 @@ void CreditGUI::showConfEditor()
 
 void CreditGUI::showSNConfEditor()
 {
-    GUIUtil::openDNConfigfile();
+    GUIUtil::openSNConfigfile();
 }
 
 void CreditGUI::showBackups()
@@ -1121,7 +1121,7 @@ void CreditGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVeri
             tooltip += tr("Less than 60 seconds behind.");
         } else {
             tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
-        }      
+        }
         tooltip += QString("<br>");
         tooltip += tr("Transactions after this will not yet be visible.");
     } else if (fLiteMode) {

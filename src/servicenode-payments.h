@@ -24,8 +24,8 @@ static const int SNPAYMENTS_SIGNATURES_TOTAL = 20;
 //  vote for servicenode and be elected as a payment winner
 // V1 - Last protocol version before update
 // V2 - Newest protocol version
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 71100;
-static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71110;  // Only Service Nodes >= v1.1.0.0 will get paid after Spork 10 activation
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_1 = 71000;
+static const int MIN_SERVICENODE_PAYMENT_PROTO_VERSION_2 = 71000;  // Only Service Nodes >= v1.0.0.0 will get paid after Spork 10 activation
 
 extern CCriticalSection cs_vecPayees;
 extern CCriticalSection cs_mapServiceNodeBlocks;
@@ -137,7 +137,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn vinServiceNode{};
             if (ser_action.ForRead()) {
@@ -219,7 +219,7 @@ public:
 
     bool GetBlockPayee(int nBlockHeight, CScript& payeeRet) const;
     bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight) const;
-    bool IsScheduled(const servicenode_info_t& dnInfo, int nNotBlockHeight) const;
+    bool IsScheduled(const servicenode_info_t& snInfo, int nNotBlockHeight) const;
 
     bool UpdateLastVote(const CServiceNodePaymentVote& vote);
 

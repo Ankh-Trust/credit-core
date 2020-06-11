@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -307,7 +306,7 @@ public:
 
     // These commands are only used in RPC
     std::vector<CGovernanceVote> GetMatchingVotes(const uint256& nParentHash) const;
-    std::vector<CGovernanceVote> GetCurrentVotes(const uint256& nParentHash, const COutPoint& dnCollateralOutpointFilter) const;
+    std::vector<CGovernanceVote> GetCurrentVotes(const uint256& nParentHash, const COutPoint& snCollateralOutpointFilter) const;
     std::vector<const CGovernanceObject*> GetAllNewerThan(int64_t nMoreThanTime) const;
 
     void AddGovernanceObject(CGovernanceObject& govobj, CConnman& connman, CNode* pfrom = nullptr);

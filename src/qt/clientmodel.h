@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -100,7 +99,7 @@ private:
     BanTableModel* banTableModel;
 
     QTimer* pollTimer;
-    QTimer* pollDnTimer;
+    QTimer* pollSnTimer;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
@@ -122,7 +121,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void updateTimer();
-    void updateDnTimer();
+    void updateSnTimer();
     void updateNumConnections(int numConnections);
     void updateAlert(const QString& hash, int status);
     void updateBanlist();
