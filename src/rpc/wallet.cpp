@@ -1933,7 +1933,7 @@ UniValue listaccounts(const JSONRPCRequest& request)
             "\nList account balances where there at least 1 confirmation\n" +
             HelpExampleCli("listaccounts", "") +
             "\nList account balances including zero confirmation transactions\n" + HelpExampleCli("listaccounts", "0") +
-            "\nList account balances for 50 or more confirmations\n" + HelpExampleCli("listaccounts", "50") +
+            "\nList account balances for 10 or more confirmations\n" + HelpExampleCli("listaccounts", "10") +
             "\nAs json rpc call\n" + HelpExampleRpc("listaccounts", "10"));
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
