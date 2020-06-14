@@ -3752,7 +3752,7 @@ Näillä toiminnoilla voit korjata korruptoituneen lohkoketjun tai puuttuvat/van
         <translation>Tässä moodissa -genproclimit-cpu ohjaa kuinka monta lohkoa luodaan välittömästi.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend vaatii syötteille vähintään 10 vahvistusta, odota muutama minuutti ja yritä uudelleen.</translation>
     </message>
     <message>

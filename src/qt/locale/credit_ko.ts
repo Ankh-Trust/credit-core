@@ -3957,7 +3957,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
         <translation>이 모드에서 -genproclimit은 즉시 생성되는 블록 수를 제어합니다.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend는 최소 10 회의 확인이 필요한 입력을 필요로하므로 몇 분 기다렸다가 다시 시도해야 할 수 있습니다.</translation>
     </message>
     <message>

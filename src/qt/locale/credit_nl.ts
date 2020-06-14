@@ -481,7 +481,7 @@
     <message>
         <source>&amp;Import mnemonic/private key...</source>
         <translation>&amp;Mnemonic/private sleutel importeren...</translation>
-    </message>    
+    </message>
     <message>
         <source>&amp;PrivateSend information</source>
         <translation>&amp;PrivateSend informatie</translation>
@@ -3960,7 +3960,7 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-_ac/</translat
         <translation>In deze modus bepaalt -genproclimit-cpu hoeveel blocks onmiddellijk worden gegenereerd.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend vereist inputs met ten minste 10 bevestigingen, mogelijk moet u enkele minuten wachten en het opnieuw proberen.</translation>
     </message>
     <message>

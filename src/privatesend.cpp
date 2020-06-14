@@ -188,7 +188,7 @@ bool CPrivateSendBroadcastTx::CheckSignature(const CPubKey& pubKeyServiceNode) c
 bool CPrivateSendBroadcastTx::IsExpired(int nHeight)
 {
     // expire confirmed PSTXes after ~1h since confirmation
-    return (nConfirmedHeight != -1) && (nHeight - nConfirmedHeight > 99);
+    return (nConfirmedHeight != -1) && (nHeight - nConfirmedHeight > 24);
 }
 
 void CPrivateSendBaseSession::SetNull()

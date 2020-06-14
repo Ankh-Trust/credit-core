@@ -3743,7 +3743,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>В този режим -genproclimit-cpu се контролира колко блока са генерирани моментално.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend изисква средства с поне 10 потвърждения, може да се наложи да почакате няколко минути и да опитате отново.</translation>
     </message>
     <message>

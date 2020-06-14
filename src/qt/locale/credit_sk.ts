@@ -453,7 +453,7 @@
     <message>
         <source>&amp;Import mnemonic/private key...</source>
         <translation>&amp;Uvozi mnemotehnični/zasebni ključ...</translation>
-    </message>    
+    </message>
     <message>
         <source>Credit client</source>
         <translation>Credit klient</translation>
@@ -3365,7 +3365,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>V tomto móde -genproclimit-cpu kontroluje počet blokov, ktoré sú vygenerované okamžite.</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>InstantSend vyžaduje vstupy s aspoň 10 potvrdeniami, môžete počkať pár minút a skúsiť znova.</translation>
     </message>
     <message>

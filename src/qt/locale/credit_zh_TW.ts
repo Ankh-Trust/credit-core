@@ -3254,7 +3254,7 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation>當最新區塊改變時要執行的指令(指令中的 %s 會被取代成區塊雜湊值)</translation>
     </message>
     <message>
-        <source>InstantSend requires inputs with at least 50 confirmations, you might need to wait a few minutes and try again.</source>
+        <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
         <translation>即時到帳系統要求輸入的資金最少要有6個確認，你可能需要等待數分鐘然後再重試。</translation>
     </message>
     <message>
