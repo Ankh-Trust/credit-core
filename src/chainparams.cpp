@@ -118,7 +118,7 @@ public:
         consensus.nServiceNodePaymentsStartBlock = 32000;  // ServiceNode Payments begin on block 32000
         consensus.nMinCountServiceNodesPaymentStart = 15;  // ServiceNode Payments begin once 15 ServiceNodes exist or more.
 
-        consensus.nInstantSendConfirmationsRequired = 50;
+        consensus.nInstantSendConfirmationsRequired = 51;
         consensus.nInstantSendKeepLock = 60;
 
         consensus.nBudgetPaymentsStartBlock = 10800;   // actual historical value
