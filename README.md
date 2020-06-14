@@ -13,7 +13,7 @@ What is [Credit](https://ankh.foundation/credit)?
 * PoW Target Spacing: 30 Seconds
 * PoW Reward per Block: Controlled via Fluid Protocol
 * PoW Reward Start Height: Block 5
-* Maturity: 49 Blocks
+* Maturity: 50 Blocks
 * PoW Blocks: ~2,880 per day
 * ServiceNode Collateral Amount: 50,000 0AC
 * ServiceNode Min Confirmation: 60 Blocks
