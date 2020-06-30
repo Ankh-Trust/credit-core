@@ -160,7 +160,7 @@ static const int MAX_UNCONNECTING_HEADERS = 10;
 //Credit Constants
 static const CAmount BLOCKCHAIN_INIT_REWARD = COIN * 0;
 static const CAmount PHASE_1_POW_REWARD = COIN * 0.0280;
-static const CAmount PHASE_1_SERVICENODE_PAYMENT = COIN * 0.1080;
+static const CAmount PHASE_1_SERVICENODE_PAYMENT = COIN * 0.0000;
 static const CAmount PHASE_2_SERVICENODE_PAYMENT = COIN * 0.1080;
 static const CAmount INITIAL_SUPERBLOCK_PAYMENT = 8000000 * COIN;
 
