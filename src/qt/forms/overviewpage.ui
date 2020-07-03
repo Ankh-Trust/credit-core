@@ -115,6 +115,19 @@
              </widget>
             </item>
             <item row="0" column="4">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="4">
              <widget class="QLabel" name="labelWalletStatus">
               <property name="toolTip">
                <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet.</string>
@@ -129,20 +142,7 @@
                <set>Qt::AlignLeft|Qt::AlignLeft|Qt::AlignLeft</set>
               </property>
              </widget>
-            </item>
-            <item row="0" column="4">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>                  
+            </item>            
             <item row="1" column="1">
              <widget class="QLabel" name="labelBalanceText">
               <property name="text">
