@@ -105,6 +105,16 @@
              </widget>
             </item>
             <item row="0" column="3">
+             <widget class="QLabel" name="labelSpendable">
+              <property name="text">
+               <string>Spendable:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
              <widget class="QLabel" name="labelWalletStatus">
               <property name="toolTip">
                <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet.</string>
@@ -117,16 +127,6 @@
               </property>
               <property name="alignment">
                <set>Qt::AlignLeft|Qt::AlignLeft|Qt::AlignLeft</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLabel" name="labelSpendable">
-              <property name="text">
-               <string>Spendable:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
               </property>
              </widget>
             </item>
@@ -417,22 +417,6 @@
              </widget>
             </item>
             <item row="7" column="3">
-             <widget class="QLabel" name="labelPrivateSendSyncStatus">
-              <property name="toolTip">
-               <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet.</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel { color: #66023c; }</string>
-              </property>
-              <property name="text">
-               <string notr="true">(out of sync)</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignLeft|Qt::AlignLeft|Qt::AlignLeft</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="3">
              <widget class="QPushButton" name="privateSendInfo">
               <property name="styleSheet">
                <string notr="true">border:0;background-color:none;text-align:right;margin: 0px; text-transform: none; font-weight: none; text-decoration:underline; </string>
@@ -689,22 +673,6 @@
               </property>
               <property name="text">
                <string>Recent transactions</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="labelTransactionsStatus">
-              <property name="toolTip">
-               <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Credit network after a connection is established, but this process has not completed yet.</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel { color: #66023c; }</string>
-              </property>
-              <property name="text">
-               <string notr="true">(out of sync)</string>
-              </property>
-              <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
               </property>
              </widget>
             </item>
