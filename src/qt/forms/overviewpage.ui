@@ -97,7 +97,7 @@
             <item row="0" column="2">
              <widget class="QLabel" name="labelWatchonly">
               <property name="text">
-               <string>Watch-only:</string>
+               <string>Watch-only</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
@@ -107,10 +107,10 @@
             <item row="0" column="3">
              <widget class="QLabel" name="labelSpendable">
               <property name="text">
-               <string>Spendable:</string>
+               <string>Spendable</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
               </property>
              </widget>
             </item>
@@ -126,7 +126,7 @@
                <string notr="true">(out of sync)</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
