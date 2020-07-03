@@ -230,7 +230,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 // show/hide watch-only labels
 void OverviewPage::updateWatchOnlyLabels(bool showWatchOnly)
 {
-    ui->labelSpendable->setVisible(false);      // show spendable label (only when watch-only is active)
+    ui->labelSpendable->setVisible(true);      // show spendable label (only when watch-only is active)
     ui->labelWatchonly->setVisible(true);      // show watch-only label
     ui->lineWatchBalance->setVisible(showWatchOnly);    // show watch-only balance separator line
     ui->labelWatchAvailable->setVisible(showWatchOnly); // show watch-only available balance
