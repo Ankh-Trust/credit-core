@@ -126,7 +126,7 @@
                <string notr="true">(out of sync)</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignLeft|Qt::AlignLeft|Qt::AlignLeft</set>
+               <set>Qt::AlignRight|Qt::AlignRight|Qt::AlignRight</set>
               </property>
              </widget>
             </item>
