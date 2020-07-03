@@ -159,8 +159,8 @@ debug Categories are "addrman, alert, bench, coindb, db, http, libevent, lock, m
 SERVICENODE OPTIONS
 --------------
 * "-servicenode=[n]" ("Enable the client to act as a ServiceNode (0-1)")
-* "-dnconf=[file]" ("Specify ServiceNode configuration file", "servicenode.conf")
-* "-dnconflock=[n]" ("Lock ServiceNodes from ServiceNode configuration file")
+* "-snconf=[file]" ("Specify ServiceNode configuration file", "servicenode.conf")
+* "-snconflock=[n]" ("Lock ServiceNodes from ServiceNode configuration file")
 * "-servicenodepairingkey=[n]" ("Set the ServiceNode private key")
 
 PRIVATESEND OPTIONS

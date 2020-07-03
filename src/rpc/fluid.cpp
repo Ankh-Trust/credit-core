@@ -90,8 +90,8 @@ UniValue maketoken(const JSONRPCRequest& request)
             "\nArguments:\n"
             "1. \"string\"         (string, required) String that has to be converted to hex.\n"
             "\nExamples:\n" +
-            HelpExampleCli("maketoken", "300000 1558389600 DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd") +
-            HelpExampleRpc("maketoken", "300000 1558389600 DNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd"));
+            HelpExampleCli("maketoken", "300000 1558389600 SNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd") +
+            HelpExampleRpc("maketoken", "300000 1558389600 SNsEXkNEdzvNbR3zjaDa3TEVPtwR6Efbmd"));
     }
 
     std::string result = "";

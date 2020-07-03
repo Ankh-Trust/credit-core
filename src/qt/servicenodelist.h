@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -67,10 +66,10 @@ private:
     ClientModel* clientModel;
     WalletModel* walletModel;
     // Protects tableWidgetServiceNodes
-    CCriticalSection cs_dnlist;
+    CCriticalSection cs_snlist;
 
     // Protects tableWidgetMyServiceNodes
-    CCriticalSection cs_mydnlist;
+    CCriticalSection cs_mysnlist;
     QString strCurrentFilter;
 
 private Q_SLOTS:

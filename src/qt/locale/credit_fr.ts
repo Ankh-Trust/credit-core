@@ -3783,7 +3783,7 @@ https://www.transifex.com/projects/p/credit/</translation>
     </message>
     <message>
         <source>InstantSend requires inputs with at least 10 confirmations, you might need to wait a few minutes and try again.</source>
-        <translation>InstantSend nécessite des entrées avec au moins 6 confirmations, vous devriez attendre quelques minutes avant de réessayer.</translation>
+        <translation>InstantSend nécessite des entrées avec au moins 10 confirmations, vous devriez attendre quelques minutes avant de réessayer.</translation>
     </message>
     <message>
         <source>Name to construct url for KeePass entry that stores the wallet passphrase</source>

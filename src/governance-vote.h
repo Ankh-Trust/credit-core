@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -127,7 +126,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action)
     {
         int nVersion = s.GetVersion();
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin{};
             if (ser_action.ForRead()) {

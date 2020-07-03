@@ -453,7 +453,7 @@
     <message>
         <source>&amp;Import mnemonic/private key...</source>
         <translation>&amp;Uvozi mnemotehnični/zasebni ključ...</translation>
-    </message>    
+    </message>
     <message>
         <source>Credit client</source>
         <translation>Credit klient</translation>

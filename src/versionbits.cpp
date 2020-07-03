@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -14,12 +13,12 @@ const struct BIP9DeploymentInfo VersionBitsDeploymentInfo[Consensus::MAX_VERSION
     {
         /*.name =*/"testdummy",
         /*.gbt_force =*/true,
-        /*.check_dn_protocol =*/false,
+        /*.check_sn_protocol =*/false,
     },
     {
         /*.name =*/"csv",
         /*.gbt_force =*/true,
-        /*.check_dn_protocol =*/false,
+        /*.check_sn_protocol =*/false,
     },
     {
         /*.name =*/ "bip147",

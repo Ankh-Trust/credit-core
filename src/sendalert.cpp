@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -57,7 +56,7 @@ void ThreadSendAlert(CConnman& connman)
 
     // These versions are protocol versions
     alert.nMinVer = 60800;
-    alert.nMaxVer = 71110;
+    alert.nMaxVer = 71000;
 
     //
     //  1000 for Misc warnings like out of disk space and clock is wrong
@@ -68,7 +67,7 @@ void ThreadSendAlert(CConnman& connman)
     alert.strStatusBar = "URGENT: Upgrade required: see https://www.duality.solutions";
 
     // Set specific client version/versions here. If setSubVer is empty, no filtering on subver is done:
-    // alert.setSubVer.insert(std::string("/Credit:1.3.0.0/"));
+    // alert.setSubVer.insert(std::string("/Credit:1.0.0.0/"));
 
     // Sign
     if (!alert.Sign()) {

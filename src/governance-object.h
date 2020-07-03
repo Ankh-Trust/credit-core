@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -27,7 +26,7 @@ class CGovernanceObject;
 class CGovernanceVote;
 
 static const int MAX_GOVERNANCE_OBJECT_DATA_SIZE = 16 * 1024;
-static const int MIN_GOVERNANCE_PEER_PROTO_VERSION = 71110;
+static const int MIN_GOVERNANCE_PEER_PROTO_VERSION = 71000;
 static const int GOVERNANCE_FILTER_PROTO_VERSION = 70500;
 
 static const double GOVERNANCE_FILTER_FP_RATE = 0.001;
@@ -182,9 +181,9 @@ private:
     /// Failed to parse object data
     bool fUnparsable;
 
-    vote_m_t mapCurrentDNVotes;
+    vote_m_t mapCurrentSNVotes;
 
-    /// Limited map of votes orphaned by DN
+    /// Limited map of votes orphaned by SN
     vote_cmm_t cmmapOrphanVotes;
 
     CGovernanceObjectVoteFile fileVotes;
@@ -303,7 +302,7 @@ public:
     int GetNoCount(vote_signal_enum_t eVoteSignalIn) const;
     int GetAbstainCount(vote_signal_enum_t eVoteSignalIn) const;
 
-    bool GetCurrentDNVotes(const COutPoint& dnCollateralOutpoint, vote_rec_t& voteRecord) const;
+    bool GetCurrentSNVotes(const COutPoint& snCollateralOutpoint, vote_rec_t& voteRecord) const;
 
     // FUNCTIONS FOR DEALING WITH DATA STRING
 
@@ -323,7 +322,7 @@ public:
         READWRITE(nRevision);
         READWRITE(nTime);
         READWRITE(nCollateralHash);
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             std::string strDataHex;
             if (ser_action.ForRead()) {
@@ -338,7 +337,7 @@ public:
             READWRITE(vchData);
         }
         READWRITE(nObjectType);
-        if (nVersion == 71110 && (s.GetType() & SER_NETWORK)) {
+        if (nVersion == 71000 && (s.GetType() & SER_NETWORK)) {
             // converting from/to old format
             CTxIn txin;
             if (ser_action.ForRead()) {
@@ -360,7 +359,7 @@ public:
             LogPrint("gobject", "CGovernanceObject::SerializationOp Reading/writing votes from/to disk\n");
             READWRITE(nDeletionTime);
             READWRITE(fExpired);
-            READWRITE(mapCurrentDNVotes);
+            READWRITE(mapCurrentSNVotes);
             READWRITE(fileVotes);
             LogPrint("gobject", "CGovernanceObject::SerializationOp hash = %s, vote count = %d\n", GetHash().ToString(), fileVotes.GetVoteCount());
         }
@@ -378,7 +377,7 @@ private:
         CGovernanceException& exception,
         CConnman& connman);
 
-    /// Called when DN's which have voted on this object have been removed
+    /// Called when SN's which have voted on this object have been removed
     void ClearServiceNodeVotes();
 
     void CheckOrphanVotes(CConnman& connman);

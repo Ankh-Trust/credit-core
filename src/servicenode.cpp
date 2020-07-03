@@ -48,10 +48,10 @@ CServiceNode::CServiceNode(const CServiceNode& other) : servicenode_info_t{other
 {
 }
 
-CServiceNode::CServiceNode(const CServiceNodeBroadcast& dnb) : servicenode_info_t{dnb.nActiveState, dnb.nProtocolVersion, dnb.sigTime,
-                                                    dnb.outpoint, dnb.addr, dnb.pubKeyCollateralAddress, dnb.pubKeyServiceNode},
-                                                lastPing(dnb.lastPing),
-                                                vchSig(dnb.vchSig),
+CServiceNode::CServiceNode(const CServiceNodeBroadcast& snb) : servicenode_info_t{snb.nActiveState, snb.nProtocolVersion, snb.sigTime,
+                                                    snb.outpoint, snb.addr, snb.pubKeyCollateralAddress, snb.pubKeyServiceNode},
+                                                lastPing(snb.lastPing),
+                                                vchSig(snb.vchSig),
                                                 fAllowMixingTx(true)
 {
 }
@@ -59,22 +59,22 @@ CServiceNode::CServiceNode(const CServiceNodeBroadcast& dnb) : servicenode_info_
 //
 // When a new ServiceNode broadcast is sent, update our information
 //
-bool CServiceNode::UpdateFromNewBroadcast(CServiceNodeBroadcast& dnb, CConnman& connman)
+bool CServiceNode::UpdateFromNewBroadcast(CServiceNodeBroadcast& snb, CConnman& connman)
 {
-    if (dnb.sigTime <= sigTime && !dnb.fRecovery)
+    if (snb.sigTime <= sigTime && !snb.fRecovery)
         return false;
 
-    pubKeyServiceNode = dnb.pubKeyServiceNode;
-    sigTime = dnb.sigTime;
-    vchSig = dnb.vchSig;
-    nProtocolVersion = dnb.nProtocolVersion;
-    addr = dnb.addr;
+    pubKeyServiceNode = snb.pubKeyServiceNode;
+    sigTime = snb.sigTime;
+    vchSig = snb.vchSig;
+    nProtocolVersion = snb.nProtocolVersion;
+    addr = snb.addr;
     nPoSeBanScore = 0;
     nPoSeBanHeight = 0;
     nTimeLastChecked = 0;
     int nDos = 0;
-    if (!dnb.lastPing || (dnb.lastPing && dnb.lastPing.CheckAndUpdate(this, true, nDos, connman))) {
-        lastPing = dnb.lastPing;
+    if (!snb.lastPing || (snb.lastPing && snb.lastPing.CheckAndUpdate(this, true, nDos, connman))) {
+        lastPing = snb.lastPing;
         snodeman.mapSeenServiceNodePing.insert(std::make_pair(lastPing.GetHash(), lastPing));
     }
     // if it matches our ServiceNode privkey...
@@ -86,7 +86,7 @@ bool CServiceNode::UpdateFromNewBroadcast(CServiceNodeBroadcast& dnb, CConnman& 
         } else {
             // ... otherwise we need to reactivate our node, do not add it to the list and do not relay
             // but also do not ban the node we get this message from
-            LogPrintf("CServiceNode::UpdateFromNewBroadcast -- wrong PROTOCOL_VERSION, re-activate your DN: message nProtocolVersion=%d  PROTOCOL_VERSION=%d\n", nProtocolVersion, PROTOCOL_VERSION);
+            LogPrintf("CServiceNode::UpdateFromNewBroadcast -- wrong PROTOCOL_VERSION, re-activate your SN: message nProtocolVersion=%d  PROTOCOL_VERSION=%d\n", nProtocolVersion, PROTOCOL_VERSION);
             return false;
         }
     }
@@ -167,8 +167,8 @@ void CServiceNode::Check(bool fForce)
         if (nHeight < nPoSeBanHeight)
             return; // too early?
         // Otherwise give it a chance to proceed further to do all the usual checks and to change its state.
-        // ServiceNode still will be on the edge and can be banned back easily if it keeps ignoring dnverify
-        // or connect attempts. Will require few dnverify messages to strengthen its position in dn list.
+        // ServiceNode still will be on the edge and can be banned back easily if it keeps ignoring snverify
+        // or connect attempts. Will require few snverify messages to strengthen its position in sn list.
         LogPrintf("CServiceNode::Check -- ServiceNode %s is unbanned and back in list now\n", outpoint.ToStringShort());
         DecreasePoSeBanScore();
     } else if (nPoSeBanScore >= SERVICENODE_POSE_BAN_MAX_SCORE) {
@@ -195,7 +195,7 @@ void CServiceNode::Check(bool fForce)
     }
 
     // keep old ServiceNodes on start, give them a chance to receive updates...
-    bool fWaitForPing = !servicenodeSync.IsServiceNodeListSynced() && !IsPingedWithin(SERVICENODE_MIN_DNP_SECONDS);
+    bool fWaitForPing = !servicenodeSync.IsServiceNodeListSynced() && !IsPingedWithin(SERVICENODE_MIN_SNP_SECONDS);
 
     if (fWaitForPing && !fOurServiceNode) {
         // ...but if it was already expired before the initial check - return right away
@@ -243,10 +243,10 @@ void CServiceNode::Check(bool fForce)
         }
     }
 
-    // We require DNs to be in PRE_ENABLED until they either start to expire or receive a ping and go into ENABLED state
+    // We require SNs to be in PRE_ENABLED until they either start to expire or receive a ping and go into ENABLED state
     // Works on mainnet/testnet only and not the case on regtest/devnet.
     if (Params().NetworkIDString() != CBaseChainParams::REGTEST) {
-        if (lastPing.sigTime - sigTime < SERVICENODE_MIN_DNP_SECONDS) {
+        if (lastPing.sigTime - sigTime < SERVICENODE_MIN_SNP_SECONDS) {
             nActiveState = SERVICENODE_PRE_ENABLED;
             if (nActiveStatePrev != nActiveState) {
                 LogPrint("servicenode", "CServiceNode::Check -- ServiceNode %s is in %s state now\n", outpoint.ToStringShort(), GetStateString());
@@ -261,8 +261,8 @@ void CServiceNode::Check(bool fForce)
             bool fSentinelPingActive = servicenodeSync.IsSynced() && snodeman.IsSentinelPingActive();
             bool fSentinelPingExpired = fSentinelPingActive && !lastPing.fSentinelIsCurrent;
 
-        LogPrint("servicenode", "CServicenode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
-            outpoint.ToStringShort(), GetAdjustedTime(), fSentinelPingExpired);
+            LogPrint("servicenode", "CServicenode::Check -- outpoint=%s, GetAdjustedTime()=%d, fSentinelPingExpired=%d\n",
+                outpoint.ToStringShort(), GetAdjustedTime(), fSentinelPingExpired);
 
             if (fSentinelPingExpired) {
                 nActiveState = SERVICENODE_SENTINEL_PING_EXPIRED;
@@ -344,14 +344,14 @@ void CServiceNode::UpdateLastPaid(const CBlockIndex* pindex, int nMaxBlocksToSca
 
     const CBlockIndex* BlockReading = pindex;
 
-    CScript dnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
+    CScript snpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
     // LogPrint("servicenode", "CServiceNode::UpdateLastPaidBlock -- searching for block with payment to %s\n", vin.prevout.ToStringShort());
 
     LOCK(cs_mapServiceNodeBlocks);
 
     for (int i = 0; BlockReading && BlockReading->nHeight > nBlockLastPaid && i < nMaxBlocksToScanBack; i++) {
         if (snpayments.mapServiceNodeBlocks.count(BlockReading->nHeight) &&
-            snpayments.mapServiceNodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(dnpayee, 2)) {
+            snpayments.mapServiceNodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(snpayee, 2)) {
             CBlock block;
             if (!ReadBlockFromDisk(block, BlockReading, Params().GetConsensus())) // shouldn't really happen
                 continue;
@@ -359,7 +359,7 @@ void CServiceNode::UpdateLastPaid(const CBlockIndex* pindex, int nMaxBlocksToSca
             CAmount nServiceNodePayment = GetFluidServiceNodeReward(BlockReading->nHeight);
 
             for (const auto& txout : block.vtx[0]->vout)
-                if (dnpayee == txout.scriptPubKey && nServiceNodePayment == txout.nValue) {
+                if (snpayee == txout.scriptPubKey && nServiceNodePayment == txout.nValue) {
                     nBlockLastPaid = BlockReading->nHeight;
                     nTimeLastPaid = BlockReading->nTime;
                     LogPrint("servicenode", "CServiceNode::UpdateLastPaidBlock -- searching for block with payment to %s -- found new %d\n", outpoint.ToStringShort(), nBlockLastPaid);
@@ -380,7 +380,7 @@ void CServiceNode::UpdateLastPaid(const CBlockIndex* pindex, int nMaxBlocksToSca
 }
 
 #ifdef ENABLE_WALLET
-bool CServiceNodeBroadcast::Create(const std::string strService, const std::string strKeyServiceNode, const std::string strTxHash, const std::string strOutputIndex, std::string& strErrorRet, CServiceNodeBroadcast& dnbRet, bool fOffline)
+bool CServiceNodeBroadcast::Create(const std::string strService, const std::string strKeyServiceNode, const std::string strTxHash, const std::string strOutputIndex, std::string& strErrorRet, CServiceNodeBroadcast& snbRet, bool fOffline)
 {
     COutPoint outpoint;
     CPubKey pubKeyCollateralAddressNew;
@@ -394,7 +394,7 @@ bool CServiceNodeBroadcast::Create(const std::string strService, const std::stri
         return false;
     };
 
-    // Wait for sync to finish because dnb simply won't be relayed otherwise
+    // Wait for sync to finish because snb simply won't be relayed otherwise
     if (!fOffline && !servicenodeSync.IsSynced())
         return Log("Sync in progress. Must wait until sync is complete to start ServiceNode");
 
@@ -414,10 +414,10 @@ bool CServiceNodeBroadcast::Create(const std::string strService, const std::stri
     } else if (service.GetPort() == mainnetDefaultPort)
         return Log(strprintf("Invalid port %u for servicenode %s, %d is the only supported on mainnet.", service.GetPort(), strService, mainnetDefaultPort));
 
-    return Create(outpoint, service, keyCollateralAddressNew, pubKeyCollateralAddressNew, keyServiceNodeNew, pubKeyServiceNodeNew, strErrorRet, dnbRet);
+    return Create(outpoint, service, keyCollateralAddressNew, pubKeyCollateralAddressNew, keyServiceNodeNew, pubKeyServiceNodeNew, strErrorRet, snbRet);
 }
 
-bool CServiceNodeBroadcast::Create(const COutPoint& outpoint, const CService& service, const CKey& keyCollateralAddressNew, const CPubKey& pubKeyCollateralAddressNew, const CKey& keyServiceNodeNew, const CPubKey& pubKeyServiceNodeNew, std::string& strErrorRet, CServiceNodeBroadcast& dnbRet)
+bool CServiceNodeBroadcast::Create(const COutPoint& outpoint, const CService& service, const CKey& keyCollateralAddressNew, const CPubKey& pubKeyCollateralAddressNew, const CKey& keyServiceNodeNew, const CPubKey& pubKeyServiceNodeNew, std::string& strErrorRet, CServiceNodeBroadcast& snbRet)
 {
     // wait for reindex and/or import to finish
     if (fImporting || fReindex)
@@ -427,24 +427,24 @@ bool CServiceNodeBroadcast::Create(const COutPoint& outpoint, const CService& se
         CCreditAddress(pubKeyCollateralAddressNew.GetID()).ToString(),
         pubKeyServiceNodeNew.GetID().ToString());
 
-    auto Log = [&strErrorRet, &dnbRet](std::string sErr) -> bool {
+    auto Log = [&strErrorRet, &snbRet](std::string sErr) -> bool {
         strErrorRet = sErr;
         LogPrintf("CServiceNodeBroadcast::Create -- %s\n", strErrorRet);
-        dnbRet = CServiceNodeBroadcast();
+        snbRet = CServiceNodeBroadcast();
         return false;
     };
 
-    CServiceNodePing dnp(outpoint);
-    if (!dnp.Sign(keyServiceNodeNew, pubKeyServiceNodeNew))
+    CServiceNodePing snp(outpoint);
+    if (!snp.Sign(keyServiceNodeNew, pubKeyServiceNodeNew))
         return Log(strprintf("Failed to sign ping, servicenode=%s", outpoint.ToStringShort()));
 
-    dnbRet = CServiceNodeBroadcast(service, outpoint, pubKeyCollateralAddressNew, pubKeyServiceNodeNew, PROTOCOL_VERSION);
+    snbRet = CServiceNodeBroadcast(service, outpoint, pubKeyCollateralAddressNew, pubKeyServiceNodeNew, PROTOCOL_VERSION);
 
-    if (!dnbRet.IsValidNetAddr())
+    if (!snbRet.IsValidNetAddr())
         return Log(strprintf("Invalid IP address, servicenode=%s", outpoint.ToStringShort()));
 
-    dnbRet.lastPing = dnp;
-    if (!dnbRet.Sign(keyCollateralAddressNew))
+    snbRet.lastPing = snp;
+    if (!snbRet.Sign(keyCollateralAddressNew))
         return Log(strprintf("Failed to sign broadcast, servicenode=%s", outpoint.ToStringShort()));
 
 
@@ -511,36 +511,36 @@ bool CServiceNodeBroadcast::SimpleCheck(int& nDos)
     return true;
 }
 
-bool CServiceNodeBroadcast::Update(CServiceNode* pdn, int& nDos, CConnman& connman)
+bool CServiceNodeBroadcast::Update(CServiceNode* psn, int& nDos, CConnman& connman)
 {
     nDos = 0;
 
     AssertLockHeld(cs_main);
 
-    if (pdn->sigTime == sigTime && !fRecovery) {
-        // mapSeenServiceNodeBroadcast in CServiceNodeMan::CheckDnbAndUpdateServiceNodeList should filter legit duplicates
+    if (psn->sigTime == sigTime && !fRecovery) {
+        // mapSeenServiceNodeBroadcast in CServiceNodeMan::CheckSnbAndUpdateServiceNodeList should filter legit duplicates
         // but this still can happen if we just started, which is ok, just do nothing here.
         return false;
     }
 
     // this broadcast is older than the one that we already have - it's bad and should never happen
     // unless someone is doing something fishy
-    if (pdn->sigTime > sigTime) {
+    if (psn->sigTime > sigTime) {
         LogPrintf("CServiceNodeBroadcast::Update -- Bad sigTime %d (existing broadcast is at %d) for ServiceNode %s %s\n",
-            sigTime, pdn->sigTime, outpoint.ToStringShort(), addr.ToString());
+            sigTime, psn->sigTime, outpoint.ToStringShort(), addr.ToString());
         return false;
     }
 
-    pdn->Check();
+    psn->Check();
 
     // ServiceNode is banned by PoSe
-    if (pdn->IsPoSeBanned()) {
+    if (psn->IsPoSeBanned()) {
         LogPrintf("CServiceNodeBroadcast::Update -- Banned by PoSe, ServiceNode=%s\n", outpoint.ToStringShort());
         return false;
     }
 
     // IsVnAssociatedWithPubkey is validated once in CheckOutpoint, after that they just need to match
-    if (pdn->pubKeyCollateralAddress != pubKeyCollateralAddress) {
+    if (psn->pubKeyCollateralAddress != pubKeyCollateralAddress) {
         LogPrintf("CServiceNodeBroadcast::Update -- Got mismatched pubKeyCollateralAddress and vin\n");
         nDos = 33;
         return false;
@@ -552,11 +552,11 @@ bool CServiceNodeBroadcast::Update(CServiceNode* pdn, int& nDos, CConnman& connm
     }
 
     // if there was no ServiceNode broadcast recently or if it matches our ServiceNode privkey...
-    if (!pdn->IsBroadcastedWithin(SERVICENODE_MIN_DNB_SECONDS) || (fServiceNodeMode && pubKeyServiceNode == activeServiceNode.pubKeyServiceNode)) {
+    if (!psn->IsBroadcastedWithin(SERVICENODE_MIN_SNB_SECONDS) || (fServiceNodeMode && pubKeyServiceNode == activeServiceNode.pubKeyServiceNode)) {
         // take the newest entry
         LogPrintf("CServiceNodeBroadcast::Update -- Got UPDATED ServiceNode entry: addr=%s\n", addr.ToString());
-        if (pdn->UpdateFromNewBroadcast(*this, connman)) {
-            pdn->Check();
+        if (psn->UpdateFromNewBroadcast(*this, connman)) {
+            psn->Check();
             Relay(connman);
         }
         servicenodeSync.BumpAssetLastTime("CServiceNodeBroadcast::Update");
@@ -567,7 +567,7 @@ bool CServiceNodeBroadcast::Update(CServiceNode* pdn, int& nDos, CConnman& connm
 
 bool CServiceNodeBroadcast::CheckOutpoint(int& nDos)
 {
-    // we are a ServiceNode with the same vin (i.e. already activated) and this dnb is ours (matches our ServiceNodes privkey)
+    // we are a ServiceNode with the same vin (i.e. already activated) and this snb is ours (matches our ServiceNodes privkey)
     // so nothing to do here for us
     if (fServiceNodeMode && outpoint == activeServiceNode.outpoint && pubKeyServiceNode == activeServiceNode.pubKeyServiceNode) {
         return false;
@@ -598,7 +598,7 @@ bool CServiceNodeBroadcast::CheckOutpoint(int& nDos)
         LogPrintf("CServiceNodeBroadcast::CheckOutpoint -- ServiceNode UTXO must have at least %d confirmations, servicenode=%s\n",
             Params().GetConsensus().nServiceNodeMinimumConfirmations, outpoint.ToStringShort());
         // UTXO is legit but has not enough confirmations.
-        // Maybe we miss few blocks, let this dnb be checked again later.
+        // Maybe we miss few blocks, let this snb be checked again later.
         snodeman.mapSeenServiceNodeBroadcast.erase(GetHash());
         return false;
     }
@@ -865,7 +865,7 @@ bool CServiceNodePing::SimpleCheck(int& nDos)
     return true;
 }
 
-bool CServiceNodePing::CheckAndUpdate(CServiceNode* pdn, bool fFromNewBroadcast, int& nDos, CConnman& connman)
+bool CServiceNodePing::CheckAndUpdate(CServiceNode* psn, bool fFromNewBroadcast, int& nDos, CConnman& connman)
 {
     AssertLockHeld(cs_main);
 
@@ -876,18 +876,18 @@ bool CServiceNodePing::CheckAndUpdate(CServiceNode* pdn, bool fFromNewBroadcast,
         return false;
     }
 
-    if (pdn == nullptr) {
+    if (psn == nullptr) {
         LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- Couldn't find ServiceNode entry, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
         return false;
     }
 
     if (!fFromNewBroadcast) {
-        if (pdn->IsUpdateRequired()) {
+        if (psn->IsUpdateRequired()) {
             LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode protocol is outdated, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
             return false;
         }
 
-        if (pdn->IsNewStartRequired()) {
+        if (psn->IsNewStartRequired()) {
             LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode is completely expired, new start is required, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
             return false;
         }
@@ -904,23 +904,23 @@ bool CServiceNodePing::CheckAndUpdate(CServiceNode* pdn, bool fFromNewBroadcast,
 
     LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- New ping: ServiceNode=%s  blockHash=%s  sigTime=%d\n", servicenodeOutpoint.ToStringShort(), blockHash.ToString(), sigTime);
 
-    // LogPrintf("dnping - Found corresponding dn for vin: %s\n", vin.prevout.ToStringShort());
+    // LogPrintf("snping - Found corresponding sn for vin: %s\n", vin.prevout.ToStringShort());
     // update only if there is no known ping for this ServiceNode or
-    // last ping was more then SERVICENODE_MIN_DNP_SECONDS-60 ago comparing to this one
-    if (pdn->IsPingedWithin(SERVICENODE_MIN_DNP_SECONDS - 60, sigTime)) {
+    // last ping was more then SERVICENODE_MIN_SNP_SECONDS-60 ago comparing to this one
+    if (psn->IsPingedWithin(SERVICENODE_MIN_SNP_SECONDS - 60, sigTime)) {
         LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode ping arrived too early, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
         //nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 
-    if (!CheckSignature(pdn->pubKeyServiceNode, nDos))
+    if (!CheckSignature(psn->pubKeyServiceNode, nDos))
         return false;
 
     // so, ping seems to be ok
 
-    // if we are still syncing and there was no known ping for this dn for quite a while
-    // (NOTE: assuming that SERVICENODE_EXPIRATION_SECONDS/2 should be enough to finish dn list sync)
-    if (!servicenodeSync.IsServiceNodeListSynced() && !pdn->IsPingedWithin(SERVICENODE_EXPIRATION_SECONDS / 2)) {
+    // if we are still syncing and there was no known ping for this sn for quite a while
+    // (NOTE: assuming that SERVICENODE_EXPIRATION_SECONDS/2 should be enough to finish sn list sync)
+    if (!servicenodeSync.IsServiceNodeListSynced() && !psn->IsPingedWithin(SERVICENODE_EXPIRATION_SECONDS / 2)) {
         // let's bump sync timeout
         LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- bumping sync timeout, servicenode=%s\n", servicenodeOutpoint.ToStringShort());
         servicenodeSync.BumpAssetLastTime("CServiceNodePing::CheckAndUpdate");
@@ -928,19 +928,19 @@ bool CServiceNodePing::CheckAndUpdate(CServiceNode* pdn, bool fFromNewBroadcast,
 
     // let's store this ping as the last one
     LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode ping accepted, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());
-    pdn->lastPing = *this;
+    psn->lastPing = *this;
 
     // and update snodeman.mapSeenServiceNodeBroadcast.lastPing which is probably outdated
-    CServiceNodeBroadcast dnb(*pdn);
-    uint256 hash = dnb.GetHash();
+    CServiceNodeBroadcast snb(*psn);
+    uint256 hash = snb.GetHash();
     if (snodeman.mapSeenServiceNodeBroadcast.count(hash)) {
         snodeman.mapSeenServiceNodeBroadcast[hash].second.lastPing = *this;
     }
 
     // force update, ignoring cache
-    pdn->Check(true);
+    psn->Check(true);
     // relay ping for nodes in ENABLED/EXPIRED/SENTINEL_PING_EXPIRED state only, skip everyone else
-    if (!pdn->IsEnabled() && !pdn->IsExpired() && !pdn->IsSentinelPingExpired())
+    if (!psn->IsEnabled() && !psn->IsExpired() && !psn->IsSentinelPingExpired())
         return false;
 
     LogPrint("servicenode", "CServiceNodePing::CheckAndUpdate -- ServiceNode ping acceepted and relayed, ServiceNode=%s\n", servicenodeOutpoint.ToStringShort());

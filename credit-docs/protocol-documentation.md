@@ -51,7 +51,7 @@ Bitcoin Public Key https://bitcoin.org/en/glossary/public-key
 
 ## Message Types
 
-### DNANNOUNCE - "dnb"
+### SNANNOUNCE - "snb"
 
 CServiceNodeBroadcast
 
@@ -69,7 +69,7 @@ Whenever a ServiceNode comes online or a client is syncing, they will send this 
 | # | lastPing | CServiceNodePing | The last known ping of the ServiceNode
 | 8 | nLastPsq | int64_t | The last time the ServiceNode sent a PSQ message (for mixing)
 
-### DNPING - "dnp"
+### SNPING - "snp"
 
 CServiceNodePing
 
@@ -82,7 +82,7 @@ Every few minutes, ServiceNodes ping the network with a message that propagates 
 | 8 | sigTime | int64_t | Signature time for this ping
 | 71-73 | vchSig | char[] | Signature of this message by ServiceNode (verifiable via pubKeyServiceNode)
 
-### ServiceNodePAYMENTVOTE - "dnw"
+### ServiceNodePAYMENTVOTE - "snw"
 
 CServiceNodePaymentVote
 
@@ -184,7 +184,7 @@ Transaction Lock Vote
 | 36 | outpointServiceNode | COutPoint | The utxo of the servicenode which is signing the vote
 | 71-73 | vchServiceNodeSignature | char[] | Signature of this message by servicenode (verifiable via pubKeyServiceNode)
 
-### DNGOVERNANCEOBJECT - "govobj"
+### SNGOVERNANCEOBJECT - "govobj"
 
 Governance Object
 
@@ -201,7 +201,7 @@ A proposal, contract or setting.
 | 41 | vinServiceNode | CTxIn | Unspent output for the ServiceNode which is signing this object
 | 71-73 | vchSig | char[] | Signature of the ServiceNode
 
-### DNGOVERNANCEOBJECTVOTE - "govobjvote"
+### SNGOVERNANCEOBJECTVOTE - "govobjvote"
 
 Governance Vote
 
@@ -245,13 +245,13 @@ Spork
 
 ## Undocumented messages
 
-### SERVICENODEPAYMENTBLOCK - "dnwb"
+### SERVICENODEPAYMENTBLOCK - "snwb"
 
 ServiceNode Payment Block
 
 *NOTE: Per src/protocol.cpp, there is no message for this (only inventory)*
 
-### DNVERIFY - "dnv"
+### SNVERIFY - "snv"
 
 ServiceNode Verify
 
@@ -267,7 +267,7 @@ PrivateSend Complete
 
 Tx Lock Request
 
-### DNGOVERNANCESYNC - "govsync"
+### SNGOVERNANCESYNC - "govsync"
 
 Governance Sync
 
@@ -281,6 +281,6 @@ Get ServiceNode list or specific entry
 
 Sync Status Count
 
-### SERVICENODEPAYMENTSYNC - "dnget"
+### SERVICENODEPAYMENTSYNC - "snget"
 
 ServiceNode Payment Sync

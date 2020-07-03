@@ -26,7 +26,7 @@ What is [Credit](https://ankh.foundation/credit)?
 * ServiceNode Collateral Amount: 50000 0AC
 * ServiceNode Min Confirmation: 17 Blocks
 * ServiceNode Reward: Controlled via Fluid Protocol
-* ServiceNode Reward Start Height: Block 10,273
+* ServiceNode Reward Start Height: Block 32,000
 * Total Coins: 2<sup>63</sup> - 1
 * Min TX Fee: 0.0001 0AC
 

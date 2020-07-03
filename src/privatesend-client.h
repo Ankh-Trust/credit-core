@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -155,7 +154,7 @@ public:
 
     std::string GetStatus(bool fWaitForBlock);
 
-    bool GetMixingServiceNodeInfo(servicenode_info_t& dnInfoRet) const;
+    bool GetMixingServiceNodeInfo(servicenode_info_t& snInfoRet) const;
 
     /// Passively run mixing in the background according to the configuration in settings
     bool DoAutomaticDenominating(CConnman& connman, bool fDryRun = false);
@@ -237,7 +236,7 @@ public:
     std::string GetStatuses();
     std::string GetSessionDenoms();
 
-    bool GetMixingServiceNodesInfo(std::vector<servicenode_info_t>& vecDnInfoRet) const;
+    bool GetMixingServiceNodesInfo(std::vector<servicenode_info_t>& vecSnInfoRet) const;
 
     /// Passively run mixing in the background according to the configuration in settings
     bool DoAutomaticDenominating(CConnman& connman, bool fDryRun = false);
@@ -246,7 +245,7 @@ public:
 
     void ProcessPendingPsaRequest(CConnman& connman);
 
-    void AddUsedServiceNode(const COutPoint& outpointDn);
+    void AddUsedServiceNode(const COutPoint& outpointSn);
     servicenode_info_t GetNotUsedServiceNode();
 
     void UpdatedSuccessBlock();

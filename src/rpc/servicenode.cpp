@@ -94,13 +94,13 @@ UniValue getpoolinfo(const JSONRPCRequest& request)
     // obj.push_back(Pair("entries",            pprivateSendBase->GetEntriesCount()));
     obj.push_back(Pair("status", privateSendClient.GetStatuses()));
 
-    std::vector<servicenode_info_t> vecDnInfo;
-    if (privateSendClient.GetMixingServiceNodesInfo(vecDnInfo)) {
+    std::vector<servicenode_info_t> vecSnInfo;
+    if (privateSendClient.GetMixingServiceNodesInfo(vecSnInfo)) {
         UniValue pools(UniValue::VARR);
-        for (const auto& dnInfo : vecDnInfo) {
+        for (const auto& snInfo : vecSnInfo) {
             UniValue pool(UniValue::VOBJ);
-            pool.push_back(Pair("outpoint", dnInfo.outpoint.ToStringShort()));
-            pool.push_back(Pair("addr", dnInfo.addr.ToString()));
+            pool.push_back(Pair("outpoint", snInfo.outpoint.ToStringShort()));
+            pool.push_back(Pair("addr", snInfo.addr.ToString()));
             pools.push_back(pool);
         }
         obj.push_back(Pair("pools", pools));
@@ -195,8 +195,8 @@ UniValue servicenode(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Too many parameters");
 
         int nCount;
-        servicenode_info_t dnInfo;
-        snodeman.GetNextServiceNodeInQueueForPayment(true, nCount, dnInfo);
+        servicenode_info_t snInfo;
+        snodeman.GetNextServiceNodeInQueueForPayment(true, nCount, snInfo);
 
         int total = snodeman.size();
         int ps = snodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
@@ -235,7 +235,7 @@ UniValue servicenode(const JSONRPCRequest& request)
     if (strCommand == "current" || strCommand == "winner") {
         int nCount;
         int nHeight;
-        servicenode_info_t dnInfo;
+        servicenode_info_t snInfo;
         CBlockIndex* pindex = NULL;
         {
             LOCK(cs_main);
@@ -244,18 +244,18 @@ UniValue servicenode(const JSONRPCRequest& request)
         nHeight = pindex->nHeight + (strCommand == "current" ? 1 : 10);
         snodeman.UpdateLastPaid(pindex);
 
-        if (!snodeman.GetNextServiceNodeInQueueForPayment(nHeight, true, nCount, dnInfo))
+        if (!snodeman.GetNextServiceNodeInQueueForPayment(nHeight, true, nCount, snInfo))
             return "unknown";
 
         UniValue obj(UniValue::VOBJ);
 
         obj.push_back(Pair("height", nHeight));
-        obj.push_back(Pair("IP:port", dnInfo.addr.ToString()));
-        obj.push_back(Pair("protocol", dnInfo.nProtocolVersion));
-        obj.push_back(Pair("outpoint", dnInfo.outpoint.ToStringShort()));
-        obj.push_back(Pair("payee", CCreditAddress(dnInfo.pubKeyCollateralAddress.GetID()).ToString()));
-        obj.push_back(Pair("lastseen", dnInfo.nTimeLastPing));
-        obj.push_back(Pair("activeseconds", dnInfo.nTimeLastPing - dnInfo.sigTime));
+        obj.push_back(Pair("IP:port", snInfo.addr.ToString()));
+        obj.push_back(Pair("protocol", snInfo.nProtocolVersion));
+        obj.push_back(Pair("outpoint", snInfo.outpoint.ToStringShort()));
+        obj.push_back(Pair("payee", CCreditAddress(snInfo.pubKeyCollateralAddress.GetID()).ToString()));
+        obj.push_back(Pair("lastseen", snInfo.nTimeLastPing));
+        obj.push_back(Pair("activeseconds", snInfo.nTimeLastPing - snInfo.sigTime));
         return obj;
     }
 
@@ -279,17 +279,17 @@ UniValue servicenode(const JSONRPCRequest& request)
         UniValue statusObj(UniValue::VOBJ);
         statusObj.push_back(Pair("alias", strAlias));
 
-        for (const auto& dne : servicenodeConfig.getEntries()) {
-            if (dne.getAlias() == strAlias) {
+        for (const auto& sne : servicenodeConfig.getEntries()) {
+            if (sne.getAlias() == strAlias) {
                 fFound = true;
                 std::string strError;
-                CServiceNodeBroadcast dnb;
+                CServiceNodeBroadcast snb;
 
-                bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
+                bool fResult = CServiceNodeBroadcast::Create(sne.getIp(), sne.getPrivKey(), sne.getTxHash(), sne.getOutputIndex(), strError, snb);
 
                 int nDoS;
-                if (fResult && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
-                    strError = "Failed to verify DNB";
+                if (fResult && !snodeman.CheckSnbAndUpdateServiceNodeList(NULL, snb, nDoS, *g_connman)) {
+                    strError = "Failed to verify SNB";
                     fResult = false;
                 }
 
@@ -328,29 +328,29 @@ UniValue servicenode(const JSONRPCRequest& request)
 
         UniValue resultsObj(UniValue::VOBJ);
 
-        for (const auto& dne : servicenodeConfig.getEntries()) {
+        for (const auto& sne : servicenodeConfig.getEntries()) {
             std::string strError;
 
-            COutPoint outpoint = COutPoint(uint256S(dne.getTxHash()), (uint32_t)atoi(dne.getOutputIndex()));
-            CServiceNode dn;
-            bool fFound = snodeman.Get(outpoint, dn);
-            CServiceNodeBroadcast dnb;
+            COutPoint outpoint = COutPoint(uint256S(sne.getTxHash()), (uint32_t)atoi(sne.getOutputIndex()));
+            CServiceNode sn;
+            bool fFound = snodeman.Get(outpoint, sn);
+            CServiceNodeBroadcast snb;
 
             if (strCommand == "start-missing" && fFound)
                 continue;
-            if (strCommand == "start-disabled" && fFound && dn.IsEnabled())
+            if (strCommand == "start-disabled" && fFound && sn.IsEnabled())
                 continue;
 
-            bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb);
+            bool fResult = CServiceNodeBroadcast::Create(sne.getIp(), sne.getPrivKey(), sne.getTxHash(), sne.getOutputIndex(), strError, snb);
 
             int nDoS;
-            if (fResult && !snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDoS, *g_connman)) {
-                strError = "Failed to verify DNB";
+            if (fResult && !snodeman.CheckSnbAndUpdateServiceNodeList(NULL, snb, nDoS, *g_connman)) {
+                strError = "Failed to verify SNB";
                 fResult = false;
             }
 
             UniValue statusObj(UniValue::VOBJ);
-            statusObj.push_back(Pair("alias", dne.getAlias()));
+            statusObj.push_back(Pair("alias", sne.getAlias()));
             statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
 
             if (fResult) {
@@ -382,20 +382,20 @@ UniValue servicenode(const JSONRPCRequest& request)
     if (strCommand == "list-conf") {
         UniValue resultObj(UniValue::VOBJ);
 
-        for (const auto& dne : servicenodeConfig.getEntries()) {
-            COutPoint outpoint = COutPoint(uint256S(dne.getTxHash()), (uint32_t)atoi(dne.getOutputIndex()));
-            CServiceNode dn;
-            bool fFound = snodeman.Get(outpoint, dn);
+        for (const auto& sne : servicenodeConfig.getEntries()) {
+            COutPoint outpoint = COutPoint(uint256S(sne.getTxHash()), (uint32_t)atoi(sne.getOutputIndex()));
+            CServiceNode sn;
+            bool fFound = snodeman.Get(outpoint, sn);
 
-            std::string strStatus = fFound ? dn.GetStatus() : "MISSING";
+            std::string strStatus = fFound ? sn.GetStatus() : "MISSING";
 
-            UniValue dnObj(UniValue::VOBJ);
-            dnObj.push_back(Pair("address", dne.getIp()));
-            dnObj.push_back(Pair("privateKey", dne.getPrivKey()));
-            dnObj.push_back(Pair("txHash", dne.getTxHash()));
-            dnObj.push_back(Pair("outputIndex", dne.getOutputIndex()));
-            dnObj.push_back(Pair("status", strStatus));
-            resultObj.push_back(Pair(dne.getAlias(), dnObj));
+            UniValue snObj(UniValue::VOBJ);
+            snObj.push_back(Pair("address", sne.getIp()));
+            snObj.push_back(Pair("privateKey", sne.getPrivKey()));
+            snObj.push_back(Pair("txHash", sne.getTxHash()));
+            snObj.push_back(Pair("outputIndex", sne.getOutputIndex()));
+            snObj.push_back(Pair("status", strStatus));
+            resultObj.push_back(Pair(sne.getAlias(), snObj));
         }
 
         return resultObj;
@@ -423,18 +423,18 @@ UniValue servicenode(const JSONRPCRequest& request)
         if (!fServiceNodeMode)
             throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a servicenode");
 
-        UniValue dnObj(UniValue::VOBJ);
+        UniValue snObj(UniValue::VOBJ);
 
-        dnObj.push_back(Pair("outpoint", activeServiceNode.outpoint.ToStringShort()));
-        dnObj.push_back(Pair("service", activeServiceNode.service.ToString()));
+        snObj.push_back(Pair("outpoint", activeServiceNode.outpoint.ToStringShort()));
+        snObj.push_back(Pair("service", activeServiceNode.service.ToString()));
 
-        CServiceNode dn;
-        if (snodeman.Get(activeServiceNode.outpoint, dn)) {
-            dnObj.push_back(Pair("payee", CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString()));
+        CServiceNode sn;
+        if (snodeman.Get(activeServiceNode.outpoint, sn)) {
+            snObj.push_back(Pair("payee", CCreditAddress(sn.pubKeyCollateralAddress.GetID()).ToString()));
         }
 
-        dnObj.push_back(Pair("status", activeServiceNode.GetStatus()));
-        return dnObj;
+        snObj.push_back(Pair("status", activeServiceNode.GetStatus()));
+        return snObj;
     }
 
     if (strCommand == "winners") {
@@ -542,34 +542,34 @@ UniValue servicenodelist(const JSONRPCRequest& request)
         }
     } else {
         std::map<COutPoint, CServiceNode> mapServiceNodes = snodeman.GetFullServiceNodeMap();
-        for (const auto& dnpair : mapServiceNodes) {
-            CServiceNode dn = dnpair.second;
-            std::string strOutpoint = dnpair.first.ToStringShort();
+        for (const auto& snpair : mapServiceNodes) {
+            CServiceNode sn = snpair.second;
+            std::string strOutpoint = snpair.first.ToStringShort();
             if (strMode == "activeseconds") {
                 if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, (int64_t)(dn.lastPing.sigTime - dn.sigTime)));
+                obj.push_back(Pair(strOutpoint, (int64_t)(sn.lastPing.sigTime - sn.sigTime)));
             } else if (strMode == "addr") {
-                std::string strAddress = dn.addr.ToString();
+                std::string strAddress = sn.addr.ToString();
                 if (strFilter != "" && strAddress.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
                 obj.push_back(Pair(strOutpoint, strAddress));
             } else if (strMode == "daemon") {
-                std::string strDaemon = dn.lastPing.GetDaemonString();
+                std::string strDaemon = sn.lastPing.GetDaemonString();
                 if (strFilter != "" && strDaemon.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
                 obj.push_back(Pair(strOutpoint, strDaemon));
             } else if (strMode == "sentinel") {
-                std::string strSentinel = dn.lastPing.GetSentinelString();
+                std::string strSentinel = sn.lastPing.GetSentinelString();
                 if (strFilter != "" && strSentinel.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
                 obj.push_back(Pair(strOutpoint, strSentinel));
             } else if (strMode == "full") {
                 std::ostringstream streamFull;
-                streamFull << std::setw(18) << dn.GetStatus() << " " << dn.nProtocolVersion << " " << CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString() << " " << (int64_t)dn.lastPing.sigTime << " " << std::setw(8) << (int64_t)(dn.lastPing.sigTime - dn.sigTime) << " " << std::setw(10) << dn.GetLastPaidTime() << " " << std::setw(6) << dn.GetLastPaidBlock() << " " << dn.addr.ToString();
+                streamFull << std::setw(18) << sn.GetStatus() << " " << sn.nProtocolVersion << " " << CCreditAddress(sn.pubKeyCollateralAddress.GetID()).ToString() << " " << (int64_t)sn.lastPing.sigTime << " " << std::setw(8) << (int64_t)(sn.lastPing.sigTime - sn.sigTime) << " " << std::setw(10) << sn.GetLastPaidTime() << " " << std::setw(6) << sn.GetLastPaidBlock() << " " << sn.addr.ToString();
                 std::string strFull = streamFull.str();
                 if (strFilter != "" && strFull.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
@@ -577,7 +577,7 @@ UniValue servicenodelist(const JSONRPCRequest& request)
                 obj.push_back(Pair(strOutpoint, strFull));
             } else if (strMode == "info") {
                 std::ostringstream streamInfo;
-                streamInfo << std::setw(18) << dn.GetStatus() << " " << dn.nProtocolVersion << " " << CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString() << " " << (int64_t)dn.lastPing.sigTime << " " << std::setw(8) << (int64_t)(dn.lastPing.sigTime - dn.sigTime) << " " << dn.lastPing.GetSentinelString() << " " << (dn.lastPing.fSentinelIsCurrent ? "current" : "expired") << " " << dn.addr.ToString();
+                streamInfo << std::setw(18) << sn.GetStatus() << " " << sn.nProtocolVersion << " " << CCreditAddress(sn.pubKeyCollateralAddress.GetID()).ToString() << " " << (int64_t)sn.lastPing.sigTime << " " << std::setw(8) << (int64_t)(sn.lastPing.sigTime - sn.sigTime) << " " << sn.lastPing.GetSentinelString() << " " << (sn.lastPing.fSentinelIsCurrent ? "current" : "expired") << " " << sn.addr.ToString();
                 std::string strInfo = streamInfo.str();
                 if (strFilter != "" && strInfo.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
@@ -585,54 +585,54 @@ UniValue servicenodelist(const JSONRPCRequest& request)
                 obj.push_back(Pair(strOutpoint, strInfo));
             } else if (strMode == "json") {
                 std::ostringstream streamInfo;
-                streamInfo << dn.addr.ToString() << " " << CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString() << " " << dn.GetStatus() << " " << dn.nProtocolVersion << " " << dn.lastPing.nDaemonVersion << " " << dn.lastPing.GetSentinelString() << " " << (dn.lastPing.fSentinelIsCurrent ? "current" : "expired") << " " << (int64_t)dn.lastPing.sigTime << " " << (int64_t)(dn.lastPing.sigTime - dn.sigTime) << " " << dn.GetLastPaidTime() << " " << dn.GetLastPaidBlock();
+                streamInfo << sn.addr.ToString() << " " << CCreditAddress(sn.pubKeyCollateralAddress.GetID()).ToString() << " " << sn.GetStatus() << " " << sn.nProtocolVersion << " " << sn.lastPing.nDaemonVersion << " " << sn.lastPing.GetSentinelString() << " " << (sn.lastPing.fSentinelIsCurrent ? "current" : "expired") << " " << (int64_t)sn.lastPing.sigTime << " " << (int64_t)(sn.lastPing.sigTime - sn.sigTime) << " " << sn.GetLastPaidTime() << " " << sn.GetLastPaidBlock();
                 std::string strInfo = streamInfo.str();
                 if (strFilter != "" && strInfo.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                UniValue objDN(UniValue::VOBJ);
-                objDN.push_back(Pair("address", dn.addr.ToString()));
-                objDN.push_back(Pair("payee", CCreditAddress(dn.pubKeyCollateralAddress.GetID()).ToString()));
-                objDN.push_back(Pair("status", dn.GetStatus()));
-                objDN.push_back(Pair("protocol", dn.nProtocolVersion));
-                objDN.push_back(Pair("daemonversion", dn.lastPing.GetDaemonString()));
-                objDN.push_back(Pair("sentinelversion", dn.lastPing.GetSentinelString()));
-                objDN.push_back(Pair("sentinelstate", (dn.lastPing.fSentinelIsCurrent ? "current" : "expired")));
-                objDN.push_back(Pair("lastseen", (int64_t)dn.lastPing.sigTime));
-                objDN.push_back(Pair("activeseconds", (int64_t)(dn.lastPing.sigTime - dn.sigTime)));
-                objDN.push_back(Pair("lastpaidtime", dn.GetLastPaidTime()));
-                objDN.push_back(Pair("lastpaidblock", dn.GetLastPaidBlock()));
-                obj.push_back(Pair(strOutpoint, objDN));
+                UniValue objSN(UniValue::VOBJ);
+                objSN.push_back(Pair("address", sn.addr.ToString()));
+                objSN.push_back(Pair("payee", CCreditAddress(sn.pubKeyCollateralAddress.GetID()).ToString()));
+                objSN.push_back(Pair("status", sn.GetStatus()));
+                objSN.push_back(Pair("protocol", sn.nProtocolVersion));
+                objSN.push_back(Pair("daemonversion", sn.lastPing.GetDaemonString()));
+                objSN.push_back(Pair("sentinelversion", sn.lastPing.GetSentinelString()));
+                objSN.push_back(Pair("sentinelstate", (sn.lastPing.fSentinelIsCurrent ? "current" : "expired")));
+                objSN.push_back(Pair("lastseen", (int64_t)sn.lastPing.sigTime));
+                objSN.push_back(Pair("activeseconds", (int64_t)(sn.lastPing.sigTime - sn.sigTime)));
+                objSN.push_back(Pair("lastpaidtime", sn.GetLastPaidTime()));
+                objSN.push_back(Pair("lastpaidblock", sn.GetLastPaidBlock()));
+                obj.push_back(Pair(strOutpoint, objSN));
             } else if (strMode == "lastpaidblock") {
                 if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, dn.GetLastPaidBlock()));
+                obj.push_back(Pair(strOutpoint, sn.GetLastPaidBlock()));
             } else if (strMode == "lastpaidtime") {
                 if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, dn.GetLastPaidTime()));
+                obj.push_back(Pair(strOutpoint, sn.GetLastPaidTime()));
             } else if (strMode == "lastseen") {
                 if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, (int64_t)dn.lastPing.sigTime));
+                obj.push_back(Pair(strOutpoint, (int64_t)sn.lastPing.sigTime));
             } else if (strMode == "payee") {
-                CCreditAddress address(dn.pubKeyCollateralAddress.GetID());
+                CCreditAddress address(sn.pubKeyCollateralAddress.GetID());
                 std::string strPayee = address.ToString();
                 if (strFilter != "" && strPayee.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
                 obj.push_back(Pair(strOutpoint, strPayee));
             } else if (strMode == "protocol") {
-                if (strFilter != "" && strFilter != strprintf("%d", dn.nProtocolVersion) &&
+                if (strFilter != "" && strFilter != strprintf("%d", sn.nProtocolVersion) &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, dn.nProtocolVersion));
+                obj.push_back(Pair(strOutpoint, sn.nProtocolVersion));
             } else if (strMode == "pubkey") {
                 if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos)
                     continue;
-                obj.push_back(Pair(strOutpoint, HexStr(dn.pubKeyServiceNode)));
+                obj.push_back(Pair(strOutpoint, HexStr(sn.pubKeyServiceNode)));
             } else if (strMode == "status") {
-                std::string strStatus = dn.GetStatus();
+                std::string strStatus = sn.GetStatus();
                 if (strFilter != "" && strStatus.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos)
                     continue;
@@ -643,15 +643,15 @@ UniValue servicenodelist(const JSONRPCRequest& request)
     return obj;
 }
 
-bool DecodeHexVecDnb(std::vector<CServiceNodeBroadcast>& vecDnb, std::string strHexDnb)
+bool DecodeHexVecSnb(std::vector<CServiceNodeBroadcast>& vecSnb, std::string strHexSnb)
 {
-    if (!IsHex(strHexDnb))
+    if (!IsHex(strHexSnb))
         return false;
 
-    std::vector<unsigned char> dnbData(ParseHex(strHexDnb));
-    CDataStream ssData(dnbData, SER_NETWORK, PROTOCOL_VERSION);
+    std::vector<unsigned char> snbData(ParseHex(strHexSnb));
+    CDataStream ssData(snbData, SER_NETWORK, PROTOCOL_VERSION);
     try {
-        ssData >> vecDnb;
+        ssData >> vecSnb;
     } catch (const std::exception&) {
         return false;
     }
@@ -705,24 +705,24 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
         std::string strAlias = request.params[1].get_str();
 
         UniValue statusObj(UniValue::VOBJ);
-        std::vector<CServiceNodeBroadcast> vecDnb;
+        std::vector<CServiceNodeBroadcast> vecSnb;
 
         statusObj.push_back(Pair("alias", strAlias));
 
-        for (const auto& dne : servicenodeConfig.getEntries()) {
-            if (dne.getAlias() == strAlias) {
+        for (const auto& sne : servicenodeConfig.getEntries()) {
+            if (sne.getAlias() == strAlias) {
                 fFound = true;
                 std::string strError;
-                CServiceNodeBroadcast dnb;
+                CServiceNodeBroadcast snb;
 
-                bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb, true);
+                bool fResult = CServiceNodeBroadcast::Create(sne.getIp(), sne.getPrivKey(), sne.getTxHash(), sne.getOutputIndex(), strError, snb, true);
 
                 statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
                 if (fResult) {
-                    vecDnb.push_back(dnb);
-                    CDataStream ssVecDnb(SER_NETWORK, PROTOCOL_VERSION);
-                    ssVecDnb << vecDnb;
-                    statusObj.push_back(Pair("hex", HexStr(ssVecDnb)));
+                    vecSnb.push_back(snb);
+                    CDataStream ssVecSnb(SER_NETWORK, PROTOCOL_VERSION);
+                    ssVecSnb << vecSnb;
+                    statusObj.push_back(Pair("hex", HexStr(ssVecSnb)));
                 } else {
                     statusObj.push_back(Pair("errorMessage", strError));
                 }
@@ -755,21 +755,21 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
         int nFailed = 0;
 
         UniValue resultsObj(UniValue::VOBJ);
-        std::vector<CServiceNodeBroadcast> vecDnb;
+        std::vector<CServiceNodeBroadcast> vecSnb;
 
-        for (const auto& dne : servicenodeConfig.getEntries()) {
+        for (const auto& sne : servicenodeConfig.getEntries()) {
             std::string strError;
-            CServiceNodeBroadcast dnb;
+            CServiceNodeBroadcast snb;
 
-            bool fResult = CServiceNodeBroadcast::Create(dne.getIp(), dne.getPrivKey(), dne.getTxHash(), dne.getOutputIndex(), strError, dnb, true);
+            bool fResult = CServiceNodeBroadcast::Create(sne.getIp(), sne.getPrivKey(), sne.getTxHash(), sne.getOutputIndex(), strError, snb, true);
 
             UniValue statusObj(UniValue::VOBJ);
-            statusObj.push_back(Pair("alias", dne.getAlias()));
+            statusObj.push_back(Pair("alias", sne.getAlias()));
             statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
 
             if (fResult) {
                 nSuccessful++;
-                vecDnb.push_back(dnb);
+                vecSnb.push_back(snb);
             } else {
                 nFailed++;
                 statusObj.push_back(Pair("errorMessage", strError));
@@ -778,12 +778,12 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
             resultsObj.push_back(Pair("status", statusObj));
         }
 
-        CDataStream ssVecDnb(SER_NETWORK, PROTOCOL_VERSION);
-        ssVecDnb << vecDnb;
+        CDataStream ssVecSnb(SER_NETWORK, PROTOCOL_VERSION);
+        ssVecSnb << vecSnb;
         UniValue returnObj(UniValue::VOBJ);
         returnObj.push_back(Pair("overall", strprintf("Successfully created broadcast messages for %d servicenodes, failed to create %d, total %d", nSuccessful, nFailed, nSuccessful + nFailed)));
         returnObj.push_back(Pair("detail", resultsObj));
-        returnObj.push_back(Pair("hex", HexStr(ssVecDnb.begin(), ssVecDnb.end())));
+        returnObj.push_back(Pair("hex", HexStr(ssVecSnb.begin(), ssVecSnb.end())));
 
         return returnObj;
     }
@@ -793,9 +793,9 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
         if (request.params.size() != 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'servicenodebroadcast decode \"hexstring\"'");
 
-        std::vector<CServiceNodeBroadcast> vecDnb;
+        std::vector<CServiceNodeBroadcast> vecSnb;
 
-        if (!DecodeHexVecDnb(vecDnb, request.params[1].get_str()))
+        if (!DecodeHexVecSnb(vecSnb, request.params[1].get_str()))
             throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "ServiceNode broadcast message decode failed");
 
         int nSuccessful = 0;
@@ -803,25 +803,25 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
         int nDos = 0;
         UniValue returnObj(UniValue::VOBJ);
 
-        for (const auto& dnb : vecDnb) {
+        for (const auto& snb : vecSnb) {
             UniValue resultObj(UniValue::VOBJ);
 
-            if (dnb.CheckSignature(nDos)) {
+            if (snb.CheckSignature(nDos)) {
                 nSuccessful++;
-                resultObj.push_back(Pair("outpoint", dnb.outpoint.ToStringShort()));
-                resultObj.push_back(Pair("addr", dnb.addr.ToString()));
-                resultObj.push_back(Pair("pubKeyCollateralAddress", CCreditAddress(dnb.pubKeyCollateralAddress.GetID()).ToString()));
-                resultObj.push_back(Pair("pubKeyServiceNode", CCreditAddress(dnb.pubKeyServiceNode.GetID()).ToString()));
-                resultObj.push_back(Pair("vchSig", EncodeBase64(&dnb.vchSig[0], dnb.vchSig.size())));
-                resultObj.push_back(Pair("sigTime", dnb.sigTime));
-                resultObj.push_back(Pair("protocolVersion", dnb.nProtocolVersion));
-                resultObj.push_back(Pair("nLastPsq", dnb.nLastPsq));
+                resultObj.push_back(Pair("outpoint", snb.outpoint.ToStringShort()));
+                resultObj.push_back(Pair("addr", snb.addr.ToString()));
+                resultObj.push_back(Pair("pubKeyCollateralAddress", CCreditAddress(snb.pubKeyCollateralAddress.GetID()).ToString()));
+                resultObj.push_back(Pair("pubKeyServiceNode", CCreditAddress(snb.pubKeyServiceNode.GetID()).ToString()));
+                resultObj.push_back(Pair("vchSig", EncodeBase64(&snb.vchSig[0], snb.vchSig.size())));
+                resultObj.push_back(Pair("sigTime", snb.sigTime));
+                resultObj.push_back(Pair("protocolVersion", snb.nProtocolVersion));
+                resultObj.push_back(Pair("nLastPsq", snb.nLastPsq));
 
                 UniValue lastPingObj(UniValue::VOBJ);
-                lastPingObj.push_back(Pair("outpoint", dnb.lastPing.servicenodeOutpoint.ToStringShort()));
-                lastPingObj.push_back(Pair("blockHash", dnb.lastPing.blockHash.ToString()));
-                lastPingObj.push_back(Pair("sigTime", dnb.lastPing.sigTime));
-                lastPingObj.push_back(Pair("vchSig", EncodeBase64(&dnb.lastPing.vchSig[0], dnb.lastPing.vchSig.size())));
+                lastPingObj.push_back(Pair("outpoint", snb.lastPing.servicenodeOutpoint.ToStringShort()));
+                lastPingObj.push_back(Pair("blockHash", snb.lastPing.blockHash.ToString()));
+                lastPingObj.push_back(Pair("sigTime", snb.lastPing.sigTime));
+                lastPingObj.push_back(Pair("vchSig", EncodeBase64(&snb.lastPing.vchSig[0], snb.lastPing.vchSig.size())));
 
                 resultObj.push_back(Pair("lastPing", lastPingObj));
             } else {
@@ -829,7 +829,7 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
                 resultObj.push_back(Pair("errorMessage", "ServiceNode broadcast signature verification failed"));
             }
 
-            returnObj.push_back(Pair(dnb.GetHash().ToString(), resultObj));
+            returnObj.push_back(Pair(snb.GetHash().ToString(), resultObj));
         }
 
         returnObj.push_back(Pair("overall", strprintf("Successfully decoded broadcast messages for %d servicenodes, failed to decode %d, total %d", nSuccessful, nFailed, nSuccessful + nFailed)));
@@ -843,9 +843,9 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
                                                       "\nArguments:\n"
                                                       "1. \"hex\"      (string, required) Broadcast messages hex string\n");
 
-        std::vector<CServiceNodeBroadcast> vecDnb;
+        std::vector<CServiceNodeBroadcast> vecSnb;
 
-        if (!DecodeHexVecDnb(vecDnb, request.params[1].get_str()))
+        if (!DecodeHexVecSnb(vecSnb, request.params[1].get_str()))
             throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "ServiceNode broadcast message decode failed");
 
         int nSuccessful = 0;
@@ -853,29 +853,29 @@ UniValue servicenodebroadcast(const JSONRPCRequest& request)
         UniValue returnObj(UniValue::VOBJ);
 
         // verify all signatures first, bailout if any of them broken
-        for (const auto& dnb : vecDnb) {
+        for (const auto& snb : vecSnb) {
             UniValue resultObj(UniValue::VOBJ);
 
-            resultObj.push_back(Pair("outpoint", dnb.outpoint.ToStringShort()));
-            resultObj.push_back(Pair("addr", dnb.addr.ToString()));
+            resultObj.push_back(Pair("outpoint", snb.outpoint.ToStringShort()));
+            resultObj.push_back(Pair("addr", snb.addr.ToString()));
 
             int nDos = 0;
             bool fResult;
-            if (dnb.CheckSignature(nDos)) {
-                fResult = snodeman.CheckDnbAndUpdateServiceNodeList(NULL, dnb, nDos, *g_connman);
+            if (snb.CheckSignature(nDos)) {
+                fResult = snodeman.CheckSnbAndUpdateServiceNodeList(NULL, snb, nDos, *g_connman);
                 snodeman.NotifyServiceNodeUpdates(*g_connman);
             } else
                 fResult = false;
 
             if (fResult) {
                 nSuccessful++;
-                resultObj.push_back(Pair(dnb.GetHash().ToString(), "successful"));
+                resultObj.push_back(Pair(snb.GetHash().ToString(), "successful"));
             } else {
                 nFailed++;
                 resultObj.push_back(Pair("errorMessage", "ServiceNode broadcast signature verification failed"));
             }
 
-            returnObj.push_back(Pair(dnb.GetHash().ToString(), resultObj));
+            returnObj.push_back(Pair(snb.GetHash().ToString(), resultObj));
         }
 
         returnObj.push_back(Pair("overall", strprintf("Successfully relayed broadcast messages for %d servicenodes, failed to relay %d, total %d", nSuccessful, nFailed, nSuccessful + nFailed)));

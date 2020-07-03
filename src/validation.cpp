@@ -2389,14 +2389,14 @@ int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Para
         Consensus::DeploymentPos pos = Consensus::DeploymentPos(i);
         ThresholdState state = VersionBitsState(pindexPrev, params, pos, versionbitscache);
         const struct BIP9DeploymentInfo& vbinfo = VersionBitsDeploymentInfo[pos];
-        if (vbinfo.check_dn_protocol && state == THRESHOLD_STARTED && !fAssumeServiceNodeIsUpgraded) {
+        if (vbinfo.check_sn_protocol && state == THRESHOLD_STARTED && !fAssumeServiceNodeIsUpgraded) {
             CScript payee;
-            servicenode_info_t dnInfo;
+            servicenode_info_t snInfo;
             if (!snpayments.GetBlockPayee(pindexPrev->nHeight + 1, payee)) {
                 // no votes for this block
                 continue;
             }
-            if (!snodeman.GetServiceNodeInfo(payee, dnInfo)) {
+            if (!snodeman.GetServiceNodeInfo(payee, snInfo)) {
                 // unknown servicenode
                 continue;
             }

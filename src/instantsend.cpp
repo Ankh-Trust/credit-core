@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -332,7 +331,7 @@ bool CInstantSend::ProcessNewTxLockVote(CNode* pfrom, const CTxLockVote& vote, C
     uint256 nVoteHash = vote.GetHash();
 
     if (!vote.IsValid(pfrom, connman)) {
-        // could be because of missing DN
+        // could be because of missing SN
         LogPrint("instantsend", "CInstantSend::%s -- Vote is invalid, txid=%s\n", __func__, txHash.ToString());
         return false;
     }
@@ -364,18 +363,18 @@ bool CInstantSend::ProcessNewTxLockVote(CNode* pfrom, const CTxLockVote& vote, C
         // TODO: make sure this works good enough for multi-quorum
 
         int nServiceNodeOrphanExpireTime = GetTime() + 60 * 10; // keep time data for 10 minutes
-        auto itDnOV = mapServiceNodeOrphanVotes.find(vote.GetServiceNodeOutpoint());
-        if (itDnOV == mapServiceNodeOrphanVotes.end()) {
+        auto itSnOV = mapServiceNodeOrphanVotes.find(vote.GetServiceNodeOutpoint());
+        if (itSnOV == mapServiceNodeOrphanVotes.end()) {
             mapServiceNodeOrphanVotes.emplace(vote.GetServiceNodeOutpoint(), nServiceNodeOrphanExpireTime);
         } else {
-            if (itDnOV->second > GetTime() && itDnOV->second > GetAverageServiceNodeOrphanVoteTime()) {
+            if (itSnOV->second > GetTime() && itSnOV->second > GetAverageServiceNodeOrphanVoteTime()) {
                 LogPrint("instantsend", "CInstantSend::%s -- servicenode is spamming orphan Transaction Lock Votes: txid=%s  servicenode=%s\n",
                     __func__, txHash.ToString(), vote.GetServiceNodeOutpoint().ToStringShort());
                 // Misbehaving(pfrom->id, 1);
                 return false;
             }
             // not spamming, refresh
-            itDnOV->second = nServiceNodeOrphanExpireTime;
+            itSnOV->second = nServiceNodeOrphanExpireTime;
         }
 
         return true;
@@ -1051,7 +1050,7 @@ bool CTxLockVote::IsValid(CNode* pnode, CConnman& connman) const
 {
     if (!snodeman.Has(outpointServiceNode)) {
         LogPrint("instantsend", "CTxLockVote::IsValid -- Unknown servicenode %s\n", outpointServiceNode.ToStringShort());
-        snodeman.AskForDN(pnode, outpointServiceNode, connman);
+        snodeman.AskForSN(pnode, outpointServiceNode, connman);
         return false;
     }
 
@@ -1101,9 +1100,9 @@ bool CTxLockVote::CheckSignature() const
 {
     std::string strError;
 
-    servicenode_info_t infoDn;
+    servicenode_info_t infoSn;
 
-    if (!snodeman.GetServiceNodeInfo(outpointServiceNode, infoDn)) {
+    if (!snodeman.GetServiceNodeInfo(outpointServiceNode, infoSn)) {
         LogPrintf("CTxLockVote::CheckSignature -- Unknown ServiceNode: servicenode=%s\n", outpointServiceNode.ToString());
         return false;
     }
@@ -1111,10 +1110,10 @@ bool CTxLockVote::CheckSignature() const
     if (sporkManager.IsSporkActive(SPORK_6_NEW_SIGS)) {
         uint256 hash = GetSignatureHash();
 
-        if (!CHashSigner::VerifyHash(hash, infoDn.pubKeyServiceNode, vchServiceNodeSignature, strError)) {
+        if (!CHashSigner::VerifyHash(hash, infoSn.pubKeyServiceNode, vchServiceNodeSignature, strError)) {
             // could be a signature in old format
             std::string strMessage = txHash.ToString() + outpoint.ToStringShort();
-            if (!CMessageSigner::VerifyMessage(infoDn.pubKeyServiceNode, vchServiceNodeSignature, strMessage, strError)) {
+            if (!CMessageSigner::VerifyMessage(infoSn.pubKeyServiceNode, vchServiceNodeSignature, strMessage, strError)) {
                 // nope, not in old format either
                 LogPrintf("CTxLockVote::CheckSignature -- VerifyMessage() failed, error: %s\n", strError);
                 return false;
@@ -1122,7 +1121,7 @@ bool CTxLockVote::CheckSignature() const
         }
     } else {
         std::string strMessage = txHash.ToString() + outpoint.ToStringShort();
-        if (!CMessageSigner::VerifyMessage(infoDn.pubKeyServiceNode, vchServiceNodeSignature, strMessage, strError)) {
+        if (!CMessageSigner::VerifyMessage(infoSn.pubKeyServiceNode, vchServiceNodeSignature, strMessage, strError)) {
             LogPrintf("CTxLockVote::CheckSignature -- VerifyMessage() failed, error: %s\n", strError);
             return false;
         }

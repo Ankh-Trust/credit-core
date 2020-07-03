@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -242,8 +241,8 @@ bool CGovernanceVote::IsValid(bool fSignatureCheck) const
         return false;
     }
 
-    servicenode_info_t infoDn;
-    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoDn)) {
+    servicenode_info_t infoSn;
+    if (!snodeman.GetServiceNodeInfo(servicenodeOutpoint, infoSn)) {
         LogPrint("gobject", "CGovernanceVote::IsValid -- Unknown ServiceNode - %s\n", servicenodeOutpoint.ToStringShort());
         return false;
     }
@@ -251,7 +250,7 @@ bool CGovernanceVote::IsValid(bool fSignatureCheck) const
     if (!fSignatureCheck)
         return true;
 
-    return CheckSignature(infoDn.pubKeyServiceNode);
+    return CheckSignature(infoSn.pubKeyServiceNode);
 }
 
 bool operator==(const CGovernanceVote& vote1, const CGovernanceVote& vote2)

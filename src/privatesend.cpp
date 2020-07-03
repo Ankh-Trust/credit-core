@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2017 The Dash Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -305,7 +304,7 @@ bool CPrivateSend::IsCollateralValid(const CTransaction& txCollateral)
     for (const auto& txout : txCollateral.vout) {
         nValueOut += txout.nValue;
 
-        bool fAllowData = snpayments.GetMinServiceNodePaymentsProto() > 71110;
+        bool fAllowData = snpayments.GetMinServiceNodePaymentsProto() > 71000;
         if (!txout.scriptPubKey.IsPayToPublicKeyHash() && !(fAllowData && txout.scriptPubKey.IsUnspendable())) {
             LogPrintf("CPrivateSend::IsCollateralValid -- Invalid Script, txCollateral=%s", txCollateral.ToString());
             return false;
@@ -343,10 +342,10 @@ bool CPrivateSend::IsCollateralValid(const CTransaction& txCollateral)
 
 bool CPrivateSend::IsCollateralAmount(CAmount nInputAmount)
 {
-    if (snpayments.GetMinServiceNodePaymentsProto() > 71110) {
+    if (snpayments.GetMinServiceNodePaymentsProto() > 71000) {
         // collateral input can be anything between 1x and "max" (including both)
         return (nInputAmount >= GetCollateralAmount() && nInputAmount <= GetMaxCollateralAmount());
-    } else { // <= 71110
+    } else { // <= 71000
         // collateral input can be anything between 2x and "max" (including both)
         return (nInputAmount >= GetCollateralAmount() * 2 && nInputAmount <= GetMaxCollateralAmount());
     }
@@ -496,13 +495,13 @@ std::string CPrivateSend::GetMessageByID(PoolMessage nMessageID)
         return _("Transaction not valid.");
     case ERR_MAXIMUM:
         return _("Entry exceeds maximum size.");
-    case ERR_DN_LIST:
+    case ERR_SN_LIST:
         return _("Not in the ServiceNode list.");
     case ERR_MODE:
         return _("Incompatible mode.");
     case ERR_NON_STANDARD_PUBKEY:
         return _("Non-standard public key detected.");
-    case ERR_NOT_A_DN:
+    case ERR_NOT_A_SN:
         return _("This is not a ServiceNode."); // not used
     case ERR_QUEUE_FULL:
         return _("ServiceNode queue is full.");

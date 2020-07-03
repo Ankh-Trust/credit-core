@@ -1,4 +1,3 @@
-
 // Copyright (c) 2016-2019 Duality Blockchain Solutions Developers
 // Copyright (c) 2014-2019 The Dash Core Developers
 // Copyright (c) 2009-2019 The Bitcoin Developers
@@ -948,7 +947,7 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
     }
 
     case MSG_SERVICENODE_ANNOUNCE:
-        return snodeman.mapSeenServiceNodeBroadcast.count(inv.hash) && !snodeman.IsDnbRecoveryRequested(inv.hash);
+        return snodeman.mapSeenServiceNodeBroadcast.count(inv.hash) && !snodeman.IsSnbRecoveryRequested(inv.hash);
 
     case MSG_SERVICENODE_PING:
         return snodeman.mapSeenServiceNodePing.count(inv.hash);
@@ -1195,14 +1194,14 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
 
                 if (!push && inv.type == MSG_SERVICENODE_ANNOUNCE) {
                     if (snodeman.mapSeenServiceNodeBroadcast.count(inv.hash)) {
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::DNANNOUNCE, snodeman.mapSeenServiceNodeBroadcast[inv.hash].second));
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SNANNOUNCE, snodeman.mapSeenServiceNodeBroadcast[inv.hash].second));
                         push = true;
                     }
                 }
 
                 if (!push && inv.type == MSG_SERVICENODE_PING) {
                     if (snodeman.mapSeenServiceNodePing.count(inv.hash)) {
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::DNPING, snodeman.mapSeenServiceNodePing[inv.hash]));
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SNPING, snodeman.mapSeenServiceNodePing[inv.hash]));
                         push = true;
                     }
                 }
@@ -1229,7 +1228,7 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
                     }
                     LogPrint("net", "ProcessGetData -- MSG_GOVERNANCE_OBJECT: topush = %d, inv = %s\n", topush, inv.ToString());
                     if (topush) {
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::DNGOVERNANCEOBJECT, ss));
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SNGOVERNANCEOBJECT, ss));
                         push = true;
                     }
                 }
@@ -1247,14 +1246,14 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
                     }
                     if (topush) {
                         LogPrint("net", "ProcessGetData -- pushing: inv = %s\n", inv.ToString());
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::DNGOVERNANCEOBJECTVOTE, ss));
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SNGOVERNANCEOBJECTVOTE, ss));
                         push = true;
                     }
                 }
 
                 if (!push && inv.type == MSG_SERVICENODE_VERIFY) {
                     if (snodeman.mapSeenServiceNodeVerification.count(inv.hash)) {
-                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::DNVERIFY, snodeman.mapSeenServiceNodeVerification[inv.hash]));
+                        connman.PushMessage(pfrom, msgMaker.Make(NetMsgType::SNVERIFY, snodeman.mapSeenServiceNodeVerification[inv.hash]));
                         push = true;
                     }
                 }
@@ -1907,21 +1906,21 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
                 return true; // not an error
             }
 
-            CServiceNode dn;
+            CServiceNode sn;
 
-            if (!snodeman.Get(pstx.servicenodeOutpoint, dn)) {
+            if (!snodeman.Get(pstx.servicenodeOutpoint, sn)) {
                 LogPrint("privatesend", "PSTX -- Can't find servicenode %s to verify %s\n", pstx.servicenodeOutpoint.ToStringShort(), hashTx.ToString());
                 return false;
             }
 
-            if (!dn.fAllowMixingTx) {
+            if (!sn.fAllowMixingTx) {
                 LogPrint("privatesend", "PSTX -- ServiceNode %s is sending too many transactions %s\n", pstx.servicenodeOutpoint.ToStringShort(), hashTx.ToString());
                 return true;
                 // TODO: Not an error? Could it be that someone is relaying old PSTXes
                 // we have no idea about (e.g we were offline)? How to handle them?
             }
 
-            if (!pstx.CheckSignature(dn.pubKeyServiceNode)) {
+            if (!pstx.CheckSignature(sn.pubKeyServiceNode)) {
                 LogPrint("privatesend", "PSTX -- CheckSignature() failed for %s\n", hashTx.ToString());
                 return false;
             }
