@@ -127,7 +127,7 @@ public:
         consensus.nBudgetProposalEstablishingTime = 24 * 60 * 60;
 
         consensus.nSuperblockStartBlock = 10800;
-        consensus.nSuperblockStartHash = uint256S("");
+        consensus.nSuperblockStartHash = uint256S("000007856f7f9cb78b2aebf7535e3c0d8e4ef60036ba00ecc95bdd7ecc72f89a");
         consensus.nSuperblockCycle = 87660; // 2880 (Blocks per day) x 365.25 (Days per Year) / 12 = 87660
 
         consensus.nGovernanceMinQuorum = 10;
@@ -176,10 +176,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_ISAUTOLOCKS].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = 0;
+        consensus.nMinimumChainWork = 32000;
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x"); // 500
+        consensus.defaultAssumeValid = uint256S("0x00000bfa926462511071c77070f8a990db10b2bc4c050aba77111d60fd2c10b2"); // 32000
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -242,9 +242,9 @@ public:
 
         checkpointData = (CCheckpointData){
             boost::assign::map_list_of
-	    (0, uint256S("0x0000049d099254d27f72451dd68377969aaef8b6cb6d673859ee9c9e8ec437a6")),
-	    (25000, uint256S("0x000008562088281c54f2d5e7c3a38a957a42a75501a1b5b386b8644b0bc6e74a"))
-	};
+	          (0, uint256S("0x0000049d099254d27f72451dd68377969aaef8b6cb6d673859ee9c9e8ec437a6"))
+	          (25000, uint256S("0x000008562088281c54f2d5e7c3a38a957a42a75501a1b5b386b8644b0bc6e74a"))
+	      };
 
         chainTxData = ChainTxData{
             0,		// * UNIX timestamp of last known number of transactions
