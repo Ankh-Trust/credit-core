@@ -97,7 +97,7 @@
             <item row="0" column="2">
              <widget class="QLabel" name="labelWatchonly">
               <font>
-                <italic>true</italic>
+                <cursive>true</cursive>
                </font>
               <property name="text">
                <string>Watch-only</string>
