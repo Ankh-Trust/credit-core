@@ -1,4 +1,4 @@
-# **Ankh Credit (0AC) v1.1.0.0**
+# **Ankh Credit (0AC) v1.0.0.0**
 
 ![0AC logo](https://github.com/Ankh-Trust/credit-core/blob/master/src/qt/res/icons/about.png)
 
