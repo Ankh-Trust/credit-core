@@ -207,7 +207,8 @@ public:
             assert(genesis.hashMerkleRoot == uint256S("0xcf42d6a146359c277a6620e802ff3511ec0877c588fd5e26d996e431befb966c"));
         }
 
-        vSeeds.push_back(CDNSSeedData("", ""));
+        vSeeds.push_back(CDNSSeedData("ankh-trust.com", "dnsseed1.ankh-trust.com"));
+        vSeeds.push_back(CDNSSeedData("ankh-trust.com", "dnsseed2.ankh-trust.com"));
 
         // Credit addresses start with 'C'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 28);
