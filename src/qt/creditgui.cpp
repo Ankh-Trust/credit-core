@@ -470,7 +470,7 @@ void CreditGUI::createActions()
     openAction = new QAction(QIcon(":/icons/open"), tr("Open &URI..."), this);
     openAction->setStatusTip(tr("Open a credit: URI or payment request"));
 
-    mnemonicAction = new QAction(platformStyle->TextColorIcon(":/icons/filesave"), tr("&Import mnemonic/private key..."), this);
+    mnemonicAction = new QAction(platformStyle->TextColorIcon(":/icons/key"), tr("&Import mnemonic/private key..."), this);
     mnemonicAction->setStatusTip(tr("Import Mnemonic Phrase or Private Key"));
 
     showHelpMessageAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Command-line options"), this);
@@ -549,9 +549,10 @@ void CreditGUI::createMenuBar()
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
         file->addSeparator();
-        file->addAction(mnemonicAction);
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
+        file->addSeparator();
+        file->addAction(mnemonicAction);
         file->addSeparator();
     }
     file->addAction(quitAction);
@@ -570,12 +571,14 @@ void CreditGUI::createMenuBar()
     if (walletFrame) {
         tools->addAction(openInfoAction);
         tools->addAction(openRPCConsoleAction);
+        tools->addAction(openRepairAction);
+        tools->addSeparator();
         tools->addAction(openGraphAction);
         tools->addAction(openPeersAction);
-        tools->addAction(openRepairAction);
         tools->addSeparator();
         tools->addAction(openConfEditorAction);
         tools->addAction(openSNConfEditorAction);
+        tools->addSeparator();
         tools->addAction(showBackupsAction);
     }
 
