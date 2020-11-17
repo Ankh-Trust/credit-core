@@ -140,8 +140,8 @@ public:
         consensus.nMajorityWindow = 1000;
 
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds
-        consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME;
+        consensus.nPowTargetTimespan = 30 * 64; // Credit: 1920 seconds [original aim 12h]
+        consensus.nPowTargetSpacing = DEFAULT_AVERAGE_POW_BLOCK_TIME; // Credit: 30s [original aim 128s]
         consensus.nUpdateDiffAlgoHeight = 10; // Credit: Algorithm fork block
         consensus.nPowAveragingWindow = 5;
         consensus.nPowMaxAdjustUp = 32;
@@ -149,8 +149,8 @@ public:
         assert(maxUint / UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
-        consensus.nRuleChangeActivationThreshold = 321; // 95% of nMinerConfirmationWindow
-        consensus.nMinerConfirmationWindow = 30;        // nPowTargetTimespan / nPowTargetSpacing
+        consensus.nRuleChangeActivationThreshold = 321; // 95% of nMinerConfirmationWindow [original aim 320.625 = 321 blocks]
+        consensus.nMinerConfirmationWindow = 30;        // nPowTargetTimespan / nPowTargetSpacing [original aim 337.5 = 338 blocks]
 
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
