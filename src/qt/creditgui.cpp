@@ -571,7 +571,6 @@ void CreditGUI::createMenuBar()
     if (walletFrame) {
         tools->addAction(openInfoAction);
         tools->addAction(openRPCConsoleAction);
-        tools->addAction(openRepairAction);
         tools->addSeparator();
         tools->addAction(openGraphAction);
         tools->addAction(openPeersAction);
@@ -580,6 +579,7 @@ void CreditGUI::createMenuBar()
         tools->addAction(openSNConfEditorAction);
         tools->addSeparator();
         tools->addAction(showBackupsAction);
+        tools->addAction(openRepairAction);        
     }
 
     QMenu* help = appMenuBar->addMenu(tr("&Help"));
