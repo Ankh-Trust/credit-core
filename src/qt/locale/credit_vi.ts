@@ -1600,8 +1600,8 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation><numerusform>%n Vòng</numerusform></translation>
     </message>
     <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; instead</source>
-        <translation>Không đủ đầu vào tương ứng để ẩn danh &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;sẽ ẩn danh &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; thay vào đó</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; instead</source>
+        <translation>Không đủ đầu vào tương ứng để ẩn danh &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;sẽ ẩn danh &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; thay vào đó</translation>
     </message>
     <message>
         <source>Overall progress</source>

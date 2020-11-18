@@ -1503,8 +1503,8 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation><numerusform>%n 次循環</numerusform></translation>
     </message>
     <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; instead</source>
-        <translation>沒有足夠相容的輸入來進行匿名處理&lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;將匿名處理 &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; 作為代替</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; instead</source>
+        <translation>沒有足夠相容的輸入來進行匿名處理&lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;將匿名處理 &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; 作為代替</translation>
     </message>
     <message>
         <source>Overall progress</source>

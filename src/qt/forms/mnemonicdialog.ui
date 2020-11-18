@@ -153,7 +153,7 @@ p, li { white-space: pre-wrap; }
            <item row="2" column="0">
             <widget class="QLabel" name="labelWarning">
              <property name="styleSheet">
-              <string notr="true">color: #66023c;
+              <string notr="true">color: #800000;
 font-weight: bold;</string>
              </property>
              <property name="text">

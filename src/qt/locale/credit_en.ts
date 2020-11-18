@@ -2001,8 +2001,8 @@ https://www.transifex.com/projects/p/credit/</translation>
     </message>
     <message>
         <location line="-7"/>
-        <source>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%2&lt;/span&gt; instead</source>
-        <translation>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%2&lt;/span&gt; instead</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%2&lt;/span&gt; instead</source>
+        <translation>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%2&lt;/span&gt; instead</translation>
     </message>
     <message>
         <location line="+46"/>

@@ -1560,8 +1560,8 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation><numerusform>%n Kierros</numerusform><numerusform>%n Kierrosta</numerusform></translation>
     </message>
     <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; instead</source>
-        <translation>Ei tarpeeksi yhteensopivia syötteitä anonymisointiin &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;anonymisoidaan &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; sen sijaan</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; instead</source>
+        <translation>Ei tarpeeksi yhteensopivia syötteitä anonymisointiin &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;anonymisoidaan &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; sen sijaan</translation>
     </message>
     <message>
         <source>Overall progress</source>

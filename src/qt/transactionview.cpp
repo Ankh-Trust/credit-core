@@ -555,7 +555,7 @@ void TransactionView::computeSum()
     }
     QString strAmount(CreditUnits::formatWithUnit(nDisplayUnit, amount, true, CreditUnits::separatorAlways));
     if (amount < 0)
-        strAmount = "<span style='color: #66023c;'>" + strAmount + "</span>";
+        strAmount = "<span style='color: #800000;'>" + strAmount + "</span>";
     Q_EMIT trxAmount(strAmount);
 }
 

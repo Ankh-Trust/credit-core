@@ -1712,8 +1712,8 @@ https://www.transifex.com/duality-blockchain-solutions-llc/credit-0AC/</translat
         </translation>
     </message>
     <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #66023c;&apos;&gt;%2&lt;/span&gt; instead</source>
-        <translation>Keine ausreichenden kompatiblen Eingänge um zu anonymisieren &lt;span style=&apos;color: #66023c;&apos;&gt;%1&lt;/span&gt;,&lt;br/&gt; stattdessen wird &lt;span style=&apos;color: #66023c;&apos;&gt;%2&lt;/span&gt; anonymisiert</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style=&apos;color: #800000;&apos;&gt;%2&lt;/span&gt; instead</source>
+        <translation>Keine ausreichenden kompatiblen Eingänge um zu anonymisieren &lt;span style=&apos;color: #800000;&apos;&gt;%1&lt;/span&gt;,&lt;br/&gt; stattdessen wird &lt;span style=&apos;color: #800000;&apos;&gt;%2&lt;/span&gt; anonymisiert</translation>
     </message>
     <message>
         <source>Overall progress</source>

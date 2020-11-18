@@ -1590,8 +1590,8 @@ https://www.transifex.com/projects/p/credit/</translation>
         <translation><numerusform>%n Cycle</numerusform><numerusform>%n Cycles</numerusform></translation>
     </message>
     <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; instead</source>
-        <translation>Pas assez d'entrées compatibles pour anonymiser &lt;span style='color: #66023c;'&gt;%1&lt;/span&gt;, &lt;br&gt;nous allons anonymiser &lt;span style='color: #66023c;'&gt;%2&lt;/span&gt; à la place</translation>
+        <source>Not enough compatible inputs to anonymize &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; instead</source>
+        <translation>Pas assez d'entrées compatibles pour anonymiser &lt;span style='color: #800000;'&gt;%1&lt;/span&gt;, &lt;br&gt;nous allons anonymiser &lt;span style='color: #800000;'&gt;%2&lt;/span&gt; à la place</translation>
     </message>
     <message>
         <source>Overall progress</source>
