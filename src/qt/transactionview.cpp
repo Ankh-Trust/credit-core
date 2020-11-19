@@ -51,13 +51,8 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
 
     QHBoxLayout* hlayout = new QHBoxLayout();
     hlayout->setContentsMargins(0, 0, 0, 0);
-    if (platformStyle->getUseExtraSpacing()) {
-        hlayout->setSpacing(0);
-        hlayout->addSpacing(STATUS_COLUMN_WIDTH -1);
-    } else {
-        hlayout->setSpacing(0);
-        hlayout->addSpacing(STATUS_COLUMN_WIDTH);
-    }
+    hlayout->setSpacing(0);
+    hlayout->addSpacing(STATUS_COLUMN_WIDTH);
 
     watchOnlyWidget = new QComboBox(this);
     watchOnlyWidget->setFixedWidth(30);
@@ -76,11 +71,7 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
  */
 
     dateWidget = new QComboBox(this);
-    if (platformStyle->getUseExtraSpacing()) {
-        dateWidget->setFixedWidth(DATE_COLUMN_WIDTH - 1);
-    } else {
-        dateWidget->setFixedWidth(DATE_COLUMN_WIDTH);
-    }
+    dateWidget->setFixedWidth(DATE_COLUMN_WIDTH);
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
     dateWidget->addItem(tr("This week"), ThisWeek);
@@ -92,11 +83,7 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     hlayout->addWidget(dateWidget);
 
     typeWidget = new QComboBox(this);
-    if (platformStyle->getUseExtraSpacing()) {
-        typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH - 1);
-    } else {
-        typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
-    }
+    typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
     typeWidget->addItem(tr("Most Common"), TransactionFilterProxy::COMMON_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
@@ -136,13 +123,9 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     amountWidget = new QLineEdit(this);
 #if QT_VERSION >= 0x040700
     amountWidget->setPlaceholderText(tr("Min amount"));
-    amountWidget->setAlignment(Qt::AlignRight);
 #endif
-    if (platformStyle->getUseExtraSpacing()) {
-        amountWidget->setFixedWidth(AMOUNT_MINIMUM_COLUMN_WIDTH - 1);
-    } else {
-        amountWidget->setFixedWidth(AMOUNT_MINIMUM_COLUMN_WIDTH);
-    }
+    amountWidget->setAlignment(Qt::AlignRight);
+    amountWidget->setFixedWidth(AMOUNT_MINIMUM_COLUMN_WIDTH + 1);
     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
     amountWidget->setObjectName("amountWidget");
     hlayout->addWidget(amountWidget);
