@@ -59,7 +59,6 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
         hlayout->addSpacing(STATUS_COLUMN_WIDTH);
     }
 
-
     watchOnlyWidget = new QComboBox(this);
     watchOnlyWidget->setFixedWidth(30);
     watchOnlyWidget->addItem("", TransactionFilterProxy::WatchOnlyFilter_All);
@@ -98,7 +97,6 @@ TransactionView::TransactionView(const PlatformStyle* platformStyle, QWidget* pa
     } else {
         typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
     }
-
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
     typeWidget->addItem(tr("Most Common"), TransactionFilterProxy::COMMON_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
