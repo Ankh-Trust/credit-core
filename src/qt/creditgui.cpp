@@ -135,8 +135,8 @@ CreditGUI::CreditGUI(const PlatformStyle* _platformStyle, const NetworkStyle* ne
                                                                                                                  spinnerFrame(0),
                                                                                                                  platformStyle(_platformStyle)
 {
-    GUIUtil::restoreWindowGeometry("nWindow", QSize(1152, 576), this);
-    setMinimumSize(QSize(1152, 576));
+    GUIUtil::restoreWindowGeometry("nWindow", QSize(1152, 720), this);
+    setMinimumSize(QSize(1152, 720));
     QString windowTitle = tr("Credit Core") + "";
 #ifdef ENABLE_WALLET
     enableWallet = WalletModel::isWalletEnabled();
@@ -416,7 +416,7 @@ void CreditGUI::createActions()
     webInfoAction->setMenuRole(QAction::NoRole);
     webInfoAction->setEnabled(false);
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
-    optionsAction->setStatusTip(tr("Modify configuration options for Credit"));
+    optionsAction->setStatusTip(tr("Modify configuration options for Credit Core"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     optionsAction->setEnabled(false);
     toggleHideAction = new QAction(QIcon(":/icons/about"), tr("&Show / Hide"), this);
@@ -579,7 +579,7 @@ void CreditGUI::createMenuBar()
         tools->addAction(openSNConfEditorAction);
         tools->addSeparator();
         tools->addAction(showBackupsAction);
-        tools->addAction(openRepairAction);        
+        tools->addAction(openRepairAction);
     }
 
     QMenu* help = appMenuBar->addMenu(tr("&Help"));
