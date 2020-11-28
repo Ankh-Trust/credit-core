@@ -97,8 +97,8 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("fShowServiceNodesTab", true);
 
     if (!settings.contains("fShowAdvancedPSUI"))
-        settings.setValue("fShowAdvancedPSUI", false);
-    fShowAdvancedPSUI = settings.value("fShowAdvancedPSUI", false).toBool();
+        settings.setValue("fShowAdvancedPSUI", true);
+    fShowAdvancedPSUI = settings.value("fShowAdvancedPSUI", true).toBool();
 
     if (!settings.contains("fShowPrivateSendPopups"))
         settings.setValue("fShowPrivateSendPopups", true);
