@@ -31,8 +31,8 @@
 #include <QTimer>
 
 #define DECORATION_SIZE 17
-#define NUM_ITEMS 7
-#define NUM_ITEMS_ADV 7
+#define NUM_ITEMS 8
+#define NUM_ITEMS_ADV 8
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
