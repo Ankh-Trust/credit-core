@@ -301,14 +301,48 @@ void CreditGUI::createActions()
 #endif
     tabGroup->addAction(overviewAction);
 
+/*
+ *     bdapAction->setStatusTip(tr("BDAP"));
+ *     bdapAction->setToolTip(bdapAction->statusTip());
+ *     bdapAction->setCheckable(true);
+ * #ifdef Q_OS_MAC
+ *     bdapAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
+ * #else
+ *     bdapAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+ * #endif
+ *     tabGroup->addAction(bdapAction);
+s */
+
+    miningAction = new QAction(QIcon(":/icons/miner"), tr("&Mining"), this);
+    miningAction->setStatusTip(tr("Mine Credit(0AC)"));
+    miningAction->setToolTip(miningAction->statusTip());
+    miningAction->setCheckable(true);
+#ifdef Q_OS_MAC
+    miningAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+#else
+    miningAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
+#endif
+    tabGroup->addAction(miningAction);
+
+    servicenodeAction = new QAction(QIcon(":/icons/servicenodes"), tr("&ServiceNodes"), this);
+    servicenodeAction->setStatusTip(tr("Browse ServiceNodes"));
+    servicenodeAction->setToolTip(servicenodeAction->statusTip());
+    servicenodeAction->setCheckable(true);
+#ifdef Q_OS_MAC
+    servicenodeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+#else
+    servicenodeAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
+#endif
+    tabGroup->addAction(servicenodeAction);
+
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), this);
     sendCoinsAction->setStatusTip(tr("Send coins to a Credit address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
-    sendCoinsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    sendCoinsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
 #else
-    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
+    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
 #endif
     tabGroup->addAction(sendCoinsAction);
 
@@ -321,9 +355,9 @@ void CreditGUI::createActions()
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
-    receiveCoinsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    receiveCoinsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
 #else
-    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
+    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
 #endif
     tabGroup->addAction(receiveCoinsAction);
 
@@ -336,51 +370,23 @@ void CreditGUI::createActions()
     historyAction->setToolTip(historyAction->statusTip());
     historyAction->setCheckable(true);
 #ifdef Q_OS_MAC
-    historyAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    historyAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
 #else
-    historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
+    historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
 #endif
     tabGroup->addAction(historyAction);
 
 #ifdef ENABLE_WALLET
-    servicenodeAction = new QAction(QIcon(":/icons/servicenodes"), tr("&ServiceNodes"), this);
-    servicenodeAction->setStatusTip(tr("Browse ServiceNodes"));
-    servicenodeAction->setToolTip(servicenodeAction->statusTip());
-    servicenodeAction->setCheckable(true);
-#ifdef Q_OS_MAC
-    servicenodeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
-#else
-    servicenodeAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
-#endif
-    tabGroup->addAction(servicenodeAction);
-
-    miningAction = new QAction(QIcon(":/icons/miner"), tr("&Mining"), this);
-    miningAction->setStatusTip(tr("Mine Credit(0AC)"));
-    miningAction->setToolTip(miningAction->statusTip());
-    miningAction->setCheckable(true);
-#ifdef Q_OS_MAC
-    miningAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
-#else
-    miningAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
-#endif
-    tabGroup->addAction(miningAction);
-
-/*
- *     bdapAction->setStatusTip(tr("BDAP"));
- *     bdapAction->setToolTip(bdapAction->statusTip());
- *     bdapAction->setCheckable(true);
- * #ifdef Q_OS_MAC
- *     bdapAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
- * #else
- *     bdapAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
- * #endif
- *     tabGroup->addAction(bdapAction);
- */
-
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
+    //    connect(bdapAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    //    connect(bdapAction, SIGNAL(triggered()), this, SLOT(gotoBdapPage()));
+    connect(miningAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(miningAction, SIGNAL(triggered()), this, SLOT(gotoMiningPage()));
+    connect(servicenodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(servicenodeAction, SIGNAL(triggered()), this, SLOT(gotoServiceNodePage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
     connect(sendCoinsMenuAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -391,12 +397,6 @@ void CreditGUI::createActions()
     connect(receiveCoinsMenuAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
-    connect(servicenodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(servicenodeAction, SIGNAL(triggered()), this, SLOT(gotoServiceNodePage()));
-    connect(miningAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(miningAction, SIGNAL(triggered()), this, SLOT(gotoMiningPage()));
-//    connect(bdapAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-//    connect(bdapAction, SIGNAL(triggered()), this, SLOT(gotoBdapPage()));
 
 #endif // ENABLE_WALLET
 
@@ -598,12 +598,12 @@ void CreditGUI::createToolBars()
         QToolBar* toolbar = new QToolBar(tr("Tabs toolbar"));
         toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         toolbar->addAction(overviewAction);
+//        toolbar->addAction(bdapAction);
+        toolbar->addAction(miningAction);
+        toolbar->addAction(servicenodeAction);
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
-        toolbar->addAction(servicenodeAction);
-        toolbar->addAction(miningAction);
-//        toolbar->addAction(bdapAction);
 
         /** Create additional container for toolbar and walletFrame and make it the central widget.
             This is a workaround mostly for toolbar styling on Mac OS but should work fine for every other OSes too.
@@ -739,14 +739,14 @@ void CreditGUI::removeAllWallets()
 void CreditGUI::setWalletActionsEnabled(bool enabled)
 {
     overviewAction->setEnabled(enabled);
+//    bdapAction->setEnabled(enabled);
+    miningAction->setEnabled(enabled);
+    servicenodeAction->setEnabled(enabled);
     sendCoinsAction->setEnabled(enabled);
     sendCoinsMenuAction->setEnabled(enabled);
     receiveCoinsAction->setEnabled(enabled);
     receiveCoinsMenuAction->setEnabled(enabled);
     historyAction->setEnabled(enabled);
-    servicenodeAction->setEnabled(enabled);
-    miningAction->setEnabled(enabled);
-//    bdapAction->setEnabled(enabled);
     encryptWalletAction->setEnabled(enabled);
     backupWalletAction->setEnabled(enabled);
     changePassphraseAction->setEnabled(enabled);
@@ -780,12 +780,12 @@ void CreditGUI::createIconMenu(QMenu* pmenu)
     pmenu->addAction(verifyMessageAction);
     pmenu->addSeparator();
     pmenu->addAction(overviewAction);
+    //    pmenu->addAction(bdapAction);
+    pmenu->addAction(miningAction);
+    pmenu->addAction(servicenodeAction);
     pmenu->addAction(sendCoinsAction);
     pmenu->addAction(receiveCoinsAction);
     pmenu->addAction(historyAction);
-    pmenu->addAction(servicenodeAction);
-    pmenu->addAction(miningAction);
-//    pmenu->addAction(bdapAction);
     pmenu->addSeparator();
     pmenu->addAction(optionsAction);
     pmenu->addAction(openInfoAction);
@@ -931,6 +931,29 @@ void CreditGUI::gotoOverviewPage()
         walletFrame->gotoOverviewPage();
 }
 
+/*
+ * void CreditGUI::gotoBdapPage()
+ * {
+ *     bdapAction->setChecked(true);
+ *     if (walletFrame)
+ *         walletFrame->gotoBdapPage();
+ * }
+ */
+
+void CreditGUI::gotoMiningPage()
+{
+    miningAction->setChecked(true);
+    if (walletFrame)
+        walletFrame->gotoMiningPage();
+}
+
+void CreditGUI::gotoServiceNodePage()
+{
+    servicenodeAction->setChecked(true);
+    if (walletFrame)
+        walletFrame->gotoServiceNodePage();
+}
+
 void CreditGUI::gotoSendCoinsPage(QString addr)
 {
     sendCoinsAction->setChecked(true);
@@ -951,29 +974,6 @@ void CreditGUI::gotoHistoryPage()
     if (walletFrame)
         walletFrame->gotoHistoryPage();
 }
-
-void CreditGUI::gotoServiceNodePage()
-{
-    servicenodeAction->setChecked(true);
-    if (walletFrame)
-        walletFrame->gotoServiceNodePage();
-}
-
-void CreditGUI::gotoMiningPage()
-{
-    miningAction->setChecked(true);
-    if (walletFrame)
-        walletFrame->gotoMiningPage();
-}
-
-/*
- * void CreditGUI::gotoBdapPage()
- * {
- *     bdapAction->setChecked(true);
- *     if (walletFrame)
- *         walletFrame->gotoBdapPage();
- * }
- */
 
 void CreditGUI::gotoSignMessageTab(QString addr)
 {
