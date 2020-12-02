@@ -37,19 +37,19 @@ What is [Credit](https://ankh.foundation/credit)?
 P2P Port = 33600
 RPC Port = 33650
 ServiceNodes = 33600
-Magic Bytes: 0x5e 0x61 0x74 0x80
+Magic Bytes: 0x65 0x67 0x7a 0x85
 
 **TestNet Parameters**
 P2P Port = 33700
 RPC Port = 33750
 ServiceNodes = 33700
-Magic Bytes: 0x2f 0x32 0x15 0x40
+Magic Bytes: 0x35 0x38 0x1b 0x45
 
 **RegTest Parameters**
 P2P Port = 33800
 RPC Port = 33850
 ServiceNodes = 33800
-Magic Bytes = 0x2f 0x32 0x15 0x3f
+Magic Bytes = 0x37 0x3a 0x1d 0x47
 
 
 UNIX BUILD NOTES
