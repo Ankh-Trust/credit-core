@@ -339,11 +339,15 @@ QString TransactionTableModel::lookupAddress(const std::string& address, bool to
 {
     QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(address));
     QString description;
-    if (!label.isEmpty()) {
+    if (!label.isEmpty())
+    {
         description += label;
     }
-    if (label.isEmpty() || tooltip) {
-        description += QString(" (") + QString::fromStdString(address) + QString(")");
+    if(label.isEmpty() || tooltip)
+    {
+        if(!label.isEmpty())
+          description += QString(" ");
+        description += QString("(") + QString::fromStdString(address) + QString(")");
     }
     return description;
 }
