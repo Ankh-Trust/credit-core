@@ -761,7 +761,7 @@ void CreditGUI::setWalletActionsEnabled(bool enabled)
 void CreditGUI::createTrayIcon(const NetworkStyle* networkStyle)
 {
     trayIcon = new QSystemTrayIcon(this);
-    QString toolTip = tr("Credit client") + " " + networkStyle->getTitleAddText();
+    QString toolTip = tr("Credit Core client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getTrayAndWindowIcon());
     trayIcon->hide();
